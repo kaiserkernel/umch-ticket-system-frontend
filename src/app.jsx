@@ -6,6 +6,7 @@ import Content from "./components/content/content.jsx";
 import Footer from "./components/footer/footer.jsx";
 import ThemePanel from "./components/theme-panel/theme-panel.jsx";
 import { AppSettings } from "./config/app-settings.js";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   var defaultOptions = {
