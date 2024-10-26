@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Row, Col, Form } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
+import dayjs from "dayjs";
+
+const StyledDatePicker = styled(DatePicker)`
+  border: 1px solid !important;
+  padding: 8px !important;
+  border-radius: 0px !important;
+  outline: none !important;
+  width: 100% !important;
+
+  &:focus {
+    border-color: #2596be !important;
+  }
+`;
 
 const Internship = () => {
+  const [selectedFromDate, handleSelectFromDate] = useState();
+  const [selectedToDate, handleSelectToDate] = useState();
   return (
     <div className="pt-5">
       <h1 className="mt-2 mt-md-5 mb-0 mb-md-5">Internship</h1>
@@ -34,7 +52,13 @@ const Internship = () => {
               Interval of time from{" "}
               <span className="ms-1 required-label">*</span>
             </Form.Label>
-            <Form.Control type="text" placeholder="" className="custom-input" />
+            <StyledDatePicker
+              selected={selectedFromDate}
+              onChange={(date) => handleSelectFromDate(date)}
+              dateFormat="yyyy/MM/dd"
+              isClearable
+              className="custom-input"
+            />
           </Form.Group>
         </Col>
         <Col lg={6}>
@@ -42,7 +66,13 @@ const Internship = () => {
             <Form.Label className="input-label">
               Interval of time to<span className="ms-1 required-label">*</span>
             </Form.Label>
-            <Form.Control type="text" placeholder="" className="custom-input" />
+            <StyledDatePicker
+              selected={selectedToDate}
+              onChange={(date) => handleSelectToDate(date)}
+              dateFormat="yyyy/MM/dd"
+              isClearable
+              className="custom-input"
+            />
           </Form.Group>
         </Col>
       </Row>

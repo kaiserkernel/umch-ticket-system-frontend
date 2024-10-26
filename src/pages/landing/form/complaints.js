@@ -25,9 +25,21 @@ const Complaints = () => {
               }}
               className="custom-input"
             >
-              <option>- Select -</option>
-              <option>Option 2</option>
-              <option>Option 3</option>
+              <option value="">– Select –</option>
+              <option value="Campus">Campus</option>
+              <option value="Dean's Office">Dean’s Office</option>
+              <option value="German Teaching Department">
+                German Teaching Department
+              </option>
+              <option value="Teaching Hospital">Teaching Hospital</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Online Catalouge (Carnet)">
+                Online Catalouge (Carnet)
+              </option>
+              <option value="Exam">Exam</option>
+              <option value="Other" selected="">
+                Other
+              </option>
             </Form.Control>
           </Form.Group>
         </Col>

@@ -25,9 +25,9 @@ const CampusIT = () => {
               }}
               className="custom-input"
             >
-              <option>- Select -</option>
-              <option>Option 2</option>
-              <option>Option 3</option>
+              <option value="">– Select –</option>
+              <option value="Canvas">Canvas</option>
+              <option value="Streaming / Panopto">Streaming / Panopto</option>
             </Form.Control>
           </Form.Group>
         </Col>
