@@ -15,9 +15,6 @@ import Other from "./other";
 const FormSection = () => {
   const [selectedEffect, setSelectedEffect] = useState("default");
 
-  useEffect(() => {
-    console.log(selectedEffect);
-  }, [selectedEffect]);
   // Define animation variants for each collapse effect
   const variants = {
     default: {
