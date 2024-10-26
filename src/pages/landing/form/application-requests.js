@@ -4,7 +4,7 @@ import { Row, Col, Form } from "react-bootstrap";
 const ApplicationRequests = () => {
   return (
     <div className="pt-5">
-      <h1 className="mt-2 mt-md-5 mb-0 mb-md-5">Applications and Requests</h1>
+      <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Applications and Requests</h1>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group>

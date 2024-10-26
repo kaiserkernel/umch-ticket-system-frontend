@@ -4,7 +4,7 @@ import { Row, Col, Form } from "react-bootstrap";
 const Thesis = () => {
   return (
     <div className="pt-5">
-      <h1 className="mt-2 mt-md-5 mb-0 mb-md-5">Thesis</h1>
+      <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Thesis</h1>
 
       <Row className="mt-2 g-4 g-md-4">
         <Col lg={6}>
