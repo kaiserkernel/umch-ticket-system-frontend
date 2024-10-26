@@ -1,8 +1,11 @@
 import React from "react";
+import useVisibility from "../../../hook/useVisibility";
 
 const BannerSection = () => {
+  const [ref, isVisible] = useVisibility();
+  console.log(isVisible);
   return (
-    <section className="banner-section">
+    <section ref={ref} className="banner-section">
       <div className="bg-header-positionRelative">
         <div className="bg-header-container">
           <img
@@ -16,7 +19,11 @@ const BannerSection = () => {
             className="d-block d-md-none bg-header-overlay-section"
             style={{ width: "70%" }}
           >
-            <div className="bg-header-img-caption">
+            <div
+              className={`bg-header-img-caption ${
+                isVisible ? "fade-in-down" : ""
+              }`}
+            >
               {/* <img src="assets/img/Pen.svg" width={50} height={50} /> */}
               <div className="bg-header-img-headerCaption">Ticket System</div>
               <div className="bg-header-img-textCaption ">
@@ -35,7 +42,11 @@ const BannerSection = () => {
           />
 
           <div className="bg-header-overlay-section" style={{ width: "50%" }}>
-            <div className="bg-header-img-caption">
+            <div
+              className={`bg-header-img-caption ${
+                isVisible ? "fade-in-down" : ""
+              }`}
+            >
               <img src="assets/img/Pen.svg" width={70} height={70} />
               <div className="bg-header-img-headerCaption mt-2 mt-md-5">
                 Ticket System
