@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
+
 import ApplicationRequests from "./application-requests";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import BookRental from "./book-rental";
@@ -12,11 +13,146 @@ import Thesis from "./thesis";
 import Other from "./other";
 
 const FormSection = () => {
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedEffect, setSelectedEffect] = useState("default");
 
-  const handleSelectChange = (e) => {
-    setSelectedOption(e.target.value);
+  useEffect(() => {
+    console.log(selectedEffect);
+  }, [selectedEffect]);
+  // Define animation variants for each collapse effect
+  const variants = {
+    default: {
+      hidden: { scaleY: 0, opacity: 0, originY: 1 },
+      visible: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+    application: {
+      hidden: { height: 0, opacity: 0, originY: 0 },
+      visible: {
+        height: "auto",
+        opacity: 1,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+
+    booking: {
+      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
+      visible: {
+        scaleY: 1,
+        opacity: 1,
+        originY: 1,
+        transition: { duration: 0.5 },
+      },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+    campus: {
+      hidden: { scaleY: 0, opacity: 0 },
+      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+    complaints: {
+      hidden: { height: 0, opacity: 0, originY: 0 },
+      visible: {
+        height: "auto",
+        opacity: 1,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+
+    internship: {
+      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
+      visible: {
+        scaleY: 1,
+        opacity: 1,
+        originY: 1,
+        transition: { duration: 0.5 },
+      },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+    medical: {
+      hidden: { scaleY: 0, opacity: 0 },
+      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+    thesis: {
+      hidden: { height: 0, opacity: 0, originY: 0 },
+      visible: {
+        height: "auto",
+        opacity: 1,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
+    other: {
+      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
+      visible: {
+        scaleY: 1,
+        opacity: 1,
+        originY: 1,
+        transition: { duration: 0.5 },
+      },
+      exit: {
+        scaleY: 0,
+        opacity: 0,
+        originY: 0,
+        transition: { duration: 0.5 },
+      },
+    },
   };
+  const content = {
+    application: <ApplicationRequests />,
+    booking: <BookRental />,
+    campus: <CampusIT />,
+    complaints: <Complaints />,
+    internship: <Internship />,
+    medical: <MedicalAbilities />,
+    thesis: <Thesis />,
+    other: <Other />,
+  };
+
   return (
     <section className="form py-2 py-md-2">
       <div className="bg-gray mt-2 mt-md-4 py-2 py-md-5">
@@ -121,6 +257,7 @@ const FormSection = () => {
                 </Form.Group>
               </Col>
             </Row>
+
             <Row className="mt-4">
               <Col lg={12}>
                 <Form.Group>
@@ -140,37 +277,49 @@ const FormSection = () => {
                       border: "1px solid #007bff",
                     }}
                     className="custom-input"
-                    onChange={handleSelectChange}
-                    value={selectedOption}
+                    onChange={(e) => setSelectedEffect(e.target.value)}
+                    value={selectedEffect}
                   >
-                    <option>- Select -</option>
-                    <option value="1">Applications and Requests</option>
-                    <option value="2">Book rental UMCH library</option>
-                    <option value="3">Campus IT</option>
-                    <option value="4">Complaints</option>
-                    <option value="5">Internship</option>
-                    <option value="6">Medical Abilities</option>
-                    <option value="7">Thesis</option>
-                    <option value="8">Other</option>
+                    <option value="default">- Select -</option>
+                    <option value="application">
+                      Applications and Requests
+                    </option>
+                    <option value="booking">Book rental UMCH library</option>
+                    <option value="campus">Campus IT</option>
+                    <option value="complaints">Complaints</option>
+                    <option value="internship">Internship</option>
+                    <option value="medical">Medical Abilities</option>
+                    <option value="thesis">Thesis</option>
+                    <option value="other">Other</option>
                   </Form.Control>
                 </Form.Group>
               </Col>
             </Row>
 
-            {selectedOption && (
-              <div
-                className={`transition-box ${selectedOption ? "visible" : ""}`}
-              >
-                {selectedOption === "1" && <ApplicationRequests />}
-                {selectedOption === "2" && <BookRental />}
-                {selectedOption === "3" && <CampusIT />}
-                {selectedOption === "4" && <Complaints />}
-                {selectedOption === "5" && <Internship />}
-                {selectedOption === "6" && <MedicalAbilities />}
-                {selectedOption === "7" && <Thesis />}
-                {selectedOption === "8" && <Other />}
-              </div>
-            )}
+            <AnimatePresence mode="wait">
+              {selectedEffect === "default" ? (
+                <motion.div
+                  key="default"
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={variants.default}
+                >
+                  <p>{content[selectedEffect]}</p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={selectedEffect}
+                  initial="hidden"
+                  animate="visible"
+                  //   exit={selectedEffect === "default" ? "exit" : false}
+
+                  variants={variants[selectedEffect] || variants.default}
+                >
+                  <p>{content[selectedEffect]}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <p className="mt-5">
               {" "}

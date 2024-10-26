@@ -6,7 +6,7 @@ const BannerSection = () => {
       <div className="bg-header-positionRelative">
         <div className="bg-header-container">
           <img
-            src="assets/img/UMCH-Header Bewerbung.webp"
+            src="assets/img/2023-05-05-UMFST-UMCH-Days-2023-5201-3.webp"
             alt="Sample Image 1"
             height={10}
             className="bg-header-img"
