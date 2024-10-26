@@ -112,7 +112,7 @@ h4 {
 
 .p,
 p {
-  font-size: 12pt !important;
+  font-size: 16px !important;
   font-weight: 500 !important;
   color: var(--bs-body-color) !important;
 }
@@ -121,7 +121,7 @@ p {
 @media (min-width: 1200px) {
   .h1,
   h1 {
-    font-size: 32pt !important;
+    font-size: 37px !important;
     font-weight: bold !important;
   }
 
@@ -145,7 +145,7 @@ p {
 
   .p,
   p {
-    font-size: 14pt !important;
+    font-size: 16px !important;
     font-weight: 500 !important;
   }
 }
@@ -176,8 +176,8 @@ p {
 
   .p,
   p {
-    font-size: 14pt !important;
-    font-weight: 500 !important;
+    font-size: 16px !important;
+    font-weight: 300 !important;
   }
 }
 
@@ -436,8 +436,23 @@ p {
 }
 
 .bg-gray {
-  /*gray #778693 #f2f4f6*/
-  background-color: #e5e9ed !important;
+  background-color: rgba(230, 230, 230, 1) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 750px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+@media (max-width: 786px) {
+  .bg-gray {
+    background-color: rgba(230, 230, 230, 1) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 750px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 .text-center {
@@ -448,12 +463,18 @@ p {
   background-color: white !important;
   color: var(--bs-primary) !important;
   border-radius: 0 !important;
-  border-color: rgba(0, 45, 71, 1) !important;
+  border-color: #002d47 !important;
   height: 50px !important;
-  font-size: 14pt !important;
+  font-size: 16px !important;
+  width: 100%;
+  padding: 10px;
 }
 .custom-input:focus {
+  background-color: white !important;
+  color: var(--bs-primary) !important;
+  border-radius: 0 !important;
   border-color: #2596be !important;
+  box-shadow: none !important;
   border-width: 5px !important;
 }
 .custom-input::placeholder {
@@ -466,6 +487,7 @@ p {
   color: var(--bs-primary) !important;
   border-radius: 0 !important;
   border-color: rgba(0, 45, 71, 1) !important;
+  box-shadow: none !important;
 
   font-size: 14pt !important;
 }
@@ -479,7 +501,7 @@ p {
 }
 
 .input-label {
-  font-size: 14pt !important;
+  font-size: 16px !important;
   color: black !important;
 }
 
@@ -519,7 +541,7 @@ option:hover {
 }
 
 .red-text-decoration {
-  color: #f56c6c !important;
+  color: #345c00 !important;
 }
 
 .custom-checkbox input[type="checkbox"] {
@@ -562,4 +584,13 @@ option:hover {
 .transition-box.visible {
   max-height: 100%; /* Adjust as needed */
   opacity: 1;
+}
+
+.form {
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
 }

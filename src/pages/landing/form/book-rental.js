@@ -1,7 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { Row, Col, Form } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import styled from "styled-components";
+import "react-datepicker/dist/react-datepicker.css";
+import dayjs from "dayjs";
+
+const StyledDatePicker = styled(DatePicker)`
+  border: 1px solid !important;
+  padding: 8px !important;
+  border-radius: 0px !important;
+  outline: none !important;
+  width: 100% !important;
+
+  &:focus {
+    border-color: #2596be !important;
+  }
+`;
 
 const BookRental = () => {
+  const today = dayjs().toDate();
+  const [selectedDate, handleSelectDate] = useState(today);
+
+  const isWithinNext3WorkingDays = (date) => {
+    let count = 0;
+    let day = dayjs();
+
+    while (count < 3) {
+      day = day.add(1, "day");
+      if (day.day() !== 0 && day.day() !== 6) count++; // Only count weekdays
+    }
+
+    const endDate = day.toDate();
+    return (
+      date >= today &&
+      date <= endDate &&
+      date.getDay() !== 0 &&
+      date.getDay() !== 6
+    );
+  };
+
   return (
     <div className="pt-5">
       <h1 className="mt-2 mt-md-5 mb-0 mb-md-5">Book rental UMCH library</h1>
@@ -25,9 +62,48 @@ const BookRental = () => {
               }}
               className="custom-input"
             >
-              <option>- Select -</option>
-              <option>Option 2</option>
-              <option>Option 3</option>
+              <option value="">– Select –</option>
+              <option value="Pathophysiology: Practical Work Guide / 1st. Edition">
+                Pathophysiology: Practical Work Guide / 1st. Edition
+              </option>
+              <option value="Anatomy of The Trunk: The Thorax">
+                Anatomy of The Trunk: The Thorax
+              </option>
+              <option value="Bones Of The Human Body">
+                Bones Of The Human Body
+              </option>
+              <option value="Limbs Anatomy">Limbs Anatomy</option>
+              <option value="Functional Anatomy Of The Abdominal Cavity">
+                Functional Anatomy Of The Abdominal Cavity
+              </option>
+              <option value="Topographical Anatomy Of The Head And Neck">
+                Topographical Anatomy Of The Head And Neck
+              </option>
+              <option value="Histology of the tissues">
+                Histology of the tissues
+              </option>
+              <option value="Histology: practical works guide">
+                Histology: practical works guide
+              </option>
+              <option value="New Approaches In Behavioral Science">
+                New Approaches In Behavioral Science
+              </option>
+              <option value="Basic Concepts Of Pathology">
+                Basic Concepts Of Pathology
+              </option>
+              <option value="Compendium Of Systematic Pathology">
+                Compendium Of Systematic Pathology
+              </option>
+              <option value="Barron’s E-Z Anatomy and Physiology">
+                Barron’s E-Z Anatomy and Physiology
+              </option>
+              <option value="Cell and Molecular Biology">
+                Cell and Molecular Biology
+              </option>
+              <option value="Detailed Solutions to Physics Problems">
+                Detailed Solutions to Physics Problems
+              </option>
+              <option value="Biophysics Labora">Biophysics Labora</option>
             </Form.Control>
           </Form.Group>
         </Col>
@@ -39,7 +115,14 @@ const BookRental = () => {
               Period of time from
               <span className="ms-1 required-label">*</span>
             </Form.Label>
-            <Form.Control type="text" placeholder="" className="custom-input" />
+            <StyledDatePicker
+              selected={selectedDate}
+              onChange={(date) => handleSelectDate(date)}
+              filterDate={isWithinNext3WorkingDays}
+              dateFormat="yyyy/MM/dd"
+              isClearable
+              className="custom-input"
+            />
           </Form.Group>
         </Col>
       </Row>
