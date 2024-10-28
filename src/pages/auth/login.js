@@ -43,12 +43,13 @@ function PagesLogin() {
     }
 
     try {
-      const formDataToSend = new FormData();
-      for (const key in formData) {
-        formDataToSend.append(key, formData[key]);
+      const response = await AuthService.login(formData);
+      if (response?.success) {
+        successNotify("Login is successfully.");
+        const bearToken = response?.token;
+        const token = bearToken.slice(7);
+        localStorage.setItem("token", token);
       }
-      const response = await AuthService.login(formDataToSend);
-      successNotify(response.message);
       setError("");
     } catch (err) {
       errorNotify(err?.message);

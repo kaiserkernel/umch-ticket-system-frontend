@@ -271,6 +271,7 @@ const FormSection = () => {
                   </Form.Label>
                   <Form.Control
                     as="select"
+                    defaultValue=""
                     style={{
                       appearance: "none", // Hides the default arrow
                       MozAppearance: "none", // For Firefox
