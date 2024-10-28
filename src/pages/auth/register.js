@@ -85,11 +85,11 @@ const PagesRegister = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+    const handleLoginNavigation = () => {
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    };
 
     try {
       const formDataToSend = new FormData();
@@ -99,14 +99,20 @@ const PagesRegister = () => {
       const response = await AuthService.register(formDataToSend);
       successNotify(response.message);
       setError("");
-      navigate("/login");
+      handleLoginNavigation();
     } catch (err) {
       const errors = err?.errors;
-
+      console.log(typeof errors);
       console.log(errors);
-      errors.map((error) => {
-        errorNotify(error.msg);
-      });
+
+      if (typeof errors != "object") {
+        errorNotify(errors);
+      } else {
+        console.log(typeof errors);
+        errors.map((error) => {
+          errorNotify(error.msg);
+        });
+      }
     }
   };
 
@@ -141,12 +147,6 @@ const PagesRegister = () => {
           <p className="text-inverse text-opacity-50 text-center">
             One Admin ID is all you need to access all the Admin services.
           </p>
-          {error && (
-            <p style={{ color: "red" }}>
-              <i className="bi bi-exclamation-triangle me-2"></i>
-              {error}
-            </p>
-          )}
 
           <Row>
             <Col lg={6}>

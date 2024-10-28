@@ -29,7 +29,7 @@ export class HttpService {
     await this.request(this.getOptionsConfig("delete", url));
 
   getOptionsConfig = (method, url, data) => {
-    const headers = { "Content-Type": "application/vnd.api+json" };
+    const headers = { "Content-Type": "application/json" };
 
     // If data is FormData, let Axios automatically set the correct headers
     if (data instanceof FormData) {
