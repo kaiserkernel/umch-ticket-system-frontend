@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
-import ApplicationRequests from "./application-requests";
-import "bootstrap-icons/font/bootstrap-icons.css";
+import ApplicationRequests from "./application-request";
 import BookRental from "./book-rental";
 import CampusIT from "./campus-it";
 import Complaints from "./complaints";
@@ -12,8 +12,49 @@ import MedicalAbilities from "./medical-abilities";
 import Thesis from "./thesis";
 import Other from "./other";
 
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 const FormSection = () => {
+  const location = useLocation();
   const [selectedEffect, setSelectedEffect] = useState("default");
+
+  useEffect(() => {
+    const specialClass = "app";
+    const newClass = "app-custom";
+    const specialClassContent = "app-content";
+    const newClassContent = "app-content-custom";
+
+    // Function to replace classes
+    const replaceClass = (elementClass, newClass) => {
+      const elements = document.querySelectorAll(`.${elementClass}`);
+      elements.forEach((element) => {
+        element.classList.remove(elementClass);
+        element.classList.add(newClass);
+      });
+    };
+
+    // Apply styles based on the current path
+    if (location.pathname === "/home") {
+      document.body.classList.remove("theme-teal");
+      document.body.classList.add("bg-white");
+      replaceClass(specialClass, newClass);
+      replaceClass(specialClassContent, newClassContent);
+    } else {
+      // Reset classes if not on "/home"
+      document.body.classList.remove("bg-white");
+      replaceClass(newClass, specialClass);
+      replaceClass(newClassContent, specialClassContent);
+      document.body.setAttribute("data-theme", "dark");
+    }
+
+    // Cleanup function to reset styles on unmount or path change
+    return () => {
+      document.body.classList.remove("bg-white");
+      document.body.classList.remove("theme-teal");
+      replaceClass(newClass, specialClass);
+      replaceClass(newClassContent, specialClassContent);
+    };
+  }, [location.pathname]); // Runs effect on path change
 
   // Define animation variants for each collapse effect
   const variants = {

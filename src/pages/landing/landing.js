@@ -6,6 +6,7 @@ import "./index.scss";
 import Header from "./header/index.js";
 import BannerSection from "./banner/index.js";
 import Form from "./form/index.js";
+import { useLocation } from "react-router-dom";
 
 function Landing() {
   const context = useContext(AppSettings);

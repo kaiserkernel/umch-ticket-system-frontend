@@ -3,7 +3,7 @@ import useVisibility from "../../../hook/useVisibility";
 
 const BannerSection = () => {
   const [ref, isVisible] = useVisibility();
-  console.log(isVisible);
+
   return (
     <section ref={ref} className="banner-section">
       <div className="bg-header-positionRelative">

@@ -8,11 +8,11 @@ import { slideToggle } from "./composables/slideToggle.js";
 import "bootstrap";
 
 // css
-// import "bootstrap-icons/font/bootstrap-icons.css";
-// import "@fortawesome/fontawesome-free/css/all.css";
-// import "react-perfect-scrollbar/dist/css/styles.css";
-// import "./index.css";
-// import "./scss/styles.scss";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "@fortawesome/fontawesome-free/css/all.css";
+import "react-perfect-scrollbar/dist/css/styles.css";
+import "./index.css";
+import "./scss/styles.scss";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
