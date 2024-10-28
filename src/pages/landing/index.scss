@@ -1,183 +1,117 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..700;1,100..700&display=swap");
+// @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..700;1,100..700&display=swap");
 
-body {
-  --bs-breakpoint-xs: 0;
-  --bs-breakpoint-sm: 576px;
-  --bs-breakpoint-md: 768px;
-  --bs-breakpoint-lg: 992px;
-  --bs-breakpoint-xl: 1200px;
-  --bs-breakpoint-xxl: 1500px;
-}
-html::before {
-  content: unset !important;
-  position: unset !important;
-  top: unset !important;
-  left: unset !important;
-  right: unset !important;
-  height: unset !important;
-  background-attachment: unset !important;
-  background-color: unset !important;
-  background-image: unset !important;
-  background-size: unset !important;
-  background-repeat: unset !important;
-  background-attachment: unset !important;
-  z-index: unset !important;
-}
-html::after {
-  content: unset !important;
-  position: unset !important;
-  top: unset !important;
-  left: unset !important;
-  right: unset !important;
-  height: unset !important;
-  background-attachment: unset !important;
-  background-color: unset !important;
-  background-image: unset !important;
-  background-size: unset !important;
-  background-repeat: unset !important;
-  background-attachment: unset !important;
-  z-index: unset !important;
-}
-body::before {
-  content: unset !important;
-  position: unset !important;
-  top: unset !important;
-  left: unset !important;
-  right: unset !important;
-  height: unset !important;
-  background-attachment: unset !important;
-  background-color: unset !important;
-  background-image: unset !important;
-  background-size: unset !important;
-  background-repeat: unset !important;
-  background-attachment: unset !important;
-  z-index: unset !important;
-}
+// body {
+//   --bs-breakpoint-xs: 0;
+//   --bs-breakpoint-sm: 576px;
+//   --bs-breakpoint-md: 768px;
+//   --bs-breakpoint-lg: 992px;
+//   --bs-breakpoint-xl: 1200px;
+//   --bs-breakpoint-xxl: 1500px;
+// }
 
-body,
-[data-bs-theme="light"] {
-  --bs-primary-rgb: 27, 58, 84;
-  --bs-secondary-rgb: 119, 134, 147;
-  --bs-primary: #002d47 !important;
-  --bs-primary-bg-subtle: #a4c5d4;
-  --bs-secondary: #778693;
-  --bs-gray: #646e6e;
-  --bs-warning: #ffe943;
-  --bs-warning-bg-subtle: #d6ceb5;
-  --bs-warning-rgb: 255, 233, 67;
-  --bs-danger: #ce0f57;
-  --bs-success: #198754;
-  --bs-info: #009bd2;
-  --bs-teal: #71c2ad;
-  --bs-yellow: #ffe943;
-  --bs-orange: #e68839;
-  /* --bs-blue: #009bd2; */
-
-  --bs-body-color: var(--bs-primary);
-  --bs-btn-color: var(--bs-primary);
-}
-
-/* Default styles */
-.h1,
-h1 {
-  font-size: 28pt !important;
-  font-weight: 700 !important;
-  line-height: inherit;
-  color: var(--bs-body-color) !important;
-}
-
-.h2,
-h2 {
-  font-size: 17pt !important;
-  font-weight: 700 !important;
-  line-height: inherit;
-  color: var(--bs-body-color) !important;
-}
-
-.h3,
-h3 {
-  font-size: 14pt !important;
-  font-weight: 700 !important;
-  line-height: inherit;
-  color: var(--bs-body-color) !important;
-}
-
-.h4,
-h4 {
-  font-size: 12pt !important;
-  font-weight: 700 !important;
-  line-height: inherit;
-  color: var(--bs-body-color) !important;
-}
-
-.p,
-p {
-  font-size: 16px !important;
-  font-weight: 500 !important;
-  color: var(--bs-body-color) !important;
-}
-
-/* Extra large devices (large desktops, 1200px and up) */
-@media (min-width: 1200px) {
+// /* Default styles */
+.form {
   .h1,
   h1 {
-    font-size: 37px !important;
-    font-weight: bold !important;
+    font-size: 28pt !important;
+    font-weight: 700 !important;
+    line-height: inherit;
+    color: #002d47 !important;
   }
 
   .h2,
   h2 {
-    font-size: 28pt !important;
-    font-weight: bold !important;
+    font-size: 17pt !important;
+    font-weight: 700 !important;
+    line-height: inherit;
+    color: #002d47 !important;
   }
 
   .h3,
   h3 {
-    font-size: 22pt !important;
-    font-weight: bold !important;
+    font-size: 14pt !important;
+    font-weight: 700 !important;
+    line-height: inherit;
+    color: #002d47 !important;
   }
 
   .h4,
   h4 {
-    font-size: 15pt !important;
-    font-weight: bold !important;
+    font-size: 12pt !important;
+    font-weight: 700 !important;
+    line-height: inherit;
+    color: #002d47 !important;
   }
 
   .p,
   p {
-    font-size: 16px !important;
-    font-weight: 500 !important;
-  }
-}
-@media (max-width: 768px) {
-  .h1,
-  h1 {
-    font-size: 22pt !important;
-    font-weight: bold !important;
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    color: #002d47 !important;
   }
 
-  .h2,
-  h2 {
-    font-size: 28pt !important;
-    font-weight: bold !important;
-  }
+  /* Extra large devices (large desktops, 1200px and up) */
+  @media (min-width: 1200px) {
+    .h1,
+    h1 {
+      font-size: 37px !important;
+      font-weight: bold !important;
+    }
 
-  .h3,
-  h3 {
-    font-size: 22pt !important;
-    font-weight: bold !important;
-  }
+    .h2,
+    h2 {
+      font-size: 28pt !important;
+      font-weight: bold !important;
+    }
 
-  .h4,
-  h4 {
-    font-size: 15pt !important;
-    font-weight: bold !important;
-  }
+    .h3,
+    h3 {
+      font-size: 22pt !important;
+      font-weight: bold !important;
+    }
 
-  .p,
-  p {
-    font-size: 16px !important;
-    font-weight: 300 !important;
+    .h4,
+    h4 {
+      font-size: 15pt !important;
+      font-weight: bold !important;
+    }
+
+    .p,
+    p {
+      font-size: 20px !important;
+      font-weight: 400 !important;
+    }
+  }
+  @media (max-width: 768px) {
+    .h1,
+    h1 {
+      font-size: 22pt !important;
+      font-weight: bold !important;
+    }
+
+    .h2,
+    h2 {
+      font-size: 28pt !important;
+      font-weight: bold !important;
+    }
+
+    .h3,
+    h3 {
+      font-size: 22pt !important;
+      font-weight: bold !important;
+    }
+
+    .h4,
+    h4 {
+      font-size: 15pt !important;
+      font-weight: bold !important;
+    }
+
+    .p,
+    p {
+      font-size: 18px !important;
+      font-weight: 400 !important;
+    }
   }
 }
 
@@ -190,7 +124,7 @@ p {
 }
 
 .bg-dark-blue {
-  background-color: var(--bs-primary);
+  background-color: #002d47;
 }
 
 .imgFit {
@@ -202,7 +136,6 @@ p {
 .logo-img {
   height: 57px !important;
   width: 556px;
-  object-fit: cover;
 }
 
 @media (max-width: "768px") {
@@ -218,7 +151,7 @@ p {
 }
 
 .default-color {
-  color: var(--bs-primary) !important;
+  color: #002d47 !important;
 }
 
 .accordion-button::after {
@@ -283,7 +216,7 @@ p {
 }
 
 .bg-header-container {
-  width: 70%;
+  width: 60%;
   position: relative;
 }
 
@@ -295,7 +228,7 @@ p {
 
 .bg-header-img {
   width: 100%;
-  height: 480px;
+  height: 570px;
   object-fit: cover;
 }
 
@@ -418,20 +351,20 @@ p {
 
 .bg-header-mask-img {
   width: 100%;
-  height: 480px;
+  height: 570px;
   object-fit: cover;
 }
 
-.app-content {
+.app-content-custom {
   padding: unset !important;
   margin-left: unset !important;
 }
 
-.app {
+.app-custom {
   padding: unset !important;
 }
 
-.theme-teal {
+.bg-white {
   background-color: white !important;
 }
 
@@ -449,7 +382,7 @@ p {
     background-color: rgba(230, 230, 230, 1) !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    max-width: 750px;
+    max-width: 650px;
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -461,7 +394,7 @@ p {
 
 .custom-input {
   background-color: white !important;
-  color: var(--bs-primary) !important;
+  color: #002d47 !important;
   border-radius: 0 !important;
   border-color: #002d47 !important;
   height: 50px !important;
@@ -471,20 +404,20 @@ p {
 }
 .custom-input:focus {
   background-color: white !important;
-  color: var(--bs-primary) !important;
+  color: #002d47 !important;
   border-radius: 0 !important;
   border-color: #2596be !important;
   box-shadow: none !important;
   border-width: 5px !important;
 }
 .custom-input::placeholder {
-  // color: var(--bs-primary) !important;
+  /* color: #002d47 !important; */
   color: gray !important;
 }
 
 .custom-textarea-input {
   background-color: white !important;
-  color: var(--bs-primary) !important;
+  color: #002d47 !important;
   border-radius: 0 !important;
   border-color: rgba(0, 45, 71, 1) !important;
   box-shadow: none !important;
@@ -496,7 +429,7 @@ p {
   border-width: 5px !important;
 }
 .custom-textarea-input::placeholder {
-  // color: var(--bs-primary) !important;
+  /* color: #002d47 !important; */
   color: gray !important;
 }
 
@@ -518,9 +451,9 @@ option:hover {
 }
 
 .default-bg {
-  --bs-btn-bg: var(--bs-body-color) !important;
-  --bs-btn-border-color: var(--bs-body-color) !important;
-  --bs-btn-hover-color: var(--bs-body-color) !important;
+  --bs-btn-bg: #002d47 !important;
+  --bs-btn-border-color: #002d47 !important;
+  --bs-btn-hover-color: #002d47 !important;
   --bs-btn-hover-bg: white !important;
   font-size: 14pt !important;
 }
@@ -532,10 +465,10 @@ option:hover {
   background-repeat: no-repeat;
   height: 100px !important;
   width: 100%;
-  --bs-btn-bg: var(--bs-body-color) !important;
-  --bs-btn-border-color: var(--bs-body-color) !important;
+  --bs-btn-bg: #002d47 !important;
+  --bs-btn-border-color: #002d47 !important;
   --bs-btn-hover-color: white !important;
-  --bs-btn-hover-bg: var(--bs-body-color) !important;
+  --bs-btn-hover-bg: #002d47 !important;
   font-size: 14pt !important;
   border-radius: 10px !important;
 }
@@ -547,8 +480,8 @@ option:hover {
 .custom-checkbox input[type="checkbox"] {
   -webkit-appearance: none; /* Remove default checkbox style in WebKit browsers */
   appearance: none; /* Remove default checkbox style */
-  width: 20px; /* Custom checkbox width */
-  height: 20px; /* Custom checkbox height */
+  width: 18px; /* Custom checkbox width */
+  height: 18px; /* Custom checkbox height */
   border: 2px solid var(--bs-gray); /* Border color */
   border-radius: 4px; /* Optional: rounded corners */
   outline: none; /* Remove outline */
@@ -568,9 +501,9 @@ option:hover {
   color: white; /* Check mark color */
   display: block; /* Show the check mark */
   text-align: center; /* Center the check mark */
-  font-size: 16px; /* Adjust font size */
+  font-size: 14px; /* Adjust font size */
   font-weight: bolder;
-  line-height: 20px; /* Align check mark vertically */
+  line-height: 18px; /* Align check mark vertically */
   cursor: pointer !important;
 }
 
@@ -614,4 +547,8 @@ option:hover {
 
 .fade-in-down {
   animation: fadeInDown 1s ease-out;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

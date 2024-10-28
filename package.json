@@ -13,6 +13,7 @@
     "@iconify/react": "^4.1.1",
     "@react-google-maps/api": "^2.19.3",
     "apexcharts": "^3.46.0",
+    "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bootstrap-daterangepicker": "^3.1.0",
     "bootstrap-icons": "^1.11.3",
@@ -44,6 +45,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.11.10",
+    "http-browserify": "^1.7.0",
     "jquery": "^3.7.1",
     "jsvectormap": "^1.5.3",
     "jszip": "^3.10.1",
@@ -71,6 +73,7 @@
     "react-scripts": "^5.0.1",
     "react-select": "^5.8.0",
     "react-tag-input-component": "^2.0.2",
+    "stream-http": "^3.2.0",
     "styled-components": "^6.1.13"
   },
   "scripts": {
