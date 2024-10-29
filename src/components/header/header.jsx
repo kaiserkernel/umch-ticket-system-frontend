@@ -13,6 +13,11 @@ function Header() {
   }
   userData = JSON.parse(userData);
 
+  const handleClickOpenTicket = (e) => {
+    e.preventDefault();
+    navigate("/home", { replace: true });
+  };
+
   const toggleAppSidebarDesktop = () => {
     var elm = document.querySelector(".app");
     if (elm) {
@@ -100,6 +105,34 @@ function Header() {
       </div>
 
       <div className="menu">
+        <div className="menu-item dropdown dropdown-mobile-full">
+          <a
+            href="#/"
+            data-bs-toggle="dropdown"
+            data-bs-display="static"
+            className="menu-link"
+          >
+            <div className="menu-icon">
+              <i className="bi bi-pencil-square nav-icon"></i>
+            </div>
+          </a>
+          <div className="dropdown-menu fade dropdown-menu-end w-100px text-center p-0 mt-1">
+            <div className="row gx-0">
+              <div className="">
+                <Link
+                  to="#"
+                  className="dropdown-item text-decoration-none p-3 bg-none"
+                  onClick={handleClickOpenTicket}
+                >
+                  <div className="position-relative">
+                    <i className="bi bi-pencil-square h2 opacity-5 d-block my-1"></i>
+                  </div>
+                  <div className="fw-500 fs-10px text-inverse">OPEN TICKET</div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="menu-item dropdown">
           <a href="#/" onClick={toggleAppHeaderSearch} className="menu-link">
             <div className="menu-icon">
