@@ -1,11 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
 import AuthService from "../../sevices/auth-service.js";
 import { ToastContainer, toast } from "react-toastify";
 
 function PagesLogin() {
   const context = useContext(AppSettings);
+  const navigate = useNavigate();
   const [redirect, setRedirect] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -49,6 +51,7 @@ function PagesLogin() {
         const bearToken = response?.token;
         const token = bearToken.slice(7);
         localStorage.setItem("token", token);
+        handleProfileNavigation();
       }
       setError("");
     } catch (err) {
@@ -56,6 +59,11 @@ function PagesLogin() {
     }
   };
 
+  const handleProfileNavigation = () => {
+    setTimeout(() => {
+      navigate("/profile", { replace: true });
+    }, 2000);
+  };
   const successNotify = (msg) => {
     toast.info(msg, {
       autoClose: 5000, // Duration in milliseconds
