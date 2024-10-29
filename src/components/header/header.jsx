@@ -8,6 +8,9 @@ function Header() {
   const navigate = useNavigate();
 
   let userData = localStorage.getItem("userData");
+  if (!userData) {
+    return;
+  }
   userData = JSON.parse(userData);
 
   const toggleAppSidebarDesktop = () => {
@@ -53,6 +56,7 @@ function Header() {
     e.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userData");
     navigate("/login");
   };
 
@@ -264,7 +268,7 @@ function Header() {
               </div>
             </div>
             <div className="menu-text d-sm-block d-none w-170px">
-              {userData.email}
+              {userData?.email}
             </div>
           </a>
           <div className="dropdown-menu dropdown-menu-end me-lg-3 fs-11px mt-1">

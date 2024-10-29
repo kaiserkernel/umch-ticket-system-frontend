@@ -16,7 +16,9 @@ const Header = () => {
   };
 
   const handleClickLogout = () => {
+    localStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userData");
     navigate("/login");
   };
 
