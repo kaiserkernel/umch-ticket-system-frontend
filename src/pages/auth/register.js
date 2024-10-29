@@ -207,8 +207,12 @@ const PagesRegister = () => {
                   value={formData.role}
                   onChange={handleChange}
                 >
-                  <option value="0">Admin</option>
-                  <option value="1">Teacher</option>
+                  <option value="0" disabled>
+                    Admin
+                  </option>
+                  <option value="1" disabled>
+                    Teacher
+                  </option>
                   <option value="2">Student</option>
                 </select>
               </div>
