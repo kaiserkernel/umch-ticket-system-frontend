@@ -1,6 +1,10 @@
 import HttpService from "./http.service";
 
 class AuthService {
+  adminLogin = async (payload) => {
+    const loginEndpoint = "/api/auth/admin";
+    return await HttpService.post(loginEndpoint, payload);
+  };
   login = async (payload) => {
     const loginEndpoint = "/api/auth/login";
     return await HttpService.post(loginEndpoint, payload);

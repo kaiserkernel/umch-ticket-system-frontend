@@ -1,0 +1,110 @@
+.mainBg {
+    background-image: url("/bilder/Blue_Color_gradient2.webp");
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: 150px auto;
+}
+
+.bgDark {
+    background: linear-gradient(to left, #002d47, #004f70);
+}
+
+.imgFit {
+    height: 200px !important;
+    object-fit: cover;
+}
+.imgObjectFit {
+    object-fit: cover;
+}
+
+.footerMedal {
+    margin-top: -5px;
+}
+
+.footerFontSize {
+    font-size: 11pt;
+}
+
+.footerSubFontSize {
+    font-size: 10pt;
+}
+
+.linkUnderline {
+    border-bottom: 1px solid white;
+}
+
+.imgContainer {
+    width: 18vw;
+}
+
+@media only screen and (max-width: 1200px) {
+    .footerFontSize {
+        font-size: 10pt;
+    }
+    .footerSubFontSize {
+        font-size: 9pt;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    .footerFontSize {
+        font-size: 9pt;
+    }
+    .footerSubFontSize {
+        font-size: 8pt;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .footerFontSize {
+        font-size: 8pt;
+    }
+    .footerSubFontSize {
+        font-size: 7pt;
+    }
+}
+
+@media only screen and (max-width: 810px) {
+    .footerFontSize {
+        font-size: 7pt;
+    }
+    .footerSubFontSize {
+        font-size: 6pt;
+    }
+}
+
+.iconSize {
+    font-size: 20pt;
+    margin-right: 1rem;
+
+}
+
+@media only screen and (max-width: 1200px) {
+    .iconSize {
+        font-size: 17pt;
+        margin-right: 0.7rem;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    .iconSize {
+        font-size: 14pt;
+        margin-right: 0.3rem;
+    }
+}
+
+@media only screen and (max-width: 810px) {
+    .iconSize {
+        font-size: 12pt;
+        margin-right: 0;
+    }
+}
+
+.branchLine > span{
+    width: auto;
+}
+
+.branchLine > hr {
+    width: 30vw;
+    margin: auto 0;
+}

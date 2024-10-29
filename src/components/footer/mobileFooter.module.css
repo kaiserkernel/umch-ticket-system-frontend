@@ -1,0 +1,35 @@
+.bgDark {
+  background: linear-gradient(to right, #002d47, #004f70);
+}
+
+.mobileFooterFontSize {
+  font-size: 12pt;
+}
+
+.mobileFooterSubFontSize {
+  font-size: 11pt;
+}
+
+.fixedFooter {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  z-index: 1000;
+  width: 70%;
+}
+
+@media only screen and (max-width: 500px) {
+  .socialMediaSize {
+    font-size: 1.3rem;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .socialMediaSize {
+    font-size: 1.1rem;
+  }
+}

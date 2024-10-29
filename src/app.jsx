@@ -3,7 +3,7 @@ import Header from "./components/header/header.jsx";
 import TopNav from "./components/top-nav/top-nav.jsx";
 import Sidebar from "./components/sidebar/sidebar.jsx";
 import Content from "./components/content/content.jsx";
-import Footer from "./components/footer/footer.jsx";
+// import Footer from "./components/footer/footer.jsx";
 import ThemePanel from "./components/theme-panel/theme-panel.jsx";
 import { AppSettings } from "./config/app-settings.js";
 import { AuthProvider } from "./context/authProvider.js";
@@ -12,7 +12,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   var defaultOptions = {
-    appMode: "dark",
+    appMode: "light",
     appTheme: "theme-teal",
     appCover: "",
     appHeaderNone: false,
@@ -149,7 +149,7 @@ function App() {
           {appTopNav && <TopNav />}
           {!appSidebarNone && <Sidebar />}
           {!appContentNone && <Content className={appContentClass} />}
-          {appFooter && <Footer />}
+          {/* {appFooter && <Footer />} */}
           {/* <ThemePanel /> */}
         </div>
       </AuthProvider>
