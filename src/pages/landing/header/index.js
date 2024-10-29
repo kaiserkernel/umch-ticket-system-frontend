@@ -1,15 +1,23 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/authProvider";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const handleClickRegister = () => {
     navigate("/register"); // Navigate to the "/special" route
   };
+
   const handleClickLogin = () => {
     navigate("/login"); // Navigate to the "/special" route
+  };
+
+  const handleClickLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    navigate("/login");
   };
 
   return (
@@ -27,19 +35,30 @@ const Header = () => {
                     />
                   </div>
                   <nav className="text-white">
-                    <span
-                      className="p-3 cursor-pointer"
-                      onClick={handleClickLogin}
-                    >
-                      Sign In
-                    </span>
-                    <span> | </span>
-                    <span
-                      className="p-3 cursor-pointer"
-                      onClick={handleClickRegister}
-                    >
-                      Sign Up
-                    </span>
+                    {isAuthenticated == false ? (
+                      <>
+                        <span
+                          className="p-3 cursor-pointer"
+                          onClick={handleClickLogin}
+                        >
+                          Sign In
+                        </span>
+                        <span> | </span>
+                        <span
+                          className="p-3 cursor-pointer"
+                          onClick={handleClickRegister}
+                        >
+                          Sign Up
+                        </span>
+                      </>
+                    ) : (
+                      <span
+                        className="p-3 cursor-pointer"
+                        onClick={handleClickLogout}
+                      >
+                        Logout
+                      </span>
+                    )}
                   </nav>
                 </div>
               </div>

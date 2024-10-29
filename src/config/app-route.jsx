@@ -1,6 +1,7 @@
 import React from "react";
 import App from "./../app.jsx";
 import { Navigate } from "react-router-dom";
+import ProtectedRoute from "../components/protectedRoute/protectedRoute.js";
 
 import Landing from "./../pages/landing/landing.js";
 import PagesError from "./../pages/error.js";
@@ -20,13 +21,41 @@ const AppRoute = [
       { path: "home", element: <Landing /> },
       { path: "register", element: <Register /> },
       { path: "login", element: <Login /> },
-      { path: "profile", element: <Profile /> },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "email/*",
         children: [
-          { path: "inbox", element: <EmailInbox /> },
-          { path: "compose", element: <EmailCompose /> },
-          { path: "detail", element: <EmailDetail /> },
+          {
+            path: "inbox",
+            element: (
+              <ProtectedRoute>
+                <EmailInbox />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "compose",
+            element: (
+              <ProtectedRoute>
+                <EmailCompose />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "detail",
+            element: (
+              <ProtectedRoute>
+                <EmailDetail />
+              </ProtectedRoute>
+            ),
+          },
         ],
       },
       { path: "*", element: <PagesError /> },

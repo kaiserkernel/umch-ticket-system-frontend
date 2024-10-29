@@ -4,6 +4,11 @@ import "lity";
 import "lity/dist/lity.min.css";
 
 function Profile() {
+  let userData = localStorage.getItem("userData");
+  userData = JSON.parse(userData);
+
+  const roleName = ["Admin", "Teacher", "Student"];
+
   return (
     <Card>
       <CardBody className="p-0">
@@ -12,12 +17,15 @@ function Profile() {
             <div className="profile-sidebar">
               <div className="desktop-sticky-top">
                 <div className="profile-img">
-                  <img src="/assets/img/user/profile.jpg" alt="" />
+                  <img
+                    src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
+                    alt=""
+                  />
                 </div>
 
-                <h4>John Smith</h4>
+                <h4>{userData.fullName}</h4>
                 <div className="mb-3 text-inverse text-opacity-50 fw-bold mt-n2">
-                  @johnsmith
+                  {roleName[userData.role]}
                 </div>
                 <p>
                   Principal UXUI Design & Brand Architecture for HUD. Creator of

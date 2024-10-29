@@ -333,7 +333,7 @@ const PagesRegister = () => {
                           Choose File
                         </span>
                         <img
-                          src="assets/img/img-input.png"
+                          src="/assets/img/img-input.png"
                           alt="input"
                           style={{ width: "40px" }}
                         />

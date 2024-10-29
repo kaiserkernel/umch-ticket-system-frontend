@@ -7,6 +7,7 @@ import Footer from "./components/footer/footer.jsx";
 import ThemePanel from "./components/theme-panel/theme-panel.jsx";
 import { AppSettings } from "./config/app-settings.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { AuthProvider } from "./context/authProvider.js";
 
 function App() {
   var defaultOptions = {
@@ -130,25 +131,27 @@ function App() {
 
   return (
     <AppSettings.Provider value={providerValue}>
-      <div
-        className={
-          "app " +
-          (appBoxedLayout ? "app-boxed-layout " : "") +
-          (appContentFullHeight ? "app-content-full-height " : "") +
-          (appHeaderNone ? "app-without-header " : "") +
-          (appSidebarNone ? "app-without-sidebar " : "") +
-          (appSidebarCollapsed ? "app-sidebar-collapsed " : "") +
-          (appFooter ? "app-footer-fixed " : "") +
-          (appTopNav ? "app-with-top-nav " : "")
-        }
-      >
-        {!appHeaderNone && <Header />}
-        {appTopNav && <TopNav />}
-        {!appSidebarNone && <Sidebar />}
-        {!appContentNone && <Content className={appContentClass} />}
-        {appFooter && <Footer />}
-        {/* <ThemePanel /> */}
-      </div>
+      <AuthProvider>
+        <div
+          className={
+            "app " +
+            (appBoxedLayout ? "app-boxed-layout " : "") +
+            (appContentFullHeight ? "app-content-full-height " : "") +
+            (appHeaderNone ? "app-without-header " : "") +
+            (appSidebarNone ? "app-without-sidebar " : "") +
+            (appSidebarCollapsed ? "app-sidebar-collapsed " : "") +
+            (appFooter ? "app-footer-fixed " : "") +
+            (appTopNav ? "app-with-top-nav " : "")
+          }
+        >
+          {!appHeaderNone && <Header />}
+          {appTopNav && <TopNav />}
+          {!appSidebarNone && <Sidebar />}
+          {!appContentNone && <Content className={appContentClass} />}
+          {appFooter && <Footer />}
+          {/* <ThemePanel /> */}
+        </div>
+      </AuthProvider>
     </AppSettings.Provider>
   );
 }
