@@ -251,7 +251,8 @@ function Header() {
               <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle">
                 <img
                   src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
-                  className="rounded-circle w-100 h-100"
+                  className="rounded-circle w-100 h-100 object-fit-cover object"
+                  style={{ objectPosition: "top" }}
                   alt=""
                 />
               </div>
