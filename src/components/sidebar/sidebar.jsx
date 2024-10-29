@@ -70,7 +70,7 @@ function Sidebar() {
 
   return (
     <React.Fragment>
-      <div id="sidebar" className="app-sidebar">
+      <div id="sidebar" className="app-sidebar mt-5 pt-4">
         <PerfectScrollbar
           className="app-sidebar-content"
           options={{ suppressScrollX: true }}
