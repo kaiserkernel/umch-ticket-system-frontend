@@ -2,11 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { slideToggle } from "./../../composables/slideToggle.js";
+import { useAuth } from "../../context/authProvider.js";
 
 function Header() {
   const notificationData = [];
   const navigate = useNavigate();
-
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   let userData = localStorage.getItem("userData");
   if (!userData) {
     return;
@@ -61,21 +62,23 @@ function Header() {
     e.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
+    sessionStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userData");
+    setIsAuthenticated(false);
     navigate("/login");
   };
 
   return (
-    <div id="header" className="app-header">
+    <div id="header" className="app-header bg-dark-blue px-3">
       <div className="desktop-toggler">
         <button
           type="button"
           className="menu-toggler"
           onClick={toggleAppSidebarDesktop}
         >
-          <span className="bar"></span>
-          <span className="bar"></span>
-          <span className="bar"></span>
+          <span className="bar bg-white"></span>
+          <span className="bar bg-white"></span>
+          <span className="bar bg-white"></span>
         </button>
       </div>
 
@@ -85,9 +88,9 @@ function Header() {
           className="menu-toggler"
           onClick={toggleAppSidebarMobile}
         >
-          <span className="bar"></span>
-          <span className="bar"></span>
-          <span className="bar"></span>
+          <span className="bar bg-white"></span>
+          <span className="bar bg-white"></span>
+          <span className="bar bg-white"></span>
         </button>
       </div>
 
@@ -100,7 +103,7 @@ function Header() {
             height={40}
           />
 
-          <span className="brand-text">UMCH Ticket System</span>
+          <span className="brand-text text-white">UMCH Ticket System</span>
         </Link>
       </div>
 
@@ -112,7 +115,7 @@ function Header() {
             data-bs-display="static"
             className="menu-link"
           >
-            <div className="menu-icon">
+            <div className="menu-icon text-white">
               <i className="bi bi-pencil-square nav-icon"></i>
             </div>
           </a>
@@ -135,7 +138,7 @@ function Header() {
         </div>
         <div className="menu-item dropdown">
           <a href="#/" onClick={toggleAppHeaderSearch} className="menu-link">
-            <div className="menu-icon">
+            <div className="menu-icon text-white">
               <i className="bi bi-search nav-icon"></i>
             </div>
           </a>
@@ -147,7 +150,7 @@ function Header() {
             data-bs-display="static"
             className="menu-link"
           >
-            <div className="menu-icon">
+            <div className="menu-icon text-white">
               <i className="bi bi-grid-3x3-gap nav-icon"></i>
             </div>
           </a>
@@ -233,7 +236,7 @@ function Header() {
             data-bs-display="static"
             className="menu-link"
           >
-            <div className="menu-icon">
+            <div className="menu-icon text-white text-white">
               <i className="bi bi-bell nav-icon"></i>
             </div>
             <div className="menu-badge bg-theme"></div>
@@ -295,12 +298,12 @@ function Header() {
                   />
                 ) : (
                   <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle overflow-hidden">
-                    <i className="bi bi-person-fill fs-32px mb-n3"></i>
+                    <i className="bi bi-person-fill fs-32px mb-n3 text-white"></i>
                   </div>
                 )}
               </div>
             </div>
-            <div className="menu-text d-sm-block d-none w-170px">
+            <div className="menu-text d-sm-block d-none w-170px text-white">
               {userData?.email}
             </div>
           </a>

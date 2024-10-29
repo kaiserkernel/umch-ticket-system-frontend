@@ -11,15 +11,24 @@ import Profile from "./../pages/profile/profile.js";
 import EmailInbox from "./../pages/email/inbox.js";
 import EmailCompose from "./../pages/email/compose.js";
 import EmailDetail from "./../pages/email/detail.js";
+import AdminLogin from "../pages/auth/adminLogin.js";
 
 const AppRoute = [
   {
     path: "*",
     element: <App />,
     children: [
-      { path: "", element: <Navigate to="/home" /> },
-      { path: "home", element: <Landing /> },
+      { path: "", element: <Navigate to="/login" /> },
+      {
+        path: "home",
+        element: (
+          <ProtectedRoute>
+            <Landing />
+          </ProtectedRoute>
+        ),
+      },
       { path: "register", element: <Register /> },
+      { path: "admin", element: <AdminLogin /> },
       { path: "login", element: <Login /> },
       {
         path: "profile",

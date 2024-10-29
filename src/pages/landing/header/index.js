@@ -5,7 +5,7 @@ import { useAuth } from "../../../context/authProvider";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
 
   const handleClickRegister = () => {
     navigate("/register"); // Navigate to the "/special" route
@@ -18,8 +18,14 @@ const Header = () => {
   const handleClickLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
+    sessionStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userData");
+    setIsAuthenticated(false);
     navigate("/login");
+  };
+
+  const handleClickDashboard = () => {
+    navigate("/profile", { replace: true });
   };
 
   return (
@@ -54,12 +60,21 @@ const Header = () => {
                         </span>
                       </>
                     ) : (
-                      <span
-                        className="p-3 cursor-pointer"
-                        onClick={handleClickLogout}
-                      >
-                        Logout
-                      </span>
+                      <>
+                        <span
+                          className="p-3 cursor-pointer"
+                          onClick={handleClickLogout}
+                        >
+                          Logout
+                        </span>
+                        <span> | </span>
+                        <span
+                          className="p-3 cursor-pointer"
+                          onClick={handleClickDashboard}
+                        >
+                          Dashboard
+                        </span>
+                      </>
                     )}
                   </nav>
                 </div>

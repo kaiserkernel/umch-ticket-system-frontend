@@ -8,16 +8,15 @@ import { ToastContainer, toast } from "react-toastify";
 import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
 
-function PagesLogin() {
+function AdminLogin() {
   const navigate = useNavigate();
   const context = useContext(AppSettings);
   const { setIsAuthenticated } = useAuth();
   const [redirect, setRedirect] = useState(false);
 
   const [formData, setFormData] = useState({
-    enrollmentNumber: "",
+    email: "",
     password: "",
-    role: "2",
     rememberMe: false,
   });
 
@@ -35,8 +34,8 @@ function PagesLogin() {
 
   // Validate form data
   const validateForm = () => {
-    const { enrollmentNumber, password } = formData;
-    if (!enrollmentNumber || !password) {
+    const { email, password } = formData;
+    if (!email || !password) {
       return "All fields are required";
     }
 
@@ -59,7 +58,7 @@ function PagesLogin() {
     });
 
     try {
-      const response = await AuthService.login(formData);
+      const response = await AuthService.adminLogin(formData);
       if (response?.success) {
         successNotify("Login is successfully.");
 
@@ -131,8 +130,7 @@ function PagesLogin() {
   return (
     <>
       <Header />
-
-      <div className="login mt-3 mt-md-5">
+      <div className="login">
         <div className="login-content">
           <ToastContainer />
           <form onSubmit={handleSubmit}>
@@ -146,34 +144,34 @@ function PagesLogin() {
               {error}
             </p>
           )} */}
-            {/* <div className="mb-3">
-            <label className="form-label">
-              Enrollment Number <span className="text-danger">*</span>
+            <div className="mb-3">
+              {/* <label className="form-label">
+              Email <span className="text-danger">*</span>
             </label>
             <input
               type="text"
-              name="enrollmentNumber"
+              name="email"
               onChange={handleChange}
-              value={formData.enrollmentNumber}
+              value={formData.email}
               className="form-control form-control-lg bg-white bg-opacity-5"
               placeholder=""
-            />
-          </div> */}
+            /> */}
 
-            <Form.Group controlId="enrollmentNumber">
-              <Form.Label className="input-label">
-                Enrollment Number <span className="ms-1 required-label">*</span>
-              </Form.Label>
-              <Form.Control
-                type="text"
-                name="enrollmentNumber"
-                onChange={handleChange}
-                value={formData.enrollmentNumber}
-                placeholder="Enrollment Number"
-                className="custom-input"
-              />
-            </Form.Group>
-            <div className="mb-3 mt-4">
+              <Form.Group controlId="Email">
+                <Form.Label className="input-label">
+                  Email <span className="ms-1 required-label">*</span>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="email"
+                  onChange={handleChange}
+                  value={formData.email}
+                  placeholder="Email"
+                  className="custom-input"
+                />
+              </Form.Group>
+            </div>
+            <div className="mb-3">
               {/* <div className="d-flex">
               <label className="form-label">
                 Password <span className="text-danger">*</span>
@@ -187,7 +185,6 @@ function PagesLogin() {
               className="form-control form-control-lg bg-white bg-opacity-5"
               placeholder=""
             /> */}
-
               <Form.Group controlId="password">
                 <Form.Label className="input-label">
                   Password <span className="ms-1 required-label">*</span>
@@ -232,4 +229,4 @@ function PagesLogin() {
   );
 }
 
-export default PagesLogin;
+export default AdminLogin;
