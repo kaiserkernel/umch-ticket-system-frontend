@@ -2,9 +2,11 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/authProvider";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, setIsAuthenticated } = useAuth();
 
   const handleClickRegister = () => {
@@ -45,19 +47,34 @@ const Header = () => {
                   <nav className="text-white">
                     {isAuthenticated == false ? (
                       <>
-                        <span
-                          className="p-3 cursor-pointer"
-                          onClick={handleClickLogin}
-                        >
-                          Sign In
-                        </span>
-                        <span> | </span>
-                        <span
-                          className="p-3 cursor-pointer"
-                          onClick={handleClickRegister}
-                        >
-                          Sign Up
-                        </span>
+                        {location.pathname == "/login" && (
+                          <>
+                            {/* <span
+                              className="p-3 cursor-pointer"
+                              onClick={handleClickLogin}
+                            >
+                              Sign In
+                            </span>
+                            <span> | </span> */}
+                            <span
+                              className="p-3 cursor-pointer"
+                              onClick={handleClickRegister}
+                            >
+                              Sign Up
+                            </span>
+                          </>
+                        )}
+
+                        {location.pathname == "/register" && (
+                          <>
+                            <span
+                              className="p-3 cursor-pointer"
+                              onClick={handleClickLogin}
+                            >
+                              Sign In
+                            </span>
+                          </>
+                        )}
                       </>
                     ) : (
                       <>

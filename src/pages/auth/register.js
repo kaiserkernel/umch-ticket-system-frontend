@@ -352,7 +352,6 @@ const PagesRegister = () => {
                   </Form.Label>
                   <Form.Control
                     as="select"
-                    defaultValue="default"
                     name="firstYearOfStudy"
                     value={formData.firstYearOfStudy}
                     onChange={handleChange}
@@ -392,7 +391,7 @@ const PagesRegister = () => {
                     style={{ visibility: "hidden" }}
                     onChange={handleFileChange}
                   />
-                  <label for="avatar" style={{ width: "60%" }}>
+                  <label htmlFor="avatar" style={{ width: "60%" }}>
                     <div
                       style={{
                         width: "100%",
