@@ -284,58 +284,66 @@ const PagesRegister = () => {
               </Col>
             </Row>
           )}
-          <div className="mb-3 d-flex flex-column justify-content-center align-items-center">
-            <input
-              type="file"
-              name="avatar"
-              id="avatar"
-              accept="image/*"
-              style={{ visibility: "hidden" }}
-              onChange={handleFileChange}
-            />
-            <label for="avatar" style={{ width: "60%" }}>
-              <div
-                style={{
-                  width: "100%",
-                  height: "220px",
-                  border: "2px solid #878787",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-              >
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="input"
+          <Row>
+            <Col md={1}>
+              <label className="form-label">Avatar</label>
+            </Col>
+            <Col md={11}>
+              <div className="mb-3 d-flex flex-column justify-content-center align-items-center">
+                <input
+                  type="file"
+                  name="avatar"
+                  id="avatar"
+                  accept="image/*"
+                  style={{ visibility: "hidden" }}
+                  onChange={handleFileChange}
+                />
+                <label for="avatar" style={{ width: "60%" }}>
+                  <div
                     style={{
                       width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
+                      height: "220px",
+                      border: "2px solid #878787",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
                     }}
-                  />
-                ) : (
-                  <>
-                    <span
-                      style={{
-                        color: "#FF9C00",
-                        fontSize: "18px",
-                        margin: "0 10px 0 0 ",
-                      }}
-                    >
-                      Choose File
-                    </span>
-                    <img
-                      src="assets/img/img-input.png"
-                      alt="input"
-                      style={{ width: "40px" }}
-                    />
-                  </>
-                )}
+                  >
+                    {imagePreview ? (
+                      <img
+                        src={imagePreview}
+                        alt="input"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          objectPosition: "top",
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <span
+                          style={{
+                            color: "#FF9C00",
+                            fontSize: "18px",
+                            margin: "0 10px 0 0 ",
+                          }}
+                        >
+                          Choose File
+                        </span>
+                        <img
+                          src="assets/img/img-input.png"
+                          alt="input"
+                          style={{ width: "40px" }}
+                        />
+                      </>
+                    )}
+                  </div>
+                </label>
               </div>
-            </label>
-          </div>
+            </Col>
+          </Row>
           <div className="mb-3">
             <button
               type="submit"

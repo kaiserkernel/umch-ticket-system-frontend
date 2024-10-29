@@ -11,6 +11,20 @@ import { useLocation } from "react-router-dom";
 function Landing() {
   const context = useContext(AppSettings);
 
+  useEffect(() => {
+    context.setAppHeaderNone(true);
+    context.setAppSidebarNone(true);
+    context.setAppContentClass("p-0");
+
+    return function cleanUp() {
+      context.setAppHeaderNone(false);
+      context.setAppSidebarNone(false);
+      context.setAppContentClass("");
+    };
+
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       <Header />

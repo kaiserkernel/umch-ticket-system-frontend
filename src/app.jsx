@@ -142,9 +142,9 @@ function App() {
           (appTopNav ? "app-with-top-nav " : "")
         }
       >
-        {/* {!appHeaderNone && <Header />} */}
+        {!appHeaderNone && <Header />}
         {appTopNav && <TopNav />}
-        {/* {!appSidebarNone && <Sidebar />} */}
+        {!appSidebarNone && <Sidebar />}
         {!appContentNone && <Content className={appContentClass} />}
         {appFooter && <Footer />}
         {/* <ThemePanel /> */}
