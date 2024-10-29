@@ -68,8 +68,8 @@ const Absence = () => {
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker
-              selected={selectedFromDate}
-              onChange={(date) => handleSelectFromDate(date)}
+              selected={selectedToDate}
+              onChange={(date) => handleSelectToDate(date)}
               dateFormat="yyyy/MM/dd"
               isClearable
               className="custom-input"

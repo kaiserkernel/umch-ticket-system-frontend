@@ -14,6 +14,7 @@ const Complaints = () => {
             </Form.Label>
             <Form.Control
               as="select"
+              defaultValue="default"
               style={{
                 appearance: "none", // Hides the default arrow
                 MozAppearance: "none", // For Firefox
@@ -25,7 +26,7 @@ const Complaints = () => {
               }}
               className="custom-input"
             >
-              <option value="">– Select –</option>
+              <option value="default">– Select –</option>
               <option value="Campus">Campus</option>
               <option value="Dean's Office">Dean’s Office</option>
               <option value="German Teaching Department">
@@ -37,9 +38,7 @@ const Complaints = () => {
                 Online Catalouge (Carnet)
               </option>
               <option value="Exam">Exam</option>
-              <option value="Other" selected="">
-                Other
-              </option>
+              <option value="Other">Other</option>
             </Form.Control>
           </Form.Group>
         </Col>

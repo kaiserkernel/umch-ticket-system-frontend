@@ -17,10 +17,14 @@ function Profile() {
             <div className="profile-sidebar">
               <div className="desktop-sticky-top">
                 <div className="profile-img">
-                  <img
-                    src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
-                    alt=""
-                  />
+                  {userData?.avatar ? (
+                    <img
+                      src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
+                      alt=""
+                    />
+                  ) : (
+                    <img src="/assets/img/user_placeholder.webp" alt="" />
+                  )}
                 </div>
 
                 <h4>{userData.fullName}</h4>
