@@ -214,7 +214,7 @@ const ExamInspection = () => {
         <Col lg={6}>
           <Form.Group controlId="">
             <Form.Label className="input-label">
-              Nationality
+              Exam Date
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker
@@ -229,7 +229,7 @@ const ExamInspection = () => {
         <Col lg={6}>
           <Form.Group>
             <Form.Label className="input-label">
-              Current year of study
+              Specification of exam
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <Form.Control

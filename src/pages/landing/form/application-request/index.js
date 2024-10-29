@@ -309,7 +309,7 @@ const ApplicationRequests = () => {
 
           variants={variants[selectedEffect]}
         >
-          <p>{content[selectedEffect]}</p>
+          <div>{content[selectedEffect]}</div>
         </motion.div>
       </AnimatePresence>
     </div>

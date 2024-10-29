@@ -271,7 +271,7 @@ const FormSection = () => {
                   </Form.Label>
                   <Form.Control
                     as="select"
-                    defaultValue=""
+                    defaultValue="default"
                     style={{
                       appearance: "none", // Hides the default arrow
                       MozAppearance: "none", // For Firefox
@@ -283,10 +283,8 @@ const FormSection = () => {
                     }}
                     className="custom-input"
                   >
-                    <option value="">– Select –</option>
-                    <option value="2024" selected="">
-                      2024
-                    </option>
+                    <option value="default">– Select –</option>
+                    <option value="2024">2024</option>
                     <option value="2023">2023</option>
                     <option value="2022">2022</option>
                     <option value="2021">2021</option>
@@ -301,7 +299,7 @@ const FormSection = () => {
               <Col lg={12}>
                 <Form.Group>
                   <Form.Label className="input-label">
-                    Choose your category for your enquiry{" "}
+                    Choose your category for your inquiry{" "}
                     <span className="ms-1 required-label">*</span>
                   </Form.Label>
                   <Form.Control
@@ -344,7 +342,7 @@ const FormSection = () => {
                   exit="exit"
                   variants={variants.default}
                 >
-                  <p>{content[selectedEffect]}</p>
+                  <div>{content[selectedEffect]}</div>
                 </motion.div>
               ) : (
                 <motion.div
@@ -355,7 +353,7 @@ const FormSection = () => {
 
                   variants={variants[selectedEffect] || variants.default}
                 >
-                  <p>{content[selectedEffect]}</p>
+                  <div>{content[selectedEffect]}</div>
                 </motion.div>
               )}
             </AnimatePresence>

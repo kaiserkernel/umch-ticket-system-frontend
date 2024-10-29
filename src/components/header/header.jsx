@@ -249,12 +249,18 @@ function Header() {
           >
             <div className="menu-img online">
               <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle">
-                <img
-                  src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
-                  className="rounded-circle w-100 h-100 object-fit-cover object"
-                  style={{ objectPosition: "top" }}
-                  alt=""
-                />
+                {userData?.avatar ? (
+                  <img
+                    src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
+                    className="rounded-circle w-100 h-100 object-fit-cover object"
+                    style={{ objectPosition: "top" }}
+                    alt=""
+                  />
+                ) : (
+                  <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle overflow-hidden">
+                    <i className="bi bi-person-fill fs-32px mb-n3"></i>
+                  </div>
+                )}
               </div>
             </div>
             <div className="menu-text d-sm-block d-none w-170px">
