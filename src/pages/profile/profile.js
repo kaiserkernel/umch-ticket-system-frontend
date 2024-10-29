@@ -10,7 +10,7 @@ function Profile() {
   const roleName = ["Admin", "Teacher", "Student"];
 
   return (
-    <Card>
+    <Card className="mt-5">
       <CardBody className="p-0">
         <div className="profile">
           <div className="profile-container">

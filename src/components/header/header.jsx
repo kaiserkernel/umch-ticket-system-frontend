@@ -69,7 +69,7 @@ function Header() {
   };
 
   return (
-    <div id="header" className="app-header bg-dark-blue px-3">
+    <div id="header" className="app-header bg-dark-blue px-3 h-100px">
       <div className="desktop-toggler">
         <button
           type="button"
