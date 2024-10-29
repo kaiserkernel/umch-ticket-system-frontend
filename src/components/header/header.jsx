@@ -6,6 +6,10 @@ import { slideToggle } from "./../../composables/slideToggle.js";
 function Header() {
   const notificationData = [];
   const navigate = useNavigate();
+
+  let userData = localStorage.getItem("userData");
+  userData = JSON.parse(userData);
+
   const toggleAppSidebarDesktop = () => {
     var elm = document.querySelector(".app");
     if (elm) {
@@ -48,6 +52,7 @@ function Header() {
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("token");
+    localStorage.removeItem("isAuthenticated");
     navigate("/login");
   };
 
@@ -80,7 +85,7 @@ function Header() {
       <div className="brand">
         <Link to="/" className="brand-logo">
           <img
-            src="assets/img/UMCH_logo.svg"
+            src="/assets/img/UMCH_logo.svg"
             alt="logo"
             width={40}
             height={40}
@@ -243,12 +248,16 @@ function Header() {
             className="menu-link"
           >
             <div className="menu-img online">
-              <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle overflow-hidden">
-                <i className="bi bi-person-fill fs-32px mb-n3"></i>
+              <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle">
+                <img
+                  src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
+                  className="rounded-circle w-100 h-100"
+                  alt=""
+                />
               </div>
             </div>
             <div className="menu-text d-sm-block d-none w-170px">
-              username@account.com
+              {userData.email}
             </div>
           </a>
           <div className="dropdown-menu dropdown-menu-end me-lg-3 fs-11px mt-1">

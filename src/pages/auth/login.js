@@ -2,11 +2,13 @@ import React, { useEffect, useContext, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
+import { useAuth } from "../../context/authProvider.js";
 import AuthService from "../../sevices/auth-service.js";
 import { ToastContainer, toast } from "react-toastify";
 
 function PagesLogin() {
   const context = useContext(AppSettings);
+  const { setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [redirect, setRedirect] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,10 +50,19 @@ function PagesLogin() {
       const response = await AuthService.login(formData);
       if (response?.success) {
         successNotify("Login is successfully.");
+
         const bearToken = response?.token;
         const token = bearToken.slice(7);
+
         localStorage.setItem("token", token);
+        localStorage.setItem("isAuthenticated", true);
+
+        const userData = JSON.stringify(response?.userData);
+        localStorage.setItem("userData", userData);
+
         handleProfileNavigation();
+
+        setIsAuthenticated(true);
       }
       setError("");
     } catch (err) {
@@ -64,11 +75,13 @@ function PagesLogin() {
       navigate("/profile", { replace: true });
     }, 2000);
   };
+
   const successNotify = (msg) => {
     toast.info(msg, {
       autoClose: 5000, // Duration in milliseconds
     });
   };
+
   const errorNotify = (msg) => {
     toast.warning(msg, {
       autoClose: 5000, // Duration in milliseconds
