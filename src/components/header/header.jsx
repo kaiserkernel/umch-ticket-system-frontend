@@ -79,10 +79,14 @@ function Header() {
 
       <div className="brand">
         <Link to="/" className="brand-logo">
-          <span className="brand-img">
-            <span className="brand-img-text text-theme">H</span>
-          </span>
-          <span className="brand-text">HUD ADMIN</span>
+          <img
+            src="assets/img/UMCH_logo.svg"
+            alt="logo"
+            width={40}
+            height={40}
+          />
+
+          <span className="brand-text">UMCH Ticket System</span>
         </Link>
       </div>
 
