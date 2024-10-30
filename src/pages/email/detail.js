@@ -10,7 +10,7 @@ function EmailDetail() {
 
   useEffect(() => {
     context.setAppContentFullHeight(true);
-    context.setAppContentClass("p-3");
+    context.setAppContentClass("py-3 px-5");
 
     fetch("/assets/data/email/inbox.json")
       .then((res) => res.json())

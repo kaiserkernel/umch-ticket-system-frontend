@@ -34,7 +34,7 @@ function AccountManagement() {
     };
 
     fetchData();
-  }, []);
+  }, [show]);
 
   const handleChange = (e) => {
     setFormData({
@@ -97,7 +97,7 @@ function AccountManagement() {
     },
     {
       name: "Registered At",
-      selector: (row) => row.created_at,
+      selector: (row) => row.createdAt,
       sortable: true,
     },
     {
@@ -209,7 +209,6 @@ function AccountManagement() {
                   <option value="1">UMCH Studysecretariat</option>
                   <option value="2">UMFST Administration Office</option>
                   <option value="3">IT / Support S. Knippenberg</option>
-                
                 </Form.Control>
               </Form.Group>
               <Form.Group controlId="email" className="mt-3">

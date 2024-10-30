@@ -146,13 +146,13 @@ const PagesRegister = () => {
           <form onSubmit={handleSubmit} className="bg-gray-auth p-3 p-md-5">
             <h1 className="text-center">Sign Up</h1>
 
-            <p className="text-inverse text-opacity-50 text-center mt-5">
+            <p className="text-inverse text-opacity-50 text-center mt-5 sm-font">
               Dear Students,
             </p>
-            <p className="text-inverse text-opacity-50 text-center">
+            <p className="text-inverse text-opacity-50 text-center sm-font">
               We are here to support your academic matters.
             </p>
-            <p className="text-inverse text-opacity-50 text-center">
+            <p className="text-inverse text-opacity-50 text-center sm-font">
               This UMCH ticket system allows you to efficiently reach our team
               for assistance with any requests or complains. Please take a
               moment to log in and provide the details of your request so that
@@ -160,7 +160,7 @@ const PagesRegister = () => {
               UMCH Ticket System, and we look forward to assisting you.
             </p>
 
-            <Row className="mt-2 mt-md-5 g-3">
+            <Row className="mt-2 mt-md-3 g-3">
               <Col lg={6}>
                 {/* <div className="mb-3">
                 <label className="input-label">
@@ -462,11 +462,23 @@ const PagesRegister = () => {
               following assistance:
             </p>
             <p className="sm-font text-center">
-              Content-related questions: secretary@edu.umch.de
+              Content-related questions:{" "}
+              <a
+                href="mailto:secretary@edu.umch.de"
+                className="default-color text-decoration-none"
+              >
+                secretary@edu.umch.de
+              </a>
             </p>
 
             <p className="sm-font text-center">
-              Technical questions: marketing@edu.umch.de
+              Technical questions:
+              <a
+                href="mailto:secretary@edu.umch.de"
+                className="default-color text-decoration-none"
+              >
+                marketing@edu.umch.de
+              </a>
             </p>
 
             <div className="text-inverse text-opacity-50 text-center">

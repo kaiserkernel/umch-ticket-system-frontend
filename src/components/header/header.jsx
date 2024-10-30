@@ -305,7 +305,7 @@ function Header() {
               </div>
             </div>
             <div className="menu-text d-sm-block d-none w-170px text-white">
-              {userData?.email}
+              {userData?.fullName}
             </div>
           </a>
           <div className="dropdown-menu dropdown-menu-end me-lg-3 fs-11px mt-1">
