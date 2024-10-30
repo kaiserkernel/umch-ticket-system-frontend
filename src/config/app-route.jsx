@@ -12,6 +12,7 @@ import EmailInbox from "./../pages/email/inbox.js";
 import EmailCompose from "./../pages/email/compose.js";
 import EmailDetail from "./../pages/email/detail.js";
 import AdminLogin from "../pages/auth/adminLogin.js";
+import AccountManagement from "../pages/table/plugins.js";
 
 const AppRoute = [
   {
@@ -35,6 +36,14 @@ const AppRoute = [
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "account-management",
+        element: (
+          <ProtectedRoute>
+            <AccountManagement />
           </ProtectedRoute>
         ),
       },

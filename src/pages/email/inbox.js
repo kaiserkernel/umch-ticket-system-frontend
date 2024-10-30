@@ -35,12 +35,17 @@ function EmailInbox() {
           </div>
           <div className="mailbox-toolbar-item">
             <Link to="/email/inbox" className="mailbox-toolbar-link active">
-              Inbox
+              All
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
             <Link to="/email/inbox" className="mailbox-toolbar-link">
-              Sent
+              Approved
+            </Link>
+          </div>
+          <div className="mailbox-toolbar-item">
+            <Link to="/email/inbox" className="mailbox-toolbar-link">
+              Rejected
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
