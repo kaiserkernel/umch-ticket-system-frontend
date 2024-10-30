@@ -1,10 +1,28 @@
 import Axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
-Axios.defaults.baseURL = API_URL;
 
 export class HttpService {
-  _axios = Axios.create();
+  _axios = Axios.create({
+    baseURL: API_URL,
+  });
+
+  constructor() {
+    // Add request interceptor to automatically include the token
+    this._axios.interceptors.request.use(
+      (config) => {
+        let token = localStorage.getItem("token");
+        if (!token) {
+          token = sessionStorage.getItem("token");
+        }
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+  }
 
   addRequestInterceptor = (onFulfilled, onRejected) => {
     this._axios.interceptors.request.use(onFulfilled, onRejected);
@@ -49,7 +67,7 @@ export class HttpService {
       this._axios
         .request(options)
         .then((res) => resolve(res.data))
-        .catch((ex) => reject(ex.response.data));
+        .catch((ex) => reject(ex.response?.data || ex.message));
     });
   }
 }

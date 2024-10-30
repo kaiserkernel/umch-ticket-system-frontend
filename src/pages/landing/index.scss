@@ -575,3 +575,13 @@ table td {
   text-align: center;
   vertical-align: middle;
 }
+
+.bs-gutter-x-0 {
+  --bs-gutter-x: 0px !important;
+}
+
+////modal
+
+.modal-backdrop {
+  --bs-backdrop-opacity: 0.75 !important;
+}
