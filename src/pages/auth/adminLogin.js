@@ -133,7 +133,7 @@ function AdminLogin() {
       <div className="login">
         <div className="login-content">
           <ToastContainer />
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
             <h1 className="text-center">Sign In</h1>
             <div className="text-inverse text-opacity-50 text-center mb-4">
               For your protection, please verify your identity.
@@ -220,7 +220,11 @@ function AdminLogin() {
               Sign In
             </button>
             <div className="text-center text-inverse text-opacity-50">
-              Don't have an account yet? <Link to="/register">Sign up</Link>.
+              Don't have an account yet?{" "}
+              <Link to="/register" className="default-color">
+                Sign up
+              </Link>
+              .
             </div>
           </form>
         </div>
