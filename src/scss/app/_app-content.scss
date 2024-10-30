@@ -2,8 +2,8 @@
   padding: $app-content-padding-y / 2 $app-content-padding-x / 2;
   flex: 1;
   overflow: auto;
-  overscroll-behavior-y: auto;
-  height: calc(100vh - 10rem);
+  // overscroll-behavior-y: auto;
+  // height: calc(100vh - 10rem);
   @if $enable-rtl {
     margin-right: $app-sidebar-width;
   } @else {

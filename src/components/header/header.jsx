@@ -61,6 +61,7 @@ function Header() {
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
     sessionStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userData");
