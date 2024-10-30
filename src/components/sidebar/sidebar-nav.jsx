@@ -77,10 +77,31 @@ function NavItem({ menu, ...props }: LinkProps) {
 }
 
 function SidebarNav() {
+  let userData = localStorage.getItem("userData");
+  let userRole = "";
+
+  if (!userData) {
+    userData = sessionStorage.getItem("userData");
+  }
+  if (userData) {
+    userData = JSON.parse(userData);
+    userRole = userData.role;
+  }
+
+  const filteredMenu = menus.filter((menu) => {
+    // Only include "Account Management" if the role permits
+    if (menu.title === "Account Management" && userRole !== 0) {
+      return false; // Exclude for non-admins
+    }
+    return true; // Include other items
+  });
+
   return (
     <div className="menu mt-3 mt-md-4">
-      {menus.map((menu, i) => (
-        <NavItem key={i} menu={menu} />
+      {filteredMenu.map((menu, i) => (
+        <>
+          <NavItem key={i} menu={menu} />
+        </>
       ))}
     </div>
   );
