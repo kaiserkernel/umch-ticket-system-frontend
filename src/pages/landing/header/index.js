@@ -19,6 +19,7 @@ const Header = () => {
 
   const handleClickLogout = () => {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
     sessionStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userData");
