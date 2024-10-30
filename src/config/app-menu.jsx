@@ -2,14 +2,19 @@ const Menu = [
   {
     path: "/email",
     icon: "bi bi-envelope",
-    title: "Email",
+    title: "Tickets",
     children: [
-      { path: "/email/inbox", title: "Inbox" },
+      { path: "/email/inbox", title: "All Tickets" },
       { path: "/email/compose", title: "Compose" },
       { path: "/email/detail", title: "Detail" },
     ],
   },
   { path: "/profile", icon: "bi bi-people", title: "Profile" },
+  {
+    path: "/account-management",
+    icon: "bi bi-collection",
+    title: "Account Management",
+  },
 ];
 
 export default Menu;
