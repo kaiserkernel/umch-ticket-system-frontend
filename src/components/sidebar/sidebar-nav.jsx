@@ -99,9 +99,7 @@ function SidebarNav() {
   return (
     <div className="menu mt-3 mt-md-4">
       {filteredMenu.map((menu, i) => (
-        <>
-          <NavItem key={i} menu={menu} />
-        </>
+        <NavItem key={i} menu={menu} />
       ))}
     </div>
   );

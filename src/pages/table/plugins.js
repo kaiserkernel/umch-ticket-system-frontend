@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Modal, Button, Row, Col, Form } from "react-bootstrap";
+import { Modal, Button, Row, Col, Form, Badge } from "react-bootstrap";
 import { Card, CardBody } from "./../../components/card/card.jsx";
 import DataTable from "react-data-table-component";
 import UserService from "../../sevices/user-service.js";
+import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { px } from "framer-motion";
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
@@ -13,6 +15,13 @@ function AccountManagement() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const badgeData = [
+    { bg: "primary", text: "Mrs Vice-Rector" },
+    { bg: "info", text: "UMCH Studysecretariat" },
+    { bg: "warning", text: "UMFST Administration Office" },
+    { bg: "secondary", text: "IT / Support S. Knippenberg" },
+  ];
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -48,7 +57,9 @@ function AccountManagement() {
       const res = await UserService.createAdmin(formData);
       successNotify(res.message);
     } catch (err) {
-      //   errorNotify(err.message);
+      if (err?.message) {
+        errorNotify(err?.message);
+      }
 
       const errors = err?.errors;
 
@@ -82,22 +93,32 @@ function AccountManagement() {
     },
     {
       name: "Position",
-      selector: (row) => row.position,
-      sortable: true,
+      width: "300px",
+
+      cell: (row) => (
+        <>
+          {badgeData[row.position] && (
+            <Badge
+              style={{ fontSize: "14px", fontWeight: "300" }}
+              bg={badgeData[row.position].bg}
+            >
+              {badgeData[row.position].text}
+            </Badge>
+          )}
+        </>
+      ),
     },
     {
       name: "Email Address",
+      width: "300px",
       selector: (row) => row.email,
       sortable: true,
     },
-    {
-      name: "Password",
-      selector: (row) => row.password,
-      sortable: true,
-    },
+
     {
       name: "Registered At",
-      selector: (row) => row.createdAt,
+      width: "300px",
+      cell: (row) => moment(row.createdAt).format("MMMM DD, YYYY"),
       sortable: true,
     },
     {
@@ -107,7 +128,7 @@ function AccountManagement() {
         <div className="d-flex py-4">
           <a className="btn btn-info me-1">
             {" "}
-            <i className="bi bi-pencil me-1"></i>Edit
+            <i className="bi bi-arrow-counterclockwise me-1"></i>Reset
           </a>
           <a className="btn btn-secondary">
             {" "}
@@ -143,7 +164,7 @@ function AccountManagement() {
                       </Button>
                       <input
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Search by User Name..."
                         onChange={(e) => setSearchText(e.target.value)}
                         style={{ padding: "5px" }}
                       />
@@ -194,8 +215,9 @@ function AccountManagement() {
               <Form.Group controlId="position" className="mt-3">
                 <Form.Control
                   as="select"
-                  defaultValue="0"
                   name="position"
+                  onChange={handleChange}
+                  value={formData.position}
                   style={{
                     appearance: "none", // Hides the default arrow
                     MozAppearance: "none", // For Firefox
