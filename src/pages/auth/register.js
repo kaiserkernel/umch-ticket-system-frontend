@@ -143,7 +143,7 @@ const PagesRegister = () => {
       <div className="register">
         <div className="register-content">
           <ToastContainer />
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="bg-gray-auth p-3 p-md-5">
             <h1 className="text-center">Sign Up</h1>
             <p className="text-inverse text-opacity-50 text-center">
               One Admin ID is all you need to access all the Admin services.
@@ -446,7 +446,10 @@ const PagesRegister = () => {
               </button>
             </div>
             <div className="text-inverse text-opacity-50 text-center">
-              Already have an Admin ID? <Link to="/login">Sign In</Link>
+              Already have an Admin ID?{" "}
+              <Link to="/login" className="default-color">
+                Sign In
+              </Link>
             </div>
           </form>
         </div>

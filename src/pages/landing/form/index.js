@@ -383,7 +383,7 @@ const FormSection = () => {
               </p>
             </div>
             <div className="d-flex  mt-5 mt-md-5">
-              <Form.Group controlId="custom-checkbox" className="me-2 ">
+              <Form.Group controlId="custom-checkbox" className="me-2 mt-1 ">
                 <Form.Check type="checkbox" className="custom-checkbox" />
               </Form.Group>
               <p className="mb-0">
