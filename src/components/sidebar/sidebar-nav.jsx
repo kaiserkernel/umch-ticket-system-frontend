@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import menus from "./../../config/app-menu.jsx";
 
-function NavItem({ menu, ...props }: LinkProps) {
+function NavItem({ menu, ...props }) {
   let path = menu.path ? menu.path : "";
   let resolved = useResolvedPath(path);
   let match = useMatch({ path: resolved.pathname });
