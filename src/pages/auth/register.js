@@ -29,6 +29,7 @@ const PagesRegister = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+
     const { name, value, type, files } = event.target;
     if (file && file.type.startsWith("image/")) {
       const imageUrl = URL.createObjectURL(file);
@@ -144,20 +145,13 @@ const PagesRegister = () => {
         <div className="register-content">
           <ToastContainer />
           <form onSubmit={handleSubmit} className="bg-gray-auth p-3 p-md-5">
-            <h1 className="text-center">Sign Up</h1>
+            <h1 className="text-center">Sign Up for UMCH Ticket System</h1>
 
             <p className="text-inverse text-opacity-50 text-center mt-5 sm-font">
               Dear Students,
             </p>
             <p className="text-inverse text-opacity-50 text-center sm-font">
-              We are here to support your academic matters.
-            </p>
-            <p className="text-inverse text-opacity-50 text-center sm-font">
-              This UMCH ticket system allows you to efficiently reach our team
-              for assistance with any requests or complains. Please take a
-              moment to log in and provide the details of your request so that
-              we can respond promptly and effectively. Thank you for using the
-              UMCH Ticket System, and we look forward to assisting you.
+              we are here to support your academic matters.
             </p>
 
             <Row className="mt-2 mt-md-3 g-3">

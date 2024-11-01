@@ -45,7 +45,7 @@ h4 {
 
 .p,
 p {
-  font-size: 20px !important;
+  font-size: 16px !important;
   font-weight: 400 !important;
   color: #002d47 !important;
 }
@@ -78,7 +78,7 @@ p {
 
   .p,
   p {
-    font-size: 20px !important;
+    font-size: 16px !important;
     font-weight: 400 !important;
   }
 }
@@ -588,4 +588,9 @@ table td {
 
 .sm-font {
   font-size: 14px !important;
+}
+
+.error-content {
+  color: red !important;
+  font-size: 12px !important;
 }

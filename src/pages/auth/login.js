@@ -136,9 +136,22 @@ function PagesLogin() {
         <div className="login-content">
           <ToastContainer />
           <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
-            <h1 className="text-center">Sign In</h1>
-            <div className="text-inverse text-opacity-50 text-center mb-4">
-              For your protection, please verify your identity.
+            <h1 className="text-center">Sign in for the UMCH Ticket System</h1>
+            <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">
+              <p className="text-inverse text-opacity-50 text-center sm-font">
+                Dear Students,
+              </p>
+              <p className="text-inverse text-opacity-50 text-center sm-font">
+                the UMCH Ticket System is here to ensure you can easily reach
+                our team for assistance with requests and complaints. Please
+                sign in and provide the details of your inquiry so we can
+                address it promptly and effectively.
+              </p>
+              <p className="text-inverse text-opacity-50 text-center sm-font">
+                ure you can easily reach our team for assistance with requests
+                and complaints. Please sign in and provide the details of your
+                inquiry so we can address it promptly and effectively.
+              </p>
             </div>
             {/* {error && (
             <p style={{ color: "red" }}>
@@ -222,6 +235,30 @@ function PagesLogin() {
             >
               Sign In
             </button>
+
+            <p className="sm-font mt-3 text-center">
+              For any questions regarding the ticket system, we offer you the
+              following assistance:
+            </p>
+            <p className="sm-font text-center">
+              Content-related questions:{" "}
+              <a
+                href="mailto:secretary@edu.umch.de"
+                className="default-color text-decoration-none"
+              >
+                secretary@edu.umch.de
+              </a>
+            </p>
+
+            <p className="sm-font text-center">
+              Technical questions:
+              <a
+                href="mailto:secretary@edu.umch.de"
+                className="default-color text-decoration-none"
+              >
+                marketing@edu.umch.de
+              </a>
+            </p>
             <div className="text-center text-inverse text-opacity-50">
               Don't have an account yet?{" "}
               <Link to="/register" className="default-color">

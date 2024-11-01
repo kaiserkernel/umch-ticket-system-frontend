@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import Absence from "./absence";
@@ -17,8 +17,47 @@ import TranscriptRecords from "./transcript-records";
 import TransferTarguMures from "./transfer-targu-mures";
 import Other from "./other";
 
+import { FormContext } from "../index";
+
 const ApplicationRequests = () => {
+  const { isFormSubmit, setFormData, formData, mainPageErrors } =
+    useContext(FormContext);
   const [selectedEffect, setSelectedEffect] = useState("default");
+
+  const [formInquiryData, setFormInquiryData] = useState({
+    applicationRequest: "default",
+    comment: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    console.log(isFormSubmit);
+    console.log(formData);
+    if (isFormSubmit != 0) {
+      console.log("sumbit is done");
+      if (validate()) {
+      }
+    }
+  }, [isFormSubmit]);
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (formInquiryData.applicationRequest == "default") {
+      newErrors.applicationRequest = "Applications and Requests is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    setFormInquiryData({
+      ...formInquiryData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   // Define animation variants for each collapse effect
   const variants = {
@@ -226,7 +265,9 @@ const ApplicationRequests = () => {
   };
   const content = {
     default: <Default />,
-    absence: <Absence />,
+    absence: (
+      <Absence applicationRequest={formInquiryData.applicationRequest} />
+    ),
     change_teaching_hospital: <ChangeTeachingHospital />,
     change_study_group: <ChangeStudyGroup />,
     demonstrator_student: <DemonstratorStudent />,
@@ -262,8 +303,15 @@ const ApplicationRequests = () => {
                 // padding: "8px 12px",
                 // border: "1px solid #007bff",
               }}
-              onChange={(e) => setSelectedEffect(e.target.value)}
-              value={selectedEffect}
+              name="applicationRequest"
+              onChange={(e) => {
+                handleChange(e);
+                setFormData({
+                  ...formData,
+                  subCategory1: e.target.value,
+                });
+              }}
+              value={formInquiryData.applicationRequest}
               className="custom-input"
             >
               <option value="default">– Select –</option>
@@ -297,19 +345,22 @@ const ApplicationRequests = () => {
               <option value="other">Other</option>
             </Form.Control>
           </Form.Group>
+          {errors.applicationRequest && (
+            <p className="error-content">{errors.applicationRequest}</p>
+          )}
         </Col>
       </Row>
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={selectedEffect}
+          key={formInquiryData.applicationRequest}
           initial="hidden"
           animate="visible"
           //   exit={selectedEffect === "default" ? "exit" : false}
 
-          variants={variants[selectedEffect]}
+          variants={variants[formInquiryData.applicationRequest]}
         >
-          <div>{content[selectedEffect]}</div>
+          <div>{content[formInquiryData.applicationRequest]}</div>
         </motion.div>
       </AnimatePresence>
     </div>
