@@ -44,9 +44,40 @@ function EmailInbox() {
     const getAllInquiries = async () => {
       try {
         const res = await FormService.getAllInquiries();
-        res.filteredInquiries.reverse();
-        setTicketData(res.filteredInquiries);
-        setUserPermissonCategory(res.userCategory);
+        if (res?.inquiries) {
+          res.inquiries.reverse();
+          const result = res.inquiries.map((item1) => {
+            const match = res.inquiries.find(
+              (item2) =>
+                item2.inquiryCategory === item1.inquiryCategory &&
+                item2.subCategory1 === item1.subCategory1
+            );
+
+            return {
+              ...item1,
+              permission: match ? match.permission : null, // Add permission if found, otherwise null
+            };
+          });
+          setTicketData(result);
+          setUserPermissonCategory(res.userCategory);
+        }
+        if (res?.filteredInquiries) {
+          res.filteredInquiries.reverse();
+          const result = res.filteredInquiries.map((item1) => {
+            const match = res.filteredInquiries.find(
+              (item2) =>
+                item2.inquiryCategory === item1.inquiryCategory &&
+                item2.subCategory1 === item1.subCategory1
+            );
+
+            return {
+              ...item1,
+              permission: match ? match.permission : null, // Add permission if found, otherwise null
+            };
+          });
+          setTicketData(result);
+          setUserPermissonCategory(res.userCategory);
+        }
       } catch (err) {
         console.log(err);
       }

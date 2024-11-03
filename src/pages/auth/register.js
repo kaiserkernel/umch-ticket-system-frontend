@@ -382,11 +382,11 @@ const PagesRegister = () => {
               </Col>
             </Row>
 
-            <Row className="mt-4 mt-md-5">
-              <Col md={1}>
-                <label className="input-label">Avatar</label>
-              </Col>
-              <Col md={11}>
+            <label className="input-label mt-5">
+              Choose a profile picture for yourself:
+            </label>
+            <Row className="">
+              <Col md={12}>
                 <div className="mb-3 d-flex flex-column justify-content-center align-items-center">
                   <input
                     type="file"
