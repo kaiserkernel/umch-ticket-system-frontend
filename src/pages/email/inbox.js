@@ -2,10 +2,10 @@ import React, { useEffect, useContext, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { AppSettings } from "./../../config/app-settings.js";
 import { Link } from "react-router-dom";
-import { Card } from "./../../components/card/card.jsx";
 import moment from "moment";
 import FormService from "../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { Badge } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 
 function EmailInbox() {
@@ -20,6 +20,11 @@ function EmailInbox() {
   const [isMobile, setIsMobile] = useState(false);
   const [showTicketDetail, setShowTicketDetail] = useState(false);
   const [userPermissionCategory, setUserPermissonCategory] = useState();
+  const [activeTab, setActiveTab] = useState("All");
+  const [isTicketStatusChange, setTicketStatusChange] = useState(true);
+
+  const ticketStatus = ["Default", "Clicked", "Approved", "Rejected"];
+  const ticketStatusBadge = ["", "", "info", "danger"];
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,23 +53,6 @@ function EmailInbox() {
           res.inquiries.reverse();
           const result = res.inquiries.map((item1) => {
             const match = res.inquiries.find(
-              (item2) =>
-                item2.inquiryCategory === item1.inquiryCategory &&
-                item2.subCategory1 === item1.subCategory1
-            );
-
-            return {
-              ...item1,
-              permission: match ? match.permission : null, // Add permission if found, otherwise null
-            };
-          });
-          setTicketData(result);
-          setUserPermissonCategory(res.userCategory);
-        }
-        if (res?.filteredInquiries) {
-          res.filteredInquiries.reverse();
-          const result = res.filteredInquiries.map((item1) => {
-            const match = res.filteredInquiries.find(
               (item2) =>
                 item2.inquiryCategory === item1.inquiryCategory &&
                 item2.subCategory1 === item1.subCategory1
@@ -115,13 +103,90 @@ function EmailInbox() {
     console.log(ticket_id);
     if (ticket_id) {
       const result = ticketData.find((ticket) => ticket._id === ticket_id);
+
       setTicketId(ticket_id);
       setSelectedTicket(result);
       setSelectedTicketAttachments(result?.documents);
+      setTicketStatusChange(true);
       if (isMobile) {
         console.log("mobile");
         setShowTicketDetail(true);
       }
+    }
+  };
+
+  const handleShowApprovedTickets = async () => {
+    setActiveTab("Approved");
+    setSelectedTicket("");
+    setShowTicketDetail(false);
+    setTicketId("");
+    if (userRole != 2) {
+      const allTickets = await FormService.getAllInquiries();
+      allTickets.inquiries.reverse();
+      console.log(allTickets);
+      const filteredAllTickets = allTickets.inquiries.filter(
+        (ticket) => ticket.status === 2
+      );
+      console.log(filteredAllTickets);
+      setTicketData(filteredAllTickets);
+    } else {
+      const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
+        enrollmentNumber
+      );
+      console.log(allTickets);
+      allTickets.reverse();
+      console.log(allTickets);
+      const filteredAllTickets = allTickets.filter(
+        (ticket) => ticket.status === 2
+      );
+      console.log(filteredAllTickets);
+      setTicketData(filteredAllTickets);
+    }
+  };
+
+  const handleShowRejectedTickets = async () => {
+    setActiveTab("Rejected");
+    setSelectedTicket("");
+    setShowTicketDetail(false);
+    setTicketId("");
+    if (userRole != 2) {
+      const allTickets = await FormService.getAllInquiries();
+      console.log(allTickets);
+      allTickets.inquiries.reverse();
+      const filteredAllTickets = allTickets.inquiries.filter(
+        (ticket) => ticket.status === 3
+      );
+      console.log(filteredAllTickets);
+      setTicketData(filteredAllTickets);
+    } else {
+      const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
+        enrollmentNumber
+      );
+      console.log(allTickets);
+      allTickets.reverse();
+      const filteredAllTickets = allTickets.filter(
+        (ticket) => ticket.status === 3
+      );
+      console.log(filteredAllTickets);
+      setTicketData(filteredAllTickets);
+    }
+  };
+
+  const handleShowAllTickets = async () => {
+    setActiveTab("All");
+    setSelectedTicket("");
+    setTicketId("");
+    if (userRole != 2) {
+      const allTickets = await FormService.getAllInquiries();
+      console.log(allTickets.inquiries);
+
+      setTicketData(allTickets.inquiries);
+    } else {
+      const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
+        enrollmentNumber
+      );
+      console.log(allTickets);
+      setTicketData(allTickets);
     }
   };
 
@@ -191,7 +256,7 @@ function EmailInbox() {
   const handleInquiryAccept = async (id) => {
     try {
       const res = await FormService.acceptInquiry(id);
-
+      setTicketStatusChange(false);
       console.log(res?.message);
       console.log(res);
       successNotify(res?.message);
@@ -216,6 +281,7 @@ function EmailInbox() {
   const handleInquiryReject = async (id) => {
     try {
       const res = await FormService.rejectInquiry(id);
+      setTicketStatusChange(false);
       successNotify(res?.message);
     } catch (err) {
       if (err?.message) {
@@ -237,6 +303,7 @@ function EmailInbox() {
 
   const handleClickAllTickets = () => {
     setShowTicketDetail(false);
+    setActiveTab("All");
   };
 
   const successNotify = (msg) => {
@@ -262,9 +329,9 @@ function EmailInbox() {
             <Link
               to=""
               className={`mailbox-toolbar-link ${
-                showTicketDetail ? "" : "active"
+                activeTab == "All" ? "active" : ""
               } `}
-              onClick={handleClickAllTickets}
+              onClick={handleShowAllTickets}
             >
               All
             </Link>
@@ -284,12 +351,22 @@ function EmailInbox() {
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
-            <Link to="/email/inbox" className="mailbox-toolbar-link">
+            <Link
+              onClick={handleShowApprovedTickets}
+              className={`mailbox-toolbar-link ${
+                activeTab == "Approved" ? "active" : ""
+              } `}
+            >
               Approved
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
-            <Link to="/email/inbox" className="mailbox-toolbar-link">
+            <Link
+              onClick={handleShowRejectedTickets}
+              className={`mailbox-toolbar-link ${
+                activeTab == "Rejected" ? "active" : ""
+              } `}
+            >
               Rejected
             </Link>
           </div>
@@ -445,12 +522,23 @@ function EmailInbox() {
                     </div>
                   </div>
                   <div className="mailbox-detail-content">
-                    <h4 className="mb-3">
-                      Absense Request from{" "}
-                      {selectedTicket?.firstName +
-                        " " +
-                        selectedTicket?.lastName}
-                    </h4>
+                    <div className="d-flex gap-3 mb-3">
+                      <h4 className="mb-0">
+                        Absense Request from{" "}
+                        {selectedTicket?.firstName +
+                          " " +
+                          selectedTicket?.lastName}
+                      </h4>
+
+                      {selectedTicket && (
+                        <Badge
+                          style={{ fontSize: "14px", fontWeight: "300" }}
+                          bg={ticketStatusBadge[selectedTicket?.status]}
+                        >
+                          {ticketStatus[selectedTicket?.status]}
+                        </Badge>
+                      )}
+                    </div>
 
                     <div className="d-flex">
                       {attachments.map((attachment, index) => (
@@ -477,11 +565,18 @@ function EmailInbox() {
                         </div>
                       ))}
                     </div>
-                    <div className="mb-3" onClick={(e) => handleDownloadAll(e)}>
-                      <a className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded">
-                        Download
-                      </a>
-                    </div>
+                    {attachments.length != 0 ? (
+                      <div
+                        className="mb-3"
+                        onClick={(e) => handleDownloadAll(e)}
+                      >
+                        <a className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded">
+                          Download
+                        </a>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                     <div className="mailbox-detail-body mt-5">
                       <p className="text-black">Hi Dear Admin,</p>
                       <div className="text-black">
@@ -524,37 +619,47 @@ function EmailInbox() {
                       </div>
                       Regards,
                       <br />
-                      Twitter Inc,
+                      Name:{" "}
+                      {selectedTicket?.firstName +
+                        " " +
+                        selectedTicket?.lastName}
                       <br />
-                      795 Folsom Ave, Suite 600
+                      Email: {selectedTicket?.email}
                       <br />
                       <br />
-                      P: (123) 456-7890
+                      Enrollment Number: {selectedTicket?.enrollmentNumber}
                       <br />
                     </div>
                   </div>
-                  {userRole != 2 && (
-                    <div
-                      style={{
-                        borderTop: "1px solid",
-                        borderColor: "gray",
-                      }}
-                      className="pt-2"
-                    >
-                      <a
-                        className="btn btn-info me-3"
-                        onClick={() => handleInquiryAccept(selectedTicket?._id)}
+                  {userRole != 2 &&
+                    selectedTicket?.status != 2 &&
+                    selectedTicket?.status != 3 &&
+                    isTicketStatusChange && (
+                      <div
+                        style={{
+                          borderTop: "1px solid",
+                          borderColor: "gray",
+                        }}
+                        className="pt-2"
                       >
-                        Accept
-                      </a>
-                      <a
-                        className="btn btn-danger"
-                        onClick={() => handleInquiryReject(selectedTicket?._id)}
-                      >
-                        Reject
-                      </a>
-                    </div>
-                  )}
+                        <a
+                          className="btn btn-info me-3"
+                          onClick={() =>
+                            handleInquiryAccept(selectedTicket?._id)
+                          }
+                        >
+                          Accept
+                        </a>
+                        <a
+                          className="btn btn-danger"
+                          onClick={() =>
+                            handleInquiryReject(selectedTicket?._id)
+                          }
+                        >
+                          Reject
+                        </a>
+                      </div>
+                    )}
                 </div>
               ) : (
                 <div className="mailbox-empty-message">

@@ -6,9 +6,8 @@ import UserService from "../../sevices/user-service.js";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { px } from "framer-motion";
+
 import Select, { components } from "react-select";
-import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
@@ -25,11 +24,11 @@ function AccountManagement() {
     { bg: "info", text: "UMFST Administration Board Management (Vice-Rector)" },
     { bg: "warning", text: "UMFST Administration Office (UMFST Targu Mures)" },
     { bg: "secondary", text: "CPE Board Management" },
-    { bg: "primary", text: "UMCH Finance Department" },
-    { bg: "info", text: "UMCH German Department" },
-    { bg: "warning", text: "UMCH Teaching Hospital Coordination" },
-    { bg: "secondary", text: "UMCH IT-SUPPORT" },
-    { bg: "primary", text: "UMFST - Rector (UMFST Targu Mures)" },
+    { bg: "success", text: "UMCH Finance Department" },
+    { bg: "danger", text: "UMCH German Department" },
+    { bg: "light", text: "UMCH Teaching Hospital Coordination" },
+    { bg: "dark", text: "UMCH IT-SUPPORT" },
+    { bg: "dark", text: "UMFST - Rector (UMFST Targu Mures)" },
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
@@ -503,9 +502,9 @@ const MultiLevelSelectWithPermissions = ({
 }) => {
   const selectedCategoryBadge = [
     { bg: "secondary" },
-    { bg: "primary" },
     { bg: "warning" },
-    { bg: "info" },
+    { bg: "primary" },
+    { bg: "success" },
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
