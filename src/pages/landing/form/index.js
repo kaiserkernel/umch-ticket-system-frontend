@@ -21,14 +21,15 @@ import FormService from "../../../sevices/form-service";
 export const FormContext = createContext();
 
 const FormSection = () => {
+  const userData = JSON.parse(localStorage.getItem("userData"));
   const location = useLocation();
   const [isFormSubmit, setIsFormSubmit] = useState(0);
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    enrollmentNumber: "",
+    firstName: userData?.firstName,
+    lastName: userData?.lastName,
+    email: userData?.email,
+    enrollmentNumber: userData?.enrollmentNumber,
     firstYearOfStudy: "0",
     inquiryCategory: "default",
     subCategory2: "",
@@ -73,10 +74,17 @@ const FormSection = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name == "agreement") {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.checked,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const handleSubmit = async () => {
@@ -132,7 +140,7 @@ const FormSection = () => {
         transition: { duration: 0.5 },
       },
     },
-    application: {
+    1: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -246,7 +254,7 @@ const FormSection = () => {
     },
   };
   const content = {
-    application: <ApplicationRequests />,
+    1: <ApplicationRequests />,
     booking: <BookRental />,
     campus: <CampusIT />,
     complaints: <Complaints />,
@@ -295,6 +303,7 @@ const FormSection = () => {
                       onChange={handleChange}
                       placeholder="First Name"
                       className="custom-input"
+                      disabled
                     />
                   </Form.Group>
                   {mainPageErrors.firstName && (
@@ -314,6 +323,7 @@ const FormSection = () => {
                       onChange={handleChange}
                       placeholder="Last Name"
                       className="custom-input"
+                      disabled
                     />
                   </Form.Group>
                   {mainPageErrors.lastName && (
@@ -335,6 +345,7 @@ const FormSection = () => {
                       onChange={handleChange}
                       placeholder="Email Address"
                       className="custom-input"
+                      disabled
                     />
                   </Form.Group>
                   {mainPageErrors.email && (
@@ -356,6 +367,7 @@ const FormSection = () => {
                       autoComplete="off"
                       value={formData.enrollmentNumber}
                       onChange={handleChange}
+                      disabled={userData?.enrollmentNumber != undefined}
                     />
                   </Form.Group>
                   {mainPageErrors.enrollmentNumber && (
@@ -427,9 +439,7 @@ const FormSection = () => {
                       value={formData.inquiryCategory}
                     >
                       <option value="default">- Select -</option>
-                      <option value="application">
-                        Applications and Requests
-                      </option>
+                      <option value="1">Applications and Requests</option>
                       <option value="booking">Book rental UMCH library</option>
                       <option value="campus">Campus IT</option>
                       <option value="complaints">Complaints</option>
@@ -501,7 +511,13 @@ const FormSection = () => {
               </div>
               <div className="d-flex  mt-5 mt-md-5">
                 <Form.Group controlId="custom-checkbox" className="me-2 mt-1 ">
-                  <Form.Check type="checkbox" className="custom-checkbox" />
+                  <Form.Check
+                    type="checkbox"
+                    className="custom-checkbox"
+                    name="agreement"
+                    checked={formData.agreement}
+                    onChange={handleChange}
+                  />
                 </Form.Group>
                 <p className="mb-0">
                   {" "}
@@ -521,12 +537,13 @@ const FormSection = () => {
               <p className="mt-5 mt-md-5 pt-4 pt-md-4">Best regards</p>
               <p>UMFST-UMCH</p>
               <div className="text-center">
-                <a
+                <button
                   onClick={handleSubmit}
                   className="m-4 btn btn-primary ronded-pill px-4 py-2 default-bg"
+                  disabled={formData.agreement ? false : true}
                 >
                   Send Request
-                </a>
+                </button>
               </div>
             </Form>
           </div>

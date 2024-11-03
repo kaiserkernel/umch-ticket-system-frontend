@@ -70,7 +70,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    absence: {
+    1: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -265,9 +265,7 @@ const ApplicationRequests = () => {
   };
   const content = {
     default: <Default />,
-    absence: (
-      <Absence applicationRequest={formInquiryData.applicationRequest} />
-    ),
+    1: <Absence applicationRequest={formInquiryData.applicationRequest} />,
     change_teaching_hospital: <ChangeTeachingHospital />,
     change_study_group: <ChangeStudyGroup />,
     demonstrator_student: <DemonstratorStudent />,
@@ -315,7 +313,7 @@ const ApplicationRequests = () => {
               className="custom-input"
             >
               <option value="default">– Select –</option>
-              <option value="absence">Absence</option>
+              <option value="1">Absence</option>
               <option value="change_teaching_hospital">
                 Change of teaching hospital
               </option>

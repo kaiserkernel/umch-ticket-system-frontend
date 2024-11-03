@@ -8,6 +8,7 @@ import ThemePanel from "./components/theme-panel/theme-panel.jsx";
 import { AppSettings } from "./config/app-settings.js";
 import { AuthProvider } from "./context/authProvider.js";
 
+import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
