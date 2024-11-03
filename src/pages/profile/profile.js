@@ -27,7 +27,7 @@ function Profile() {
                   )}
                 </div>
 
-                <h4>{userData.fullName}</h4>
+                <h4>{userData?.firstName + " " + userData?.lastName}</h4>
                 <div className="mb-3 text-inverse text-opacity-50 fw-bold mt-n2">
                   {roleName[userData.role]}
                 </div>
