@@ -21,7 +21,10 @@ import FormService from "../../../sevices/form-service";
 export const FormContext = createContext();
 
 const FormSection = () => {
-  const userData = JSON.parse(localStorage.getItem("userData"));
+  let userData = "";
+  if (localStorage.getItem("userData")) {
+    userData = JSON.parse(localStorage.getItem("userData"));
+  }
   const location = useLocation();
   const [isFormSubmit, setIsFormSubmit] = useState(0);
 
@@ -30,7 +33,7 @@ const FormSection = () => {
     lastName: userData?.lastName,
     email: userData?.email,
     enrollmentNumber: userData?.enrollmentNumber,
-    firstYearOfStudy: "0",
+    firstYearOfStudy: userData?.firstYearOfStudy,
     inquiryCategory: "default",
     subCategory2: "",
     agreement: false,
@@ -398,6 +401,7 @@ const FormSection = () => {
                         border: "1px solid #007bff",
                       }}
                       className="custom-input"
+                      disabled
                     >
                       <option value="0">– Select –</option>
                       <option value="2024">2024</option>
