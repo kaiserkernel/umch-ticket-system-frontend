@@ -19,13 +19,17 @@ function AccountManagement() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  console.log(selectedItems, "========selected items");
-  console.log(permissions, "=========permission");
+
   const badgeData = [
-    { bg: "primary", text: "Mrs Vice-Rector" },
-    { bg: "info", text: "UMCH Studysecretariat" },
-    { bg: "warning", text: "UMFST Administration Office" },
-    { bg: "secondary", text: "IT / Support S. Knippenberg" },
+    { bg: "primary", text: "UMCH Study Secretariat" },
+    { bg: "info", text: "UMFST Administration Board Management (Vice-Rector)" },
+    { bg: "warning", text: "UMFST Administration Office (UMFST Targu Mures)" },
+    { bg: "secondary", text: "CPE Board Management" },
+    { bg: "primary", text: "UMCH Finance Department" },
+    { bg: "info", text: "UMCH German Department" },
+    { bg: "warning", text: "UMCH Teaching Hospital Coordination" },
+    { bg: "secondary", text: "UMCH IT-SUPPORT" },
+    { bg: "primary", text: "UMFST - Rector (UMFST Targu Mures)" },
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
@@ -231,10 +235,9 @@ function AccountManagement() {
     selectedItems.map((item) => {
       const categoryId = item.value;
       let categoryIdArr = categoryId.split("-");
-      console.log(categoryIdArr[0]);
-      console.log(categoryIdArr[1]);
+
       const permission = permissions[item.value];
-      console.log(permission);
+
       const category = {
         inquiryCategory: categoryIdArr[0],
         subCategory1: categoryIdArr[1] ? categoryIdArr[1] : "null",
@@ -242,7 +245,7 @@ function AccountManagement() {
       };
       categories.push(category);
     });
-    console.log(categories);
+
     const combinedFormData = Object.assign({}, formData, {
       category: categories,
     });
@@ -286,7 +289,7 @@ function AccountManagement() {
     },
     {
       name: "Position",
-      width: "300px",
+      width: "500px",
 
       cell: (row) => (
         <>
@@ -432,10 +435,19 @@ function AccountManagement() {
                   placeholder="Position"
                 >
                   <option value="-1">Select Position</option>
-                  <option value="0">Mrs Vice-Rector</option>
-                  <option value="1">UMCH Studysecretariat</option>
-                  <option value="2">UMFST Administration Office</option>
-                  <option value="3">IT / Support S. Knippenberg</option>
+                  <option value="0">UMCH Study Secretariat</option>
+                  <option value="1">
+                    UMFST Administration Board Management (Vice-Rector)
+                  </option>
+                  <option value="2">
+                    UMFST Administration Office (UMFST Targu Mures)
+                  </option>
+                  <option value="3">CPE Board Management</option>
+                  <option value="4">UMCH Finance Department</option>
+                  <option value="5">UMCH Facility Department</option>
+                  <option value="6">UMCH Teaching Hospital Coordination</option>
+                  <option value="7">UMCH IT-SUPPORT</option>
+                  <option value="8">UMFST - Rector (UMFST Targu Mures)</option>
                 </Form.Control>
               </Form.Group>
               <MultiLevelSelectWithPermissions
@@ -500,7 +512,7 @@ const MultiLevelSelectWithPermissions = ({
   // Handle selection of subcategory in main select component
   const handleSelectChange = (selectedOptions) => {
     setSelectedItems(selectedOptions || []);
-    console.log(selectedOptions);
+
     selectedOptions.map((option) => {
       setPermissions({
         ...permissions,
@@ -604,7 +616,6 @@ const MultiLevelSelectWithPermissions = ({
     }),
   };
 
-  console.log(permissions);
   return (
     <div>
       <div className="permissions-section mb-3">
