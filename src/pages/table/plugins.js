@@ -7,15 +7,20 @@ import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { px } from "framer-motion";
+import Select, { components } from "react-select";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [show, setShow] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [permissions, setPermissions] = useState({});
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  console.log(selectedItems, "========selected items");
+  console.log(permissions, "=========permission");
   const badgeData = [
     { bg: "primary", text: "Mrs Vice-Rector" },
     { bg: "info", text: "UMCH Studysecretariat" },
@@ -23,11 +28,180 @@ function AccountManagement() {
     { bg: "secondary", text: "IT / Support S. Knippenberg" },
   ];
 
+  const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
+
+  const categoryData = [
+    {
+      label: "Applications and Requests",
+      value: "1",
+      subcategories: [
+        {
+          label: "Absence",
+          value: "1-1",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Change of teaching hospital",
+          value: "1-2",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Change of study group",
+          value: "1-3",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Demonstrator student",
+          value: "1-4",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Enrollment",
+          value: "1-5",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Exam inspection",
+          value: "1-6",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Online Catalogue (Carnet)",
+          value: "1-7",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Recognition of Courses",
+          value: "1-8",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Recognition of Internship",
+          value: "1-9",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Short term borrow of Diploma",
+          value: "1-10",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Syllabus of the academic year",
+          value: "1-11",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Transcript of Records",
+          value: "1-12",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Transfer to Targu Mures",
+          value: "1-13",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Other",
+          value: "1-14",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+      ],
+    },
+    {
+      label: "Book rental UMCH library",
+      value: "2",
+      permissions: ["None", "Passive", "Active", "Responsible"],
+    },
+    {
+      label: "Campus IT",
+      value: "3",
+      subcategories: [
+        {
+          label: "Canvas",
+          value: "3-0",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Streaming / Panopto",
+          value: "3-1",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+      ],
+    },
+    {
+      label: "Complaints",
+      value: "4",
+      subcategories: [
+        {
+          label: "Campus",
+          value: "4-0",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Dean’s Office",
+          value: "4-1",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "German Teaching Department",
+          value: "4-2",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Teaching Hospital",
+          value: "4-3",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Teacher",
+          value: "4-4",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Online Catalouge (Carnet)",
+          value: "4-5",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Exam",
+          value: "4-6",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+        {
+          label: "Other",
+          value: "4-7",
+          permissions: ["None", "Passive", "Active", "Responsible"],
+        },
+      ],
+    },
+    {
+      label: "Internship",
+      value: "5",
+      permissions: ["None", "Passive", "Active", "Responsible"],
+    },
+    {
+      label: "Medical Abilities",
+      value: "6",
+      permissions: ["None", "Passive", "Active", "Responsible"],
+    },
+    {
+      label: "Thesis",
+      value: "7",
+      permissions: ["None", "Passive", "Active", "Responsible"],
+    },
+    {
+      label: "Other",
+      value: "8",
+      permissions: ["None", "Passive", "Active", "Responsible"],
+    },
+  ];
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    title: "",
     role: 0,
-    position: 0,
+    position: "-1",
     email: "",
     password: "",
   });
@@ -53,8 +227,27 @@ function AccountManagement() {
   };
 
   const handleAddNewUser = async () => {
+    const categories = [];
+    selectedItems.map((item) => {
+      const categoryId = item.value;
+      let categoryIdArr = categoryId.split("-");
+      console.log(categoryIdArr[0]);
+      console.log(categoryIdArr[1]);
+      const permission = permissions[item.value];
+      console.log(permission);
+      const category = {
+        inquiryCategory: categoryIdArr[0],
+        subCategory1: categoryIdArr[1] ? categoryIdArr[1] : "null",
+        permission: defaultPermissions[permission],
+      };
+      categories.push(category);
+    });
+    console.log(categories);
+    const combinedFormData = Object.assign({}, formData, {
+      category: categories,
+    });
     try {
-      const res = await UserService.createAdmin(formData);
+      const res = await UserService.createAdmin(combinedFormData);
       successNotify(res.message);
     } catch (err) {
       if (err?.message) {
@@ -211,6 +404,16 @@ function AccountManagement() {
                   onChange={handleChange}
                 />
               </Form.Group>
+              <Form.Group controlId="title" className="mt-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Title"
+                  name="title"
+                  className="custom-input"
+                  value={formData.title}
+                  onChange={handleChange}
+                />
+              </Form.Group>
 
               <Form.Group controlId="position" className="mt-3">
                 <Form.Control
@@ -226,13 +429,22 @@ function AccountManagement() {
                     color: "gray !important",
                   }}
                   className="custom-input"
+                  placeholder="Position"
                 >
+                  <option value="-1">Select Position</option>
                   <option value="0">Mrs Vice-Rector</option>
                   <option value="1">UMCH Studysecretariat</option>
                   <option value="2">UMFST Administration Office</option>
                   <option value="3">IT / Support S. Knippenberg</option>
                 </Form.Control>
               </Form.Group>
+              <MultiLevelSelectWithPermissions
+                options={categoryData}
+                setSelectedItems={setSelectedItems}
+                selectedItems={selectedItems}
+                setPermissions={setPermissions}
+                permissions={permissions}
+              />
               <Form.Group controlId="email" className="mt-3">
                 <Form.Control
                   type="email"
@@ -269,5 +481,171 @@ function AccountManagement() {
     </div>
   );
 }
+
+const MultiLevelSelectWithPermissions = ({
+  options,
+  setSelectedItems,
+  setPermissions,
+  selectedItems,
+  permissions,
+}) => {
+  const selectedCategoryBadge = [
+    { bg: "secondary" },
+    { bg: "primary" },
+    { bg: "warning" },
+    { bg: "info" },
+  ];
+
+  const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
+  // Handle selection of subcategory in main select component
+  const handleSelectChange = (selectedOptions) => {
+    setSelectedItems(selectedOptions || []);
+    console.log(selectedOptions);
+    selectedOptions.map((option) => {
+      setPermissions({
+        ...permissions,
+        [option.value]: 0,
+      });
+    });
+  };
+
+  // Update the permission for a specific subcategory
+  const handlePermissionChange = (subcategoryValue, permission) => {
+    setPermissions({
+      ...permissions,
+      [subcategoryValue]: permission,
+    });
+  };
+
+  // Prepare main options for Select component
+  const formatOptions = (data) =>
+    data.reduce((acc, category) => {
+      if (category?.subcategories) {
+        acc.push({
+          label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
+          value: category.value,
+          isDisabled: true, // Prevent main category selection
+        });
+      } else {
+        acc.push({
+          label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
+          value: category.value,
+          isDisabled: false, // Prevent main category selection
+        });
+      }
+      if (category?.subcategories) {
+        category?.subcategories.forEach((sub) =>
+          acc.push({
+            label: (
+              <div
+                style={{ display: "flex", alignItems: "center" }}
+                className="ms-3"
+              >
+                {sub.label}
+              </div>
+            ),
+            value: sub.value,
+          })
+        );
+      }
+      return acc;
+    }, []);
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? "#f0f8ff" : "#fff",
+      borderColor: state.isFocused ? "#2596be" : "#002d47",
+      borderWidth: state.isFocused ? "5px" : "1px",
+      borderRadius: "0px",
+      padding: "5px",
+      fontSize: "16px",
+      "&:hover": {
+        borderColor: state.isFocused ? "#2596be" : "#002d47",
+      },
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#4a90e2" : "#fff",
+      color: state.isSelected ? "#fff" : "#333",
+      "&:hover": {
+        backgroundColor: "#e6f7ff",
+        color: "#333",
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "5px",
+      marginTop: "5px",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.15)",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#999",
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      backgroundColor: "#4a90e2",
+      color: "#fff",
+      borderRadius: "3px",
+    }),
+    multiValueLabel: (provided) => ({
+      ...provided,
+      color: "#fff",
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      color: "#fff",
+      cursor: "pointer",
+      "&:hover": {
+        backgroundColor: "#ff5e5e",
+        color: "white",
+      },
+    }),
+  };
+
+  console.log(permissions);
+  return (
+    <div>
+      <div className="permissions-section mb-3">
+        {selectedItems.map((item) => (
+          <div key={item.value} style={{ marginTop: "15px" }}>
+            <Badge
+              style={{ fontSize: "14px", fontWeight: "300" }}
+              bg={selectedCategoryBadge[permissions[item.value]].bg}
+            >
+              <span>{item.label.props.children}:</span>
+            </Badge>
+
+            <select
+              style={{ marginLeft: "10px" }}
+              onChange={(e) =>
+                handlePermissionChange(item.value, e.target.value)
+              }
+              value={permissions[item.value] || ""}
+            >
+              {defaultPermissions.map((perm, index) => (
+                <option key={index} value={index}>
+                  {perm}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+      <Select
+        options={formatOptions(options)}
+        value={selectedItems}
+        onChange={handleSelectChange}
+        isMulti
+        placeholder="Select subcategories"
+        closeMenuOnSelect={false}
+        hideSelectedOptions={false}
+        menuPosition="fixed"
+        styles={customStyles}
+      />
+    </div>
+  );
+};
 
 export default AccountManagement;

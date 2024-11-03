@@ -108,13 +108,13 @@ const Absence = ({ applicationRequest }) => {
   useEffect(() => {
     const successNotify = (msg) => {
       toast.info(msg, {
-        autoClose: 5000, // Duration in milliseconds
+        autoClose: 3000, // Duration in milliseconds
       });
     };
 
     const errorNotify = (msg) => {
       toast.warning(msg, {
-        autoClose: 5000, // Duration in milliseconds
+        autoClose: 3000, // Duration in milliseconds
       });
     };
 
@@ -182,92 +182,96 @@ const Absence = ({ applicationRequest }) => {
   };
 
   return (
-    <div className="">
+    <>
       <ToastContainer />
-      <Row className="mt-5">
-        <div className="fw-bold input-label">Please note:</div>
-        <div className="input-label mt-2 ">
-          All requests must be submitted within 10 workingdays after recovery.
-          Otherwise the absence will not be approved.
-        </div>
-      </Row>
-      <Row className="mt-2 g-4 g-md-4">
-        <Col lg={12}>
-          <Form.Group controlId="firstName">
-            <Form.Label className="input-label">
-              Reason for absence
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder=""
-              name="reasonForAbsence"
-              value={formDetailData.reasonForAbsence}
-              onChange={handleChange}
-              className="custom-input"
-              autoComplete="off"
-            />
-          </Form.Group>
-          {errors.reasonForAbsence && (
-            <p className="error-content">{errors.reasonForAbsence}</p>
-          )}
-        </Col>
-      </Row>
+      <div className="">
+        <Row className="mt-5">
+          <div className="fw-bold input-label">Please note:</div>
+          <div className="input-label mt-2 ">
+            All requests must be submitted within 10 workingdays after recovery.
+            Otherwise the absence will not be approved.
+          </div>
+        </Row>
+        <Row className="mt-2 g-4 g-md-4">
+          <Col lg={12}>
+            <Form.Group controlId="firstName">
+              <Form.Label className="input-label">
+                Reason for absence
+                <span className="ms-1 required-label">*</span>
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder=""
+                name="reasonForAbsence"
+                value={formDetailData.reasonForAbsence}
+                onChange={handleChange}
+                className="custom-input"
+                autoComplete="off"
+              />
+            </Form.Group>
+            {errors.reasonForAbsence && (
+              <p className="error-content">{errors.reasonForAbsence}</p>
+            )}
+          </Col>
+        </Row>
 
-      <Row className="mt-2 g-4 g-md-4">
-        <Col lg={6}>
-          <Form.Group controlId="firstName">
-            <Form.Label className="input-label">
-              Period of time (absence from)
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <StyledDatePicker
-              selected={formDetailData.timeFromAbsence}
-              onChange={(date) =>
-                setformDetailData({ ...formDetailData, timeFromAbsence: date })
-              }
-              dateFormat="yyyy/MM/dd"
-              isClearable
-              className="custom-input"
-            />
-          </Form.Group>
-          {errors.timeFromAbsence && (
-            <p className="error-content">{errors.timeFromAbsence}</p>
-          )}
-        </Col>
-        <Col lg={6}>
-          <Form.Group controlId="lastName">
-            <Form.Label className="input-label">
-              Period of time (absence to)
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <StyledDatePicker
-              selected={formDetailData.timeToAbsence}
-              onChange={(date) =>
-                setformDetailData({ ...formDetailData, timeToAbsence: date })
-              }
-              dateFormat="yyyy/MM/dd"
-              isClearable
-              className="custom-input"
-            />
-          </Form.Group>
-          {errors.timeToAbsence && (
-            <p className="error-content">{errors.timeToAbsence}</p>
-          )}
-        </Col>
-      </Row>
+        <Row className="mt-2 g-4 g-md-4">
+          <Col lg={6}>
+            <Form.Group controlId="firstName">
+              <Form.Label className="input-label">
+                Period of time (absence from)
+                <span className="ms-1 required-label">*</span>
+              </Form.Label>
+              <StyledDatePicker
+                selected={formDetailData.timeFromAbsence}
+                onChange={(date) =>
+                  setformDetailData({
+                    ...formDetailData,
+                    timeFromAbsence: date,
+                  })
+                }
+                dateFormat="yyyy/MM/dd"
+                isClearable
+                className="custom-input"
+              />
+            </Form.Group>
+            {errors.timeFromAbsence && (
+              <p className="error-content">{errors.timeFromAbsence}</p>
+            )}
+          </Col>
+          <Col lg={6}>
+            <Form.Group controlId="lastName">
+              <Form.Label className="input-label">
+                Period of time (absence to)
+                <span className="ms-1 required-label">*</span>
+              </Form.Label>
+              <StyledDatePicker
+                selected={formDetailData.timeToAbsence}
+                onChange={(date) =>
+                  setformDetailData({ ...formDetailData, timeToAbsence: date })
+                }
+                dateFormat="yyyy/MM/dd"
+                isClearable
+                className="custom-input"
+              />
+            </Form.Group>
+            {errors.timeToAbsence && (
+              <p className="error-content">{errors.timeToAbsence}</p>
+            )}
+          </Col>
+        </Row>
 
-      <Row className="mt-4">
-        <Col lg={12}>
-          <Form.Group controlId="">
-            <Form.Label className="input-label mb-0">
-              File Upload (all official documents must be translated into
-              english language)
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-          </Form.Group>
+        <Row className="mt-4">
+          <Col lg={12}>
+            <Form.Group controlId="">
+              <Form.Label className="input-label mb-0">
+                File Upload (all official documents must be translated into
+                english language)
+                <span className="ms-1 required-label">*</span>
+              </Form.Label>
+            </Form.Group>
 
-          {/* <input
+            {/* <input
             type="file"
             name="file"
             id="file"
@@ -319,97 +323,101 @@ const Absence = ({ applicationRequest }) => {
             )}
           </div> */}
 
-          <input
-            type="file"
-            name="file"
-            id="file"
-            style={{ visibility: "hidden" }}
-            onChange={handleFileChange}
-          />
-          <label htmlFor="file" className="btn btn-primary upload-btn"></label>
-          <div className="d-flex flex-column mt-3">
-            {files.map((fileObj, index) => (
-              <div
-                className="d-flex border mb-3"
-                key={index}
-                style={{ position: "relative" }}
-              >
-                {fileObj.previewUrl && (
-                  <img
-                    src={fileObj.previewUrl}
-                    alt="File Preview"
-                    style={{ width: "80px", height: "80px" }}
-                  />
-                )}
-                {fileObj.progress > 0 && (
-                  <div className="d-flex flex-column justify-content-center flex-grow-1 px-2">
-                    <span className="mb-1" style={{ fontSize: "11px" }}>
-                      {fileObj.file.name}
-                    </span>
-                    <div
-                      style={{
-                        background: "#eee",
-                        height: "7px",
-                        width: "100%",
-                      }}
-                    >
+            <input
+              type="file"
+              name="file"
+              id="file"
+              style={{ visibility: "hidden" }}
+              onChange={handleFileChange}
+            />
+            <label
+              htmlFor="file"
+              className="btn btn-primary upload-btn"
+            ></label>
+            <div className="d-flex flex-column mt-3">
+              {files.map((fileObj, index) => (
+                <div
+                  className="d-flex border mb-3"
+                  key={index}
+                  style={{ position: "relative" }}
+                >
+                  {fileObj.previewUrl && (
+                    <img
+                      src={fileObj.previewUrl}
+                      alt="File Preview"
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  )}
+                  {fileObj.progress > 0 && (
+                    <div className="d-flex flex-column justify-content-center flex-grow-1 px-2">
+                      <span className="mb-1" style={{ fontSize: "11px" }}>
+                        {fileObj.file.name}
+                      </span>
                       <div
                         style={{
-                          width: `${fileObj.progress}%`,
-                          borderRadius: "10px",
-                          height: "100%",
-                          background: "#1a7efb",
-                          transition: "width 0.2s",
+                          background: "#eee",
+                          height: "7px",
+                          width: "100%",
                         }}
-                      ></div>
+                      >
+                        <div
+                          style={{
+                            width: `${fileObj.progress}%`,
+                            borderRadius: "10px",
+                            height: "100%",
+                            background: "#1a7efb",
+                            transition: "width 0.2s",
+                          }}
+                        ></div>
+                      </div>
+                      <div className="mt-1" style={{ fontSize: "11px" }}>
+                        <span className="me-2">
+                          {fileObj.progress}% Completed
+                        </span>
+                        <span>{(fileObj.file.size / 1024).toFixed(2)} KB</span>
+                      </div>
                     </div>
-                    <div className="mt-1" style={{ fontSize: "11px" }}>
-                      <span className="me-2">
-                        {fileObj.progress}% Completed
-                      </span>
-                      <span>{(fileObj.file.size / 1024).toFixed(2)} KB</span>
-                    </div>
-                  </div>
-                )}
-                <button
-                  onClick={() => removeFile(fileObj.file.name)}
-                  style={{
-                    position: "absolute",
-                    top: "5px",
-                    right: "5px",
-                    background: "transparent",
-                    color: "red",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "20px",
-                    height: "20px",
-                    cursor: "pointer",
-                  }}
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
-          </div>
-        </Col>
-      </Row>
-      <Row className="mt-4">
-        <Col lg={12}>
-          <Form.Group controlId="commentTextarea">
-            <Form.Label className="input-label">Comments</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={8}
-              placeholder=""
-              name="comment"
-              value={formDetailData.comment}
-              onChange={handleChange}
-              className="custom-textarea-input"
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-    </div>
+                  )}
+                  <button
+                    onClick={() => removeFile(fileObj.file.name)}
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "5px",
+                      background: "transparent",
+                      color: "red",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "20px",
+                      height: "20px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          </Col>
+        </Row>
+        <Row className="mt-4">
+          <Col lg={12}>
+            <Form.Group controlId="commentTextarea">
+              <Form.Label className="input-label">Comments</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={8}
+                placeholder=""
+                name="comment"
+                value={formDetailData.comment}
+                onChange={handleChange}
+                className="custom-textarea-input"
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+      </div>
+    </>
   );
 };
 
