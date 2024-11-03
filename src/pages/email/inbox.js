@@ -44,9 +44,8 @@ function EmailInbox() {
     const getAllInquiries = async () => {
       try {
         const res = await FormService.getAllInquiries();
-        res.inquiries.reverse();
-        console.log(res);
-        setTicketData(res.inquiries);
+        res.filteredInquiries.reverse();
+        setTicketData(res.filteredInquiries);
         setUserPermissonCategory(res.userCategory);
       } catch (err) {
         console.log(err);
