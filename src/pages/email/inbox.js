@@ -23,8 +23,8 @@ function EmailInbox() {
   const [activeTab, setActiveTab] = useState("All");
   const [isTicketStatusChange, setTicketStatusChange] = useState(true);
 
-  const ticketStatus = ["Default", "Clicked", "Approved", "Rejected"];
-  const ticketStatusBadge = ["", "", "info", "danger"];
+  const ticketStatus = ["Default", "Received", "Approved", "Rejected"];
+  const ticketStatusBadge = ["", "success", "info", "danger"];
 
   useEffect(() => {
     const handleResize = () => {

@@ -144,6 +144,13 @@ const Absence = ({ applicationRequest }) => {
             try {
               let res = await FormService.createInquiry(formDataToSend);
               successNotify(res?.message);
+              setformDetailData({
+                ...formData,
+                reasonForAbsence: "",
+                timeFromAbsence: "",
+                timeToAbsence: "",
+                comment: "",
+              });
             } catch (err) {
               const errors = err?.errors || err?.error;
 
