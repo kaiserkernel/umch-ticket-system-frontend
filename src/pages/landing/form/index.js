@@ -30,7 +30,7 @@ const FormSection = () => {
     lastName: userData?.lastName,
     email: userData?.email,
     enrollmentNumber: userData?.enrollmentNumber,
-    firstYearOfStudy: "0",
+    firstYearOfStudy: userData?.firstYearOfStudy,
     inquiryCategory: "default",
     subCategory2: "",
     agreement: false,
