@@ -7,6 +7,7 @@ import AuthService from "../../sevices/auth-service.js";
 import { ToastContainer, toast } from "react-toastify";
 import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
+import BannerSection from "../landing/banner/index.js";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -130,6 +131,7 @@ function AdminLogin() {
   return (
     <>
       <Header />
+      <BannerSection />
       <div className="login">
         <div className="login-content">
           <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">

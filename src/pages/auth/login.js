@@ -7,6 +7,7 @@ import AuthService from "../../sevices/auth-service.js";
 import { ToastContainer, toast } from "react-toastify";
 import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
+import BannerSection from "../landing/banner/index.js";
 
 function PagesLogin() {
   const navigate = useNavigate();
@@ -131,6 +132,7 @@ function PagesLogin() {
   return (
     <>
       <Header />
+      <BannerSection />
 
       <div className="login mt-3 mt-md-5">
         <div className="login-content">
