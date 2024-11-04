@@ -151,6 +151,12 @@ const Absence = ({ applicationRequest }) => {
                 timeToAbsence: "",
                 comment: "",
               });
+              setFiles([]);
+              setOriginalFiles([]);
+              setFormData({
+                ...formData,
+                agreement: false,
+              });
             } catch (err) {
               const errors = err?.errors || err?.error;
 
@@ -190,7 +196,6 @@ const Absence = ({ applicationRequest }) => {
 
   return (
     <>
-      <ToastContainer />
       <div className="">
         <Row className="mt-5">
           <div className="fw-bold input-label">Please note:</div>

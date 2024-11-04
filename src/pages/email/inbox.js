@@ -381,11 +381,8 @@ function EmailInbox() {
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
-            <Link
-              to="/email/compose"
-              className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
-            >
-              New Message <i className="fa fa-pen fs-12px ms-1"></i>
+            <Link className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15">
+              Open Ticket<i className="fa fa-pen fs-12px ms-1"></i>
             </Link>
           </div>
         </div>

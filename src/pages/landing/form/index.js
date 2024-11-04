@@ -43,7 +43,7 @@ const FormSection = () => {
 
   const validate = () => {
     const newErrors = {};
-
+    console.log(formData, "====formdata");
     // Name validation
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First Name is required";
@@ -278,7 +278,6 @@ const FormSection = () => {
         mainPageErrors,
       }}
     >
-      <ToastContainer />
       <section className="form py-2 py-md-2">
         <div className="bg-gray mt-2 mt-md-4 py-2 py-md-5">
           <div className="form-container">

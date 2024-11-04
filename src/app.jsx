@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/authProvider.js";
 
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   var defaultOptions = {
@@ -153,6 +154,7 @@ function App() {
           {/* {appFooter && <Footer />} */}
           {/* <ThemePanel /> */}
         </div>
+        <ToastContainer />
       </AuthProvider>
     </AppSettings.Provider>
   );

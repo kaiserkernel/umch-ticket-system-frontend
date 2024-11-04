@@ -134,7 +134,6 @@ function PagesLogin() {
 
       <div className="login mt-3 mt-md-5">
         <div className="login-content">
-          <ToastContainer />
           <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
             <h1 className="text-center">Sign in for the UMCH Ticket System</h1>
             <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">

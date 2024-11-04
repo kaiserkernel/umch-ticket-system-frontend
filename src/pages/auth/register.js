@@ -143,7 +143,6 @@ const PagesRegister = () => {
       <Header />
       <div className="register">
         <div className="register-content">
-          <ToastContainer />
           <form onSubmit={handleSubmit} className="bg-gray-auth p-3 p-md-5">
             <h1 className="text-center">Sign Up for UMCH Ticket System</h1>
 
