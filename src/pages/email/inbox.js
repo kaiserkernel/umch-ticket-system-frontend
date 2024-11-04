@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { AppSettings } from "./../../config/app-settings.js";
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function EmailInbox() {
   const context = useContext(AppSettings);
+  const navigate = useNavigate();
   const [mailData, setMailData] = useState();
   const [ticketData, setTicketData] = useState();
   const [ticketId, setTicketId] = useState();
@@ -23,8 +25,8 @@ function EmailInbox() {
   const [activeTab, setActiveTab] = useState("All");
   const [isTicketStatusChange, setTicketStatusChange] = useState(true);
 
-  const ticketStatus = ["Default", "Received", "Approved", "Rejected"];
-  const ticketStatusBadge = ["", "success", "info", "danger"];
+  const ticketStatus = ["Received", "Clicked", "Approved", "Rejected"];
+  const ticketStatusBadge = ["secondary", "success", "info", "danger"];
 
   useEffect(() => {
     const handleResize = () => {
@@ -98,6 +100,11 @@ function EmailInbox() {
 
     // eslint-disable-next-line
   }, []);
+
+  const handleClickOpenTicket = (e) => {
+    e.preventDefault();
+    navigate("/home", { replace: true });
+  };
 
   const handleSelectTicket = (ticket_id) => {
     console.log(ticket_id);
@@ -319,7 +326,6 @@ function EmailInbox() {
 
   return (
     <div className="h-100 border border-gray">
-      <ToastContainer />
       <div className="mailbox">
         <div className="mailbox-toolbar">
           <div className="mailbox-toolbar-item">
@@ -488,7 +494,7 @@ function EmailInbox() {
                       </a>
                       <div className="flex-fill ms-3">
                         <div className="d-lg-flex align-items-center">
-                          <div className="flex-1">
+                          <div className="flex-1 mt-3">
                             <div className="fw-600">
                               {selectedTicket?.firstName +
                                 " " +
@@ -614,14 +620,19 @@ function EmailInbox() {
                           {selectedTicket?.details?.comment}
                         </p>
                       </div>
-                      Regards,
-                      <br />
-                      Name:{" "}
-                      {selectedTicket?.firstName +
-                        " " +
-                        selectedTicket?.lastName}
-                      <br />
-                      Email: {selectedTicket?.email}
+                      <p className="text-black">Regards,</p>
+                      <div className="d-flex">
+                        <p className="text-black">Name:</p>
+                        <p className="text-black">
+                          {selectedTicket?.firstName +
+                            " " +
+                            selectedTicket?.lastName}
+                        </p>
+                      </div>
+                      <div className="d-flex">
+                        <p className="text-black">Email:</p>
+                        <p className="text-black">{selectedTicket?.email}</p>
+                      </div>
                       <br />
                       <br />
                       Enrollment Number: {selectedTicket?.enrollmentNumber}

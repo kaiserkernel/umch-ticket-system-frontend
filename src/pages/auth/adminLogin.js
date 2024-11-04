@@ -132,7 +132,6 @@ function AdminLogin() {
       <Header />
       <div className="login">
         <div className="login-content">
-          <ToastContainer />
           <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
             <h1 className="text-center">Sign In</h1>
             <div className="text-inverse text-opacity-50 text-center mb-4">

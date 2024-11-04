@@ -93,12 +93,27 @@ function SidebarNav() {
     if (menu.title === "Account Management" && userRole !== 0) {
       return false; // Exclude for non-admins
     }
+
     return true; // Include other items
   });
 
+  const updatedMenuItems = filteredMenu.map((item) => {
+    if (item.children) {
+      return {
+        ...item,
+        children: item.children.filter((child) => {
+          if (child.title === "Compose" && userRole !== 0) {
+            return false;
+          }
+          return true;
+        }),
+      };
+    }
+    return item;
+  });
   return (
     <div className="menu mt-3 mt-md-4">
-      {filteredMenu.map((menu, i) => (
+      {updatedMenuItems.map((menu, i) => (
         <NavItem key={i} menu={menu} />
       ))}
     </div>

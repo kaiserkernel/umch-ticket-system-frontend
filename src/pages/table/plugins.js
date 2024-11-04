@@ -342,7 +342,6 @@ function AccountManagement() {
   return (
     <div className="">
       <div className="row ">
-        <ToastContainer />
         <div className="col-xl-12">
           <div className="row bs-gutter-x-0">
             <div className="col-xl-12">
