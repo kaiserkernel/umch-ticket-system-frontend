@@ -106,10 +106,12 @@ function EmailInbox() {
     navigate("/home", { replace: true });
   };
 
-  const handleSelectTicket = (ticket_id) => {
+  const handleSelectTicket = async (ticket_id) => {
     console.log(ticket_id);
     if (ticket_id) {
       const result = ticketData.find((ticket) => ticket._id === ticket_id);
+      // const res = FormService.getInquiryByInquiryId(ticket_id);
+      // console.log(res);
 
       setTicketId(ticket_id);
       setSelectedTicket(result);
@@ -387,9 +389,23 @@ function EmailInbox() {
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
-            <Link className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15">
-              Open Ticket<i className="fa fa-pen fs-12px ms-1"></i>
-            </Link>
+            {userData?.role != 2 && (
+              <Link
+                to="/email/compose"
+                className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
+              >
+                New Message <i className="fa fa-pen fs-12px ms-1"></i>
+              </Link>
+            )}
+
+            {userData?.role == 2 && (
+              <Link
+                onClick={handleClickOpenTicket}
+                className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
+              >
+                Open Ticket<i className="fa fa-pen fs-12px ms-1"></i>
+              </Link>
+            )}
           </div>
         </div>
         <div className="mailbox-body">
