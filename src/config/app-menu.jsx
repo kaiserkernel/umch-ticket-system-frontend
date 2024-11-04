@@ -3,10 +3,7 @@ const Menu = [
     path: "/email",
     icon: "bi bi-envelope",
     title: "Tickets",
-    children: [
-      { path: "/email/inbox", title: "All Tickets" },
-      { path: "/email/compose", title: "Compose" },
-    ],
+    children: [{ path: "/email/inbox", title: "All Tickets" }],
   },
   { path: "/profile", icon: "bi bi-people", title: "Profile" },
   {

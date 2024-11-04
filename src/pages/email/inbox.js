@@ -387,23 +387,9 @@ function EmailInbox() {
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
-            {userData?.role != 2 && (
-              <Link
-                to="/email/compose"
-                className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
-              >
-                New Message <i className="fa fa-pen fs-12px ms-1"></i>
-              </Link>
-            )}
-
-            {userData?.role == 2 && (
-              <Link
-                onClick={handleClickOpenTicket}
-                className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
-              >
-                Open Ticket<i className="fa fa-pen fs-12px ms-1"></i>
-              </Link>
-            )}
+            <Link className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15">
+              Open Ticket<i className="fa fa-pen fs-12px ms-1"></i>
+            </Link>
           </div>
         </div>
         <div className="mailbox-body">
