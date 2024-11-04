@@ -109,7 +109,7 @@ function Header() {
       </div>
 
       <div className="menu">
-        <div className="menu-item dropdown dropdown-mobile-full">
+        {(userData.role == 2 || userData.role == 1) && <div className="menu-item dropdown dropdown-mobile-full">
           <a
             href="#/"
             data-bs-toggle="dropdown"
@@ -136,7 +136,7 @@ function Header() {
               </div>
             </div>
           </div>
-        </div>
+        </div>}
         <div className="menu-item dropdown">
           <a href="#/" onClick={toggleAppHeaderSearch} className="menu-link">
             <div className="menu-icon text-white">
