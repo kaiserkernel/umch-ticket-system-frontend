@@ -21,6 +21,10 @@ class FormSevice {
     const getInquiriesByEnrollmentNumberEndPoint = `/api/admin/inquiries/${id}`;
     return await HttpService.get(getInquiriesByEnrollmentNumberEndPoint);
   };
+  getInquiryByInquiryId = async (id) => {
+    const getInquiryByIdEndPoint = `/api/admin/inquiries/${id}`;
+    return await HttpService.patch(getInquiryByIdEndPoint);
+  };
 }
 
 export default new FormSevice();
