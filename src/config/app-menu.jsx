@@ -6,7 +6,6 @@ const Menu = [
     children: [
       { path: "/email/inbox", title: "All Tickets" },
       { path: "/email/compose", title: "Compose" },
-      { path: "/email/detail", title: "Detail" },
     ],
   },
   { path: "/profile", icon: "bi bi-people", title: "Profile" },
