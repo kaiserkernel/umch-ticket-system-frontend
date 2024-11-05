@@ -638,8 +638,6 @@ function EmailInbox() {
                           </span>
                         </div>
 
-
-                        {ticket?.inquiryCategory}
                         <div className="text-white fw-bold">
                           {
                             INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
