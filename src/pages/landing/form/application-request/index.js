@@ -101,7 +101,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    change_study_group: {
+    3: {
       hidden: { scaleY: 0, opacity: 0 },
       visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
       exit: {
@@ -111,7 +111,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    demonstrator_student: {
+    4: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -127,7 +127,7 @@ const ApplicationRequests = () => {
       },
     },
 
-    enrollment: {
+    5: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -142,7 +142,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    exam_inspection: {
+    6: {
       hidden: { scaleY: 0, opacity: 0 },
       visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
       exit: {
@@ -152,7 +152,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    online_catalogue: {
+    7: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -167,7 +167,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    recognition_courses: {
+    8: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -182,7 +182,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    recognition_internship: {
+    9: {
       hidden: { scaleY: 0, opacity: 0 },
       visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
       exit: {
@@ -192,7 +192,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    short_term_borrow_diploma: {
+    10: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -207,7 +207,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    syllabus_academic_year: {
+    11: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -222,7 +222,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    transcript_records: {
+    12: {
       hidden: { scaleY: 0, opacity: 0 },
       visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
       exit: {
@@ -232,7 +232,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    transfer_targu_mures: {
+    13: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -247,7 +247,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 },
       },
     },
-    other: {
+    14: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -271,18 +271,56 @@ const ApplicationRequests = () => {
         applicationRequest={formInquiryData.applicationRequest}
       />
     ),
-    change_study_group: <ChangeStudyGroup />,
-    demonstrator_student: <DemonstratorStudent />,
-    enrollment: <Enrollment />,
-    exam_inspection: <ExamInspection />,
-    online_catalogue: <OnlineCatalogue />,
-    recognition_courses: <RecognitionCourses />,
-    recognition_internship: <RecognitionInternship />,
-    short_term_borrow_diploma: <ShortTermBorrowDiploma />,
-    syllabus_academic_year: <SyllabusAcademicYear />,
-    transcript_records: <TranscriptRecords />,
-    transfer_targu_mures: <TransferTarguMures />,
-    other: <Other />,
+    3: (
+      <ChangeStudyGroup
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    4: (
+      <DemonstratorStudent
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    5: <Enrollment applicationRequest={formInquiryData.applicationRequest} />,
+    6: (
+      <ExamInspection applicationRequest={formInquiryData.applicationRequest} />
+    ),
+    7: (
+      <OnlineCatalogue
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    8: (
+      <RecognitionCourses
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    9: (
+      <RecognitionInternship
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    10: (
+      <ShortTermBorrowDiploma
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    11: (
+      <SyllabusAcademicYear
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    12: (
+      <TranscriptRecords
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    13: (
+      <TransferTarguMures
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
+    14: <Other applicationRequest={formInquiryData.applicationRequest} />,
   };
   return (
     <div className="pt-5">
@@ -319,30 +357,18 @@ const ApplicationRequests = () => {
               <option value="default">– Select –</option>
               <option value="1">Absence</option>
               <option value="2">Change of teaching hospital</option>
-              <option value="change_study_group">Change of study group</option>
-              <option value="demonstrator_student">Demonstrator student</option>
-              <option value="enrollment">Enrollment</option>
-              <option value="exam_inspection">Exam inspection</option>
-              <option value="online_catalogue">
-                Online Catalogue (Carnet)
-              </option>
-              <option value="recognition_courses">
-                Recognition of Courses
-              </option>
-              <option value="recognition_internship">
-                Recognition of Internship
-              </option>
-              <option value="short_term_borrow_diploma">
-                Short term borrow of Diploma
-              </option>
-              <option value="syllabus_academic_year">
-                Syllabus of the academic year
-              </option>
-              <option value="transcript_records">Transcript of Records</option>
-              <option value="transfer_targu_mures">
-                Transfer to Targu Mures
-              </option>
-              <option value="other">Other</option>
+              <option value="3">Change of study group</option>
+              <option value="4">Demonstrator student</option>
+              <option value="5">Enrollment</option>
+              <option value="6">Exam inspection</option>
+              <option value="7">Online Catalogue (Carnet)</option>
+              <option value="8">Recognition of Courses</option>
+              <option value="9">Recognition of Internship</option>
+              <option value="10">Short term borrow of Diploma</option>
+              <option value="11">Syllabus of the academic year</option>
+              <option value="12">Transcript of Records</option>
+              <option value="13">Transfer to Targu Mures</option>
+              <option value="14">Other</option>
             </Form.Control>
           </Form.Group>
           {errors.applicationRequest && (
