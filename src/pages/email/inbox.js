@@ -13,6 +13,18 @@ import { DownTimer } from "../../components/downTimer/downTimer.jsx";
 
 import Absence from "./inquiryTemplate/absence.js";
 import ChangeTeachingHospital from "./inquiryTemplate/changeTeachingHospital.js";
+import ChangeStudyGroup from "./inquiryTemplate/changeStudyGroup.js";
+import DemonstratorStudent from "./inquiryTemplate/demonstratorStudent.js";
+import Enrollment from "./inquiryTemplate/enrollment.js";
+import ExamInspection from "./inquiryTemplate/examInspection.js";
+import OnlineCatalogue from "./inquiryTemplate/onlineCatalogue.js";
+import RecognitionCourses from "./inquiryTemplate/recognitionCourses.js";
+import RecognitionInternship from "./inquiryTemplate/recognitionInternship.js";
+import ShotTermBorrowDiploma from "./inquiryTemplate/shortTermBorrowDiploma.js";
+import SyllabusAcademic from "./inquiryTemplate/syllabusAcademic.js";
+import TranscriptRecords from "./inquiryTemplate/transcriptRecords.js";
+import TransferTarguMures from "./inquiryTemplate/transferTarguMures.js";
+import Other from "./inquiryTemplate/other.js";
 
 const INQUIRYCATEGORIES = [
   {
@@ -24,19 +36,54 @@ const INQUIRYCATEGORIES = [
         subCategory1: "Change of teaching hospital",
         component: "ChangeTeachingHospital",
       },
-
-      "Change of study group",
-      "Demonstrator student",
-      "Enrollment",
-      "Exam inspection",
-      "Online Catalogue (Carnet)",
-      "Recognition of Courses",
-      "Recognition of Internship",
-      "Short term borrow of Diploma",
-      "Syllabus of the academic year",
-      "Transcript of Records",
-      "Transfer to Targu Mures",
-      "Other",
+      {
+        subCategory1: "Change of study group",
+        component: "ChangeStudyGroup",
+      },
+      {
+        subCategory1: "Demonstrator student",
+        component: "DemonstratorStudent",
+      },
+      {
+        subCategory1: "Enrollment",
+        component: "Enrollment",
+      },
+      {
+        subCategory1: "Exam inspection",
+        component: "ExamInspection",
+      },
+      {
+        subCategory1: "Online Catalogue (Carnet)",
+        component: "OnlineCatalogue",
+      },
+      {
+        subCategory1: "Recognition of Courses",
+        component: "RecognitionCourses",
+      },
+      {
+        subCategory1: "Recognition of Internship",
+        component: "RecognitionInternship",
+      },
+      {
+        subCategory1: "Short term borrow of Diploma",
+        component: "ShotTermBorrowDiploma",
+      },
+      {
+        subCategory1: "Syllabus of the academic year",
+        component: "SyllabusAcademic",
+      },
+      {
+        subCategory1: "Transcript of Records",
+        component: "TranscriptRecords",
+      },
+      {
+        subCategory1: "Transfer to Targu Mures",
+        component: "TransferTarguMures",
+      },
+      {
+        subCategory1: "Other",
+        component: "Other",
+      },
     ],
   },
 
@@ -100,6 +147,43 @@ function EmailInbox() {
       case "ChangeTeachingHospital":
         return <ChangeTeachingHospital selectedTicket={selectedTicket} />;
         break;
+      case "ChangeStudyGroup":
+        return <ChangeStudyGroup selectedTicket={selectedTicket} />;
+        break;
+      case "DemonstratorStudent":
+        return <DemonstratorStudent selectedTicket={selectedTicket} />;
+        break;
+      case "Enrollment":
+        return <Enrollment selectedTicket={selectedTicket} />;
+        break;
+      case "ExamInspection":
+        return <ExamInspection selectedTicket={selectedTicket} />;
+        break;
+      case "OnlineCatalogue":
+        return <OnlineCatalogue selectedTicket={selectedTicket} />;
+        break;
+      case "RecognitionCourses":
+        return <RecognitionCourses selectedTicket={selectedTicket} />;
+        break;
+      case "RecognitionInternship":
+        return <RecognitionInternship selectedTicket={selectedTicket} />;
+        break;
+      case "ShotTermBorrowDiploma":
+        return <ShotTermBorrowDiploma selectedTicket={selectedTicket} />;
+        break;
+      case "SyllabusAcademic":
+        return <SyllabusAcademic selectedTicket={selectedTicket} />;
+        break;
+      case "TranscriptRecords":
+        return <TranscriptRecords selectedTicket={selectedTicket} />;
+        break;
+      case "TransferTarguMures":
+        return <TransferTarguMures selectedTicket={selectedTicket} />;
+        break;
+      case "Other":
+        return <Other selectedTicket={selectedTicket} />;
+        break;
+
       default:
         break;
     }

@@ -1,7 +1,181 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Form } from "react-bootstrap";
+import { FormContext } from "../index";
+import FormService from "../../../../sevices/form-service";
+import { ToastContainer, toast } from "react-toastify";
 
-const Enrollment = () => {
+const Enrollment = ({ applicationRequest }) => {
+  const {
+    isFormSubmit,
+    setIsFormSubmit,
+    setFormData,
+    formData,
+    mainPageErrors,
+  } = useContext(FormContext);
+
+  const [errors, setErrors] = useState({});
+  const [formDetailData, setformDetailData] = useState({
+    nationality: "",
+    currentYearOfStudy: "",
+    comment: "",
+  });
+
+  const [files, setFiles] = useState([]);
+  const [originalFiles, setOriginalFiles] = useState([]);
+
+  useEffect(() => {
+    setIsFormSubmit(false);
+    setErrors({});
+
+    return () => {
+      setIsFormSubmit(false);
+      setErrors({});
+    };
+  }, []);
+
+  const handleFileChange = (event) => {
+    const newFile = event.target.files[0];
+
+    setOriginalFiles((previousOriginalFiles) => [
+      ...previousOriginalFiles,
+      newFile,
+    ]);
+
+    if (newFile) {
+      let previewUrl;
+      let fileType = newFile.type;
+      if (!fileType.includes("image")) {
+        previewUrl = "/assets/img/pdf.svg";
+      } else {
+        previewUrl = URL.createObjectURL(newFile);
+      }
+      const fileData = {
+        file: newFile,
+        previewUrl: previewUrl,
+        progress: 0,
+      };
+      setFiles((prevFiles) => [...prevFiles, fileData]);
+      uploadFile(fileData);
+    }
+  };
+
+  const uploadFile = (fileData) => {
+    const uploadInterval = setInterval(() => {
+      setFiles((prevFiles) =>
+        prevFiles.map((file) =>
+          file.file.name === fileData.file.name && file.progress < 100
+            ? { ...file, progress: file.progress + 10 }
+            : file
+        )
+      );
+    }, 200);
+
+    setTimeout(() => {
+      clearInterval(uploadInterval);
+    }, 2000);
+  };
+
+  const removeFile = (fileName) => {
+    setFiles((prevFiles) =>
+      prevFiles.filter((file) => file.file.name !== fileName)
+    );
+  };
+
+  const handleChange = (e) => {
+    setformDetailData({
+      ...formDetailData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  useEffect(() => {
+    const successNotify = (msg) => {
+      toast.info(msg, {
+        autoClose: 3000, // Duration in milliseconds
+      });
+    };
+
+    const errorNotify = (msg) => {
+      toast.warning(msg, {
+        autoClose: 3000, // Duration in milliseconds
+      });
+    };
+
+    const createTicket = async () => {
+      if (isFormSubmit != 0) {
+        if (validate()) {
+          if (Object.keys(mainPageErrors).length == 0) {
+            let jsonFormDetailData = JSON.stringify(formDetailData);
+
+            let applicationRequestObject = { subCategory1: applicationRequest };
+
+            const combinedFormData = Object.assign(
+              {},
+              formData,
+              applicationRequestObject
+            );
+
+            const formDataToSend = new FormData();
+            for (const key in combinedFormData) {
+              formDataToSend.append(key, formData[key]);
+            }
+            formDataToSend.append("details", jsonFormDetailData);
+            originalFiles.forEach((file) => {
+              formDataToSend.append("documents", file);
+            });
+
+            try {
+              let res = await FormService.createInquiry(formDataToSend);
+              successNotify(res?.message);
+              setformDetailData({
+                ...formDetailData,
+                nationality: "",
+                currentYearOfStudy: "",
+                comment: "",
+              });
+              setFiles([]);
+              setOriginalFiles([]);
+              setFormData({
+                ...formData,
+                agreement: false,
+              });
+            } catch (err) {
+              const errors = err?.errors || err?.error;
+
+              if (typeof errors != "object") {
+                errorNotify(errors);
+              } else {
+                console.log(typeof errors);
+                errors.map((error) => {
+                  errorNotify(error.msg);
+                });
+              }
+            }
+          }
+        }
+      }
+    };
+    createTicket();
+  }, [isFormSubmit]);
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formDetailData.nationality) {
+      newErrors.nationality = "This field is required";
+    }
+    if (
+      formDetailData.currentYearOfStudy == "default" ||
+      formDetailData.currentYearOfStudy == ""
+    ) {
+      newErrors.currentYearOfStudy = "This field is required";
+    }
+
+    console.log(newErrors, "========newErrors");
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   return (
     <div className="">
       <Row className="mt-2 g-4 g-md-4">
@@ -14,10 +188,16 @@ const Enrollment = () => {
             <Form.Control
               type="text"
               placeholder=""
+              name="nationality"
+              value={formDetailData.nationality}
+              onChange={handleChange}
               className="custom-input"
               autoComplete="off"
             />
           </Form.Group>
+          {errors.nationality && (
+            <p className="error-content">{errors.nationality}</p>
+          )}
         </Col>
         <Col lg={6}>
           <Form.Group>
@@ -27,6 +207,9 @@ const Enrollment = () => {
             </Form.Label>
             <Form.Control
               as="select"
+              name="currentYearOfStudy"
+              value={formDetailData.currentYearOfStudy}
+              onChange={handleChange}
               style={{
                 appearance: "none", // Hides the default arrow
                 MozAppearance: "none", // For Firefox
@@ -39,14 +222,17 @@ const Enrollment = () => {
               className="custom-input"
             >
               <option value="default">– Select –</option>
-              <option value="1">1st year</option>
-              <option value="2">2nd year</option>
-              <option value="3">3rd year</option>
-              <option value="4">4th year</option>
-              <option value="5">5th year</option>
-              <option value="6">6th year</option>
+              <option value="1st year">1st year</option>
+              <option value="2nd year">2nd year</option>
+              <option value="3rd year">3rd year</option>
+              <option value="4th year">4th year</option>
+              <option value="5th year">5th year</option>
+              <option value="6th year">6th year</option>
             </Form.Control>
           </Form.Group>
+          {errors.currentYearOfStudy && (
+            <p className="error-content">{errors.currentYearOfStudy}</p>
+          )}
         </Col>
       </Row>
 
@@ -58,6 +244,9 @@ const Enrollment = () => {
               as="textarea"
               rows={6}
               placeholder=""
+              name="comment"
+              value={formDetailData.comment}
+              onChange={handleChange}
               className="custom-textarea-input"
             />
           </Form.Group>
