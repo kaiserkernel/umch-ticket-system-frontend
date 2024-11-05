@@ -255,13 +255,81 @@ const Enrollment = ({ applicationRequest }) => {
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="">
-            <Form.Label className="input-label mb-0">Upload File</Form.Label>
-            <div className="text-center">
-              <div className="mt-3 btn btn-primary px-4 py-2 upload-btn">
-                <div className="d-flex flex-column"></div>
-              </div>
-            </div>
+            <Form.Label className="input-label mb-0">File Upload</Form.Label>
           </Form.Group>
+          <input
+            type="file"
+            name="file"
+            id="file"
+            accept=".pdf"
+            style={{ visibility: "hidden" }}
+            onChange={handleFileChange}
+          />
+          <label htmlFor="file" className="btn btn-primary upload-btn"></label>
+          <div className="d-flex flex-column mt-3">
+            {files.map((fileObj, index) => (
+              <div
+                className="d-flex border mb-3"
+                key={index}
+                style={{ position: "relative" }}
+              >
+                {fileObj.previewUrl && (
+                  <img
+                    src={fileObj.previewUrl}
+                    alt="File Preview"
+                    style={{ width: "80px", height: "80px" }}
+                  />
+                )}
+                {fileObj.progress > 0 && (
+                  <div className="d-flex flex-column justify-content-center flex-grow-1 px-2">
+                    <span className="mb-1" style={{ fontSize: "11px" }}>
+                      {fileObj.file.name}
+                    </span>
+                    <div
+                      style={{
+                        background: "#eee",
+                        height: "7px",
+                        width: "100%",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: `${fileObj.progress}%`,
+                          borderRadius: "10px",
+                          height: "100%",
+                          background: "#1a7efb",
+                          transition: "width 0.2s",
+                        }}
+                      ></div>
+                    </div>
+                    <div className="mt-1" style={{ fontSize: "11px" }}>
+                      <span className="me-2">
+                        {fileObj.progress}% Completed
+                      </span>
+                      <span>{(fileObj.file.size / 1024).toFixed(2)} KB</span>
+                    </div>
+                  </div>
+                )}
+                <button
+                  onClick={() => removeFile(fileObj.file.name)}
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                    background: "transparent",
+                    color: "red",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "20px",
+                    height: "20px",
+                    cursor: "pointer",
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
+          </div>
         </Col>
       </Row>
     </div>
