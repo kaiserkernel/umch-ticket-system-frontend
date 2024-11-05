@@ -944,7 +944,7 @@ function EmailInbox() {
                     <i className="bi bi-inbox text-theme text-opacity-50"></i>
                   </div>
                   <div className="mailbox-empty-message-title">
-                    No message selected
+                    No tickets selected
                   </div>
                 </div>
               )}
