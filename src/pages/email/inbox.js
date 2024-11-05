@@ -111,6 +111,7 @@ function EmailInbox() {
   const [userPermissionCategory, setUserPermissonCategory] = useState();
   const [activeTab, setActiveTab] = useState("All");
   const [isTicketStatusChange, setTicketStatusChange] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const ticketStatus = ["Received", "Checked", "Approved", "Rejected"];
   const ticketStatusBadge = ["secondary", "success", "info", "danger"];
@@ -339,8 +340,11 @@ function EmailInbox() {
     if (userRole != 2) {
       const allTickets = await FormService.getAllInquiries();
       console.log(allTickets.inquiries);
+      const filteredAllTickets = allTickets.inquiries.filter(
+        (ticket) => ticket.status === 0 || ticket.status === 1
+      );
 
-      setTicketData(allTickets.inquiries);
+      setTicketData(filteredAllTickets);
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
@@ -378,13 +382,17 @@ function EmailInbox() {
       return 1000 * 60 * 60 * 24 * 4 - (endDate - startDate);
     } else if (startDate.getDay() == 0) {
       return (
-        (1000 * 60 * 60 * 24 * 3 - (startDate % (1000 * 60 * 60 * 24))) - (endDate - startDate)
+        1000 * 60 * 60 * 24 * 3 -
+        (startDate % (1000 * 60 * 60 * 24)) -
+        (endDate - startDate)
       );
     } else if (startDate.getDay() == 6) {
       return (
-        (1000 * 60 * 60 * 24 * 4 - (startDate % (1000 * 60 * 60 * 24))) - (endDate - startDate)
+        1000 * 60 * 60 * 24 * 4 -
+        (startDate % (1000 * 60 * 60 * 24)) -
+        (endDate - startDate)
       );
-    } else return (1000 * 60 * 60 * 24 * 2 - (endDate - startDate));
+    } else return 1000 * 60 * 60 * 24 * 2 - (endDate - startDate);
   };
 
   const handleDownload = async (fileUrl, fileName) => {
@@ -429,11 +437,14 @@ function EmailInbox() {
 
   const handleInquiryAccept = async (id) => {
     try {
+      setLoading(true)
+
       const res = await FormService.acceptInquiry(id);
       setTicketStatusChange(false);
       console.log(res?.message);
       console.log(res);
       successNotify(res?.message);
+      setLoading(false)
     } catch (err) {
       if (err?.message) {
         errorNotify(err?.message);
@@ -490,6 +501,7 @@ function EmailInbox() {
       autoClose: 5000, // Duration in milliseconds
     });
   };
+  console.log("ticketdata", ticketData);
 
   return (
     <div className="h-100 border border-gray">
@@ -643,12 +655,16 @@ function EmailInbox() {
                           }
                         </div>
                         <div className="mailbox-desc">{ticket?.email}</div>
-                        <DownTimer
-                          remainTime={getTimeRemain(
-                            new Date(ticket?.createdAt),
-                            new Date()
-                          )}
-                        />
+                        {userData?.role != 2 ? (
+                          <DownTimer
+                            remainTime={getTimeRemain(
+                              new Date(ticket?.createdAt),
+                              new Date()
+                            )}
+                          />
+                        ) : (
+                          ticketStatus(ticket?.status)
+                        )}
                       </div>
                     </div>
                   ))
@@ -663,293 +679,297 @@ function EmailInbox() {
               </div>
             </PerfectScrollbar>
           </div>
+
           <div
             className={`mailbox-content d-lg-block ${showTicketDetail ? "" : "d-none"
               }`}
           >
-            <PerfectScrollbar className="h-100">
-              {ticketId ? (
-                <div className="mailbox-detail">
-                  {userRole != 2 && (
-                    <div className="d-flex gap-5 mailbox-detail-header">
-                      <a className="btn btn-primary rounded-pill">
-                        Reply to the student
-                      </a>
-                      <a className="btn btn-primary rounded-pill">
-                        Add internal note
-                      </a>
-                      <a className="btn btn-primary rounded-pill">
-                        Pass to another department
-                      </a>
-                      <a className="btn btn-light rounded-pill">
-                        Close the ticket
-                      </a>
-                    </div>
-                  )}
-                  <div className="mailbox-detail-header">
-                    <div className="d-flex " style={{ wordBreak: "break-all" }}>
-                      <a href="#/">
-                        <img
-                          src="/assets/img/user/user-1.jpg"
-                          alt=""
-                          width="40"
-                          className="rounded-circle"
-                        />
-                      </a>
-                      <div className="flex-fill ms-3">
-                        <div className="d-lg-flex align-items-center">
-                          <div className="flex-1 mt-3">
-                            <div className="fw-600">
-                              {selectedTicket?.firstName +
-                                " " +
-                                selectedTicket?.lastName +
-                                "<" +
-                                selectedTicket?.email +
-                                ">"}
-                            </div>
-                            <div className="fs-13px">
-                              <span>
-                                {" "}
-                                {getTimeDifference(
-                                  new Date(selectedTicket?.createdAt),
-                                  new Date()
-                                )}{" "}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="fs-12px text-white text-opacity-50 text-lg-end mt-lg-0 mt-3">
-                            Nov 27, 2024{" "}
-                            <span className="d-none d-lg-inline">
-                              <br />
-                            </span>
-                            at 7.00pm
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mailbox-detail-content">
-                    <div className="d-flex gap-3 mb-3">
-                      <h4 className="mb-0">
-                        {
-                          INQUIRYCATEGORIES[
-                          selectedTicket?.inquiryCategory - 1
-                          ]["subCategories"][selectedTicket?.subCategory1 - 1][
-                          "subCategory1"
-                          ]
-                        }{" "}
-                        Request from{" "}
-                        {selectedTicket?.firstName +
-                          " " +
-                          selectedTicket?.lastName}
-                      </h4>
-
-                      {selectedTicket && (
-                        <Badge
-                          style={{ fontSize: "14px", fontWeight: "300" }}
-                          bg={ticketStatusBadge[selectedTicket?.status]}
-                        >
-                          {ticketStatus[selectedTicket?.status]}
-                        </Badge>
-                      )}
-                    </div>
-
-                    <div className="d-flex">
-                      {attachments &&
-                        attachments.map((attachment, index) => (
-                          <div
-                            className="mailbox-detail-attachment"
-                            key={index}
-                          >
-                            <div className="mailbox-attachment">
-                              <a
-                                href="#"
-                                download
-                                onClick={(e) =>
-                                  handleDownload(
-                                    host + attachment?.url,
-                                    attachment?.filename
-                                  )
-                                }
-                              >
-                                <div className="document-file">
-                                  <i className="fa fa-file-archive"></i>
-                                </div>
-                                <div className="document-name">
-                                  {attachment?.filename}
-                                </div>
-                              </a>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                    {attachments.length != 0 ? (
-                      <div
-                        className="mb-3"
-                        onClick={(e) => handleDownloadAll(e)}
-                      >
-                        <a className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded">
-                          Download
+            {loading ? (
+              <div className="d-flex justify-content-center align-items-center h-100">
+                <div class="spinner-grow " role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+            ) : (
+              <PerfectScrollbar className="h-100">
+                {ticketId ? (
+                  <div className="mailbox-detail">
+                    {userRole != 2 && (
+                      <div className="d-flex gap-5 mailbox-detail-header">
+                        <a className="btn btn-primary rounded-pill">
+                          Reply to the student
+                        </a>
+                        <a className="btn btn-primary rounded-pill">
+                          Add internal note
+                        </a>
+                        <a className="btn btn-primary rounded-pill">
+                          Pass to another department
+                        </a>
+                        <a className="btn btn-light rounded-pill">
+                          Close the ticket
                         </a>
                       </div>
-                    ) : (
-                      <></>
                     )}
-                    <div className="mailbox-detail-body mt-5">
-                      <p className="text-black">Hi Dear Admin,</p>
-                      {renderContentTemplate()}
-                      <div className="mt-5">
-                        <p className="text-black">Regards,</p>
-                        <div className="d-flex">
-                          <p className="text-black">Name:</p>
-                          <p className="text-black">
-                            {selectedTicket?.firstName +
-                              " " +
-                              selectedTicket?.lastName}
-                          </p>
-                        </div>
-                        <div className="d-flex">
-                          <p className="text-black">Email:</p>
-                          <p className="text-black">{selectedTicket?.email}</p>
-                        </div>
-                        <div className="d-flex">
-                          <p className="text-black">Ticket Number:</p>
-                          <p className="text-black">
-                            {selectedTicket?.inquiryNumber}
-                          </p>
-                        </div>
-                      </div>
-                      <br />
-                      <br />
-                      Enrollment Number: {selectedTicket?.enrollmentNumber}
-                      <br />
-                    </div >
-                  </div >
-                  {userRole != 2 &&
-                    selectedTicket?.status != 2 &&
-                    selectedTicket?.status != 3 &&
-                    isTicketStatusChange && (
+                    <div className="mailbox-detail-header">
                       <div
-                        style={{
-                          borderTop: "1px solid",
-                          borderColor: "gray",
-                        }}
-                        className="pt-2 d-flex gap-3"
+                        className="d-flex "
+                        style={{ wordBreak: "break-all" }}
                       >
-                        <div
-                          class="btn-group w-100"
-                          role="group"
-                          aria-label="Basic example"
-                          style={{ maxWidth: "115px" }}
-                        >
-                          <button
-                            type="button"
-                            style={{
-                              backgroundColor: "#009be3",
-                              borderTopLeftRadius: "50px",
-                              borderBottomLeftRadius: "50px",
-                              borderRight: "1px solid orange",
-                            }}
-                            className="btn btn-info btn-left mailbox-detail-button pl-5"
-                            onClick={() =>
-                              handleInquiryAccept(selectedTicket?._id)
-                            }
-                          >
-                            Accept
-                          </button>
-                          <Dropdown type="button">
-                            {/* <button className="btn btn-info" style={{ backgroundColor: "#009be3" }}>Accept</button> */}
-                            <Dropdown.Toggle
-                              variant="success"
-                              id="dropdown-basic"
-                              className="btn btn-info dropdown-toggle"
-                              style={{
-                                borderTopRightRadius: "50px",
-                                borderBottomRightRadius: "50px",
-                              }}
-                            ></Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item
-                                href="#/action-1"
-                              >
-                                Accept with Internal Note
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                href="#/action-2"
-                              >
-                                Accept with Email
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </div>
-
-                        <div
-                          class="btn-group w-100"
-                          role="group"
-                          aria-label="Basic example"
-                          style={{ maxWidth: "115px" }}
-                        >
-                          <button
-                            type="button"
-                            style={{
-                              backgroundColor: "#e00000",
-                              borderTopLeftRadius: "50px",
-                              borderBottomLeftRadius: "50px",
-                              borderRight: "1px solid orange",
-                            }}
-                            className="btn btn-danger btn-left"
-                            onClick={() =>
-                              handleInquiryReject(selectedTicket?._id)
-                            }
-                          >
-                            Reject
-                          </button>
-                          <Dropdown type="button">
-                            <Dropdown.Toggle
-                              variant="danger"
-                              id="dropdown-basic"
-                              className="btn btn-danger dropdown-toggle"
-                              style={{
-                                borderTopRightRadius: "50px",
-                                borderBottomRightRadius: "50px",
-                              }}
-                            >
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              <Dropdown.Item
-                                href="#/action-1"
-                              >
-                                Accept with Internal Note
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                href="#/action-2"
-                              >
-                                Accept with Email
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
+                        <a href="#/">
+                          <img
+                            src="/assets/img/user/user-1.jpg"
+                            alt=""
+                            width="40"
+                            className="rounded-circle"
+                          />
+                        </a>
+                        <div className="flex-fill ms-3">
+                          <div className="d-lg-flex align-items-center">
+                            <div className="flex-1 mt-3">
+                              <div className="fw-600">
+                                {selectedTicket?.firstName +
+                                  " " +
+                                  selectedTicket?.lastName +
+                                  "<" +
+                                  selectedTicket?.email +
+                                  ">"}
+                              </div>
+                              <div className="fs-13px">
+                                <span>
+                                  {" "}
+                                  {getTimeDifference(
+                                    new Date(selectedTicket?.createdAt),
+                                    new Date()
+                                  )}{" "}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="fs-12px text-white text-opacity-50 text-lg-end mt-lg-0 mt-3">
+                              Nov 27, 2024{" "}
+                              <span className="d-none d-lg-inline">
+                                <br />
+                              </span>
+                              at 7.00pm
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    )
-                  }
-                </div >
-              ) : (
-                <div className="mailbox-empty-message">
-                  <div className="mailbox-empty-message-icon">
-                    <i className="bi bi-inbox text-theme text-opacity-50"></i>
+                    </div>
+                    <div className="mailbox-detail-content">
+                      <div className="d-flex gap-3 mb-3">
+                        <h4 className="mb-0">
+                          {
+                            INQUIRYCATEGORIES[
+                            selectedTicket?.inquiryCategory - 1
+                            ]["subCategories"][
+                            selectedTicket?.subCategory1 - 1
+                            ]["subCategory1"]
+                          }{" "}
+                          Request from{" "}
+                          {selectedTicket?.firstName +
+                            " " +
+                            selectedTicket?.lastName}
+                        </h4>
+
+                        {selectedTicket && (
+                          <Badge
+                            style={{ fontSize: "14px", fontWeight: "300" }}
+                            bg={ticketStatusBadge[selectedTicket?.status]}
+                          >
+                            {ticketStatus[selectedTicket?.status]}
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="d-flex">
+                        {attachments &&
+                          attachments.map((attachment, index) => (
+                            <div
+                              className="mailbox-detail-attachment"
+                              key={index}
+                            >
+                              <div className="mailbox-attachment">
+                                <a
+                                  href="#"
+                                  download
+                                  onClick={(e) =>
+                                    handleDownload(
+                                      host + attachment?.url,
+                                      attachment?.filename
+                                    )
+                                  }
+                                >
+                                  <div className="document-file">
+                                    <i className="fa fa-file-archive"></i>
+                                  </div>
+                                  <div className="document-name">
+                                    {attachment?.filename}
+                                  </div>
+                                </a>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                      {attachments.length != 0 ? (
+                        <div className="mb-3">
+                          <a
+                            className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded"
+                            onClick={(e) => handleDownloadAll(e)}
+                          >
+                            Download
+                          </a>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                      <div className="mailbox-detail-body mt-5">
+                        <p className="text-black">Hi Dear Admin,</p>
+                        {renderContentTemplate()}
+                        <div className="mt-5">
+                          <p className="text-black">Regards,</p>
+                          <div className="d-flex">
+                            <p className="text-black">Name:</p>
+                            <p className="text-black">
+                              {selectedTicket?.firstName +
+                                " " +
+                                selectedTicket?.lastName}
+                            </p>
+                          </div>
+                          <div className="d-flex">
+                            <p className="text-black">Email:</p>
+                            <p className="text-black">
+                              {selectedTicket?.email}
+                            </p>
+                          </div>
+                          <div className="d-flex">
+                            <p className="text-black">Ticket Number:</p>
+                            <p className="text-black">
+                              {selectedTicket?.inquiryNumber}
+                            </p>
+                          </div>
+                        </div>
+                        <br />
+                        <br />
+                        Enrollment Number: {selectedTicket?.enrollmentNumber}
+                        <br />
+                      </div>
+                    </div>
+                    {userRole != 2 &&
+                      selectedTicket?.status != 2 &&
+                      selectedTicket?.status != 3 &&
+                      isTicketStatusChange && (
+                        <div
+                          style={{
+                            borderTop: "1px solid",
+                            borderColor: "gray",
+                          }}
+                          className="pt-2 d-flex gap-3"
+                        >
+                          <div
+                            class="btn-group w-100"
+                            role="group"
+                            aria-label="Basic example"
+                            style={{ maxWidth: "115px" }}
+                          >
+                            <button
+                              type="button"
+                              style={{
+                                backgroundColor: "#009be3",
+                                borderTopLeftRadius: "50px",
+                                borderBottomLeftRadius: "50px",
+                                borderRight: "1px solid orange",
+                              }}
+                              className="btn btn-info btn-left mailbox-detail-button pl-5"
+                              onClick={() =>
+                                handleInquiryAccept(selectedTicket?._id)
+                              }
+                            >
+                              Accept
+                            </button>
+                            <Dropdown type="button">
+                              {/* <button className="btn btn-info" style={{ backgroundColor: "#009be3" }}>Accept</button> */}
+                              <Dropdown.Toggle
+                                variant="success"
+                                id="dropdown-basic"
+                                className="btn btn-info dropdown-toggle"
+                                style={{
+                                  borderTopRightRadius: "50px",
+                                  borderBottomRightRadius: "50px",
+                                }}
+                              ></Dropdown.Toggle>
+
+                              <Dropdown.Menu>
+                                <Dropdown.Item href="#/action-1">
+                                  Accept with Internal Note
+                                </Dropdown.Item>
+                                <Dropdown.Item href="#/action-2">
+                                  Accept with Email
+                                </Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </div>
+
+                          <div
+                            class="btn-group w-100"
+                            role="group"
+                            aria-label="Basic example"
+                            style={{ maxWidth: "115px" }}
+                          >
+                            <button
+                              type="button"
+                              style={{
+                                backgroundColor: "#e00000",
+                                borderTopLeftRadius: "50px",
+                                borderBottomLeftRadius: "50px",
+                                borderRight: "1px solid orange",
+                              }}
+                              className="btn btn-danger btn-left"
+                              onClick={() =>
+                                handleInquiryReject(selectedTicket?._id)
+                              }
+                            >
+                              Reject
+                            </button>
+                            <Dropdown type="button">
+                              <Dropdown.Toggle
+                                variant="danger"
+                                id="dropdown-basic"
+                                className="btn btn-danger dropdown-toggle"
+                                style={{
+                                  borderTopRightRadius: "50px",
+                                  borderBottomRightRadius: "50px",
+                                }}
+                              ></Dropdown.Toggle>
+
+                              <Dropdown.Menu>
+                                <Dropdown.Item href="#/action-1">
+                                  Reject with Internal Note
+                                </Dropdown.Item>
+                                <Dropdown.Item href="#/action-2">
+                                  Reject with Email
+                                </Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </div>
+                        </div>
+                      )}
                   </div>
-                  <div className="mailbox-empty-message-title">
-                    No tickets selected
+                ) : (
+                  <div className="mailbox-empty-message">
+                    <div className="mailbox-empty-message-icon">
+                      <i className="bi bi-inbox text-theme text-opacity-50"></i>
+                    </div>
+                    <div className="mailbox-empty-message-title">
+                      No tickets selected
+                    </div>
                   </div>
-                </div>
-              )}
-            </PerfectScrollbar >
-          </div >
-        </div >
-      </div >
-    </div >
+                )}
+              </PerfectScrollbar>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

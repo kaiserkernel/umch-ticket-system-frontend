@@ -32,14 +32,14 @@ function Profile() {
                   {roleName[userData.role]}
                 </div>
 
-                <div className="mb-1">
+                {/* <div className="mb-1">
                   <i className="fa fa-map-marker-alt fa-fw text-inverse text-opacity-50"></i>{" "}
                   New York, NY
                 </div>
                 <div className="mb-3">
                   <i className="fa fa-link fa-fw text-inverse text-opacity-50"></i>{" "}
                   seantheme.com/hud
-                </div>
+                </div> */}
 
                 <hr className="mt-4 mb-4" />
 
