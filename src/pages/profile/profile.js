@@ -48,7 +48,7 @@ function Profile() {
 
             <div className="profile-content">
               <div className="profile-content-headerCaption">
-                Wellcome to your Support-Dashboard
+                Wellcome to your UMCH Ticket System
               </div>
 
               <div className="profile-content-textCaption">
@@ -63,7 +63,7 @@ function Profile() {
               <Link to="/email/inbox" className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mr-5 py-3 fs-20px text-white">
                 Check all ticket
               </Link>
-              <Link className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white">
+              <Link className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white mb-5">
                 Edit your user profile
               </Link>
             </div>
