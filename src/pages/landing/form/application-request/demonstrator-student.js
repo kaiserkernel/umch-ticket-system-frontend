@@ -128,9 +128,7 @@ const DemonstratorStudent = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                reasonForAbsence: "",
-                timeFromAbsence: "",
-                timeToAbsence: "",
+                subject: "",
                 comment: "",
               });
               setFiles([]);

@@ -130,9 +130,9 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                reasonForAbsence: "",
-                timeFromAbsence: "",
-                timeToAbsence: "",
+                changePartner: "",
+                currentStudyGroup: "",
+                switchStudyGroup: "",
                 comment: "",
               });
               setFiles([]);
