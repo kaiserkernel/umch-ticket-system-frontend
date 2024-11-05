@@ -374,20 +374,17 @@ function EmailInbox() {
   };
 
   const getTimeRemain = (startDate, endDate) => {
-    let date = startDate;
-    if (date.getDay() > 3 && date.getDay() < 6) {
-      return endDate + 1000 * 60 * 60 * 24 * 2 - date;
-    } else if (date.getDay() == 0) {
+    if (startDate.getDay() > 3 && startDate.getDay() < 6) {
+      return 1000 * 60 * 60 * 24 * 4 - (endDate - startDate);
+    } else if (startDate.getDay() == 0) {
       return (
-        endDate - date + (1000 * 60 * 60 * 24 - (date % (1000 * 60 * 60 * 24)))
+        (1000 * 60 * 60 * 24 * 3 - (startDate % (1000 * 60 * 60 * 24))) - (endDate - startDate)
       );
-    } else if (date.getDay() == 6) {
+    } else if (startDate.getDay() == 6) {
       return (
-        endDate -
-        date +
-        (1000 * 60 * 60 * 24 * 2 - (date % (1000 * 60 * 60 * 24)))
+        (1000 * 60 * 60 * 24 * 4 - (startDate % (1000 * 60 * 60 * 24))) - (endDate - startDate)
       );
-    } else return endDate - date;
+    } else return (1000 * 60 * 60 * 24 * 2 - (endDate - startDate));
   };
 
   const handleDownload = async (fileUrl, fileName) => {
