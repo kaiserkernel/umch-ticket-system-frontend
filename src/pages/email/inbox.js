@@ -10,6 +10,44 @@ import { Badge } from "react-bootstrap";
 import Dropdown from "react-bootstrap/Dropdown";
 import "react-toastify/dist/ReactToastify.css";
 
+import Absence from "./inquiryTemplate/absence.js";
+import ChangeTeachingHospital from "./inquiryTemplate/changeTeachingHospital.js";
+
+const INQUIRYCATEGORIES = [
+  {
+    inquiryCategory: "Applications and Requests",
+    component: "",
+    subCategories: [
+      { subCategory1: "Absence", component: "Absence" },
+      {
+        subCategory1: "Change of teaching hospital",
+        component: "ChangeTeachingHospital",
+      },
+
+      "Change of study group",
+      "Demonstrator student",
+      "Enrollment",
+      "Exam inspection",
+      "Online Catalogue (Carnet)",
+      "Recognition of Courses",
+      "Recognition of Internship",
+      "Short term borrow of Diploma",
+      "Syllabus of the academic year",
+      "Transcript of Records",
+      "Transfer to Targu Mures",
+      "Other",
+    ],
+  },
+
+  "Book rental UMCH library",
+  "Campus IT",
+  "Complaints",
+  "Internship",
+  "Medical Abilities",
+  "Thesis",
+  "Other",
+];
+
 function EmailInbox() {
   const context = useContext(AppSettings);
   const navigate = useNavigate();
@@ -29,6 +67,19 @@ function EmailInbox() {
   const ticketStatus = ["Received", "Checked", "Approved", "Rejected"];
   const ticketStatusBadge = ["secondary", "success", "info", "danger"];
 
+  const [contentTemplate, setContentTemplate] = useState("Absence");
+
+  useEffect(() => {
+    if (selectedTicket) {
+      const ticketComponent =
+        INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1]["subCategories"][
+          selectedTicket?.subCategory1 - 1
+        ]["component"];
+      console.log(ticketComponent);
+      setContentTemplate(ticketComponent);
+    }
+  }, [selectedTicket]);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -40,6 +91,19 @@ function EmailInbox() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const renderContentTemplate = () => {
+    switch (contentTemplate) {
+      case "Absence":
+        return <Absence selectedTicket={selectedTicket} />;
+        break;
+      case "ChangeTeachingHospital":
+        return <ChangeTeachingHospital selectedTicket={selectedTicket} />;
+        break;
+      default:
+        break;
+    }
+    return <Absence />;
+  };
   let userData = localStorage.getItem("userData");
   userData = JSON.parse(userData);
   let userRole = "";
@@ -460,7 +524,15 @@ function EmailInbox() {
                         style={{ cursor: "pointer" }}
                       >
                         <div className="mailbox-sender">
-                          <span className="mailbox-sender-name">[Absence]</span>
+                          <span className="mailbox-sender-name">
+                            [
+                            {
+                              INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                                "subCategories"
+                              ][ticket?.subCategory1 - 1]["subCategory1"]
+                            }
+                            ]
+                          </span>
                           <span className="mailbox-time">
                             {getTimeDifference(
                               new Date(ticket?.createdAt),
@@ -470,7 +542,11 @@ function EmailInbox() {
                         </div>
 
                         <div className="text-black fw-bold">
-                          Application and Request
+                          {
+                            INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                              "inquiryCategory"
+                            ]
+                          }
                         </div>
                         <div className="mailbox-desc">{ticket?.email}</div>
                       </div>
@@ -556,7 +632,14 @@ function EmailInbox() {
                   <div className="mailbox-detail-content">
                     <div className="d-flex gap-3 mb-3">
                       <h4 className="mb-0">
-                        Absense Request from{" "}
+                        {
+                          INQUIRYCATEGORIES[
+                            selectedTicket?.inquiryCategory - 1
+                          ]["subCategories"][selectedTicket?.subCategory1 - 1][
+                            "subCategory1"
+                          ]
+                        }{" "}
+                        Request from{" "}
                         {selectedTicket?.firstName +
                           " " +
                           selectedTicket?.lastName}
@@ -615,44 +698,7 @@ function EmailInbox() {
                     )}
                     <div className="mailbox-detail-body mt-5">
                       <p className="text-black">Hi Dear Admin,</p>
-                      <div className="text-black">
-                        <p className="text-black fw-bold">
-                          Reason for Absence:
-                        </p>
-                        <p className="text-black">
-                          {selectedTicket?.details?.reasonForAbsence}
-                        </p>
-                        <div className="d-flex">
-                          <div className=" flex-grow-1">
-                            <p className="text-black fw-bold">
-                              Time From Absence:
-                            </p>
-                            <p className="text-black">
-                              {selectedTicket?.details?.timeFromAbsence
-                                ? moment(
-                                    selectedTicket?.details?.timeFromAbsence
-                                  ).format("MMMM DD, YYYY")
-                                : ""}
-                            </p>
-                          </div>
-                          <div className="flex-grow-1">
-                            <p className="text-black fw-bold">
-                              Time To Absence:
-                            </p>
-                            <p className="text-black">
-                              {selectedTicket?.details?.timeToAbsence
-                                ? moment(
-                                    selectedTicket?.details?.timeToAbsence
-                                  ).format("MMMM DD, YYYY")
-                                : ""}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-black fw-bold">Comments:</p>
-                        <p className="text-black">
-                          {selectedTicket?.details?.comment}
-                        </p>
-                      </div>
+                      {renderContentTemplate()}
                       <div className="mt-5">
                         <p className="text-black">Regards,</p>
                         <div className="d-flex">

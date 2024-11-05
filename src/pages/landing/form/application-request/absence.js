@@ -283,58 +283,6 @@ const Absence = ({ applicationRequest }) => {
               </Form.Label>
             </Form.Group>
 
-            {/* <input
-            type="file"
-            name="file"
-            id="file"
-            style={{ visibility: "hidden" }}
-            onChange={handleFileChange}
-          />
-          <label htmlFor="file" className="btn btn-primary upload-btn">
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-              }}
-            ></div>
-          </label>
-          <div className="d-flex border">
-            {file && (
-              <img
-                src={previewUrl}
-                alt="File Preview"
-                style={{ width: "80px", height: "80px" }}
-              />
-            )}
-            {uploadProgress > 0 && (
-              <div className="d-flex flex-column justify-content-center flex-grow-1 px-2">
-                <span className="mb-1" style={{ fontSize: "11px" }}>
-                  {file.name}
-                </span>
-                <div
-                  style={{ background: "#eee", height: "7px", width: "100%" }}
-                >
-                  <div
-                    style={{
-                      width: `${uploadProgress}%`,
-                      borderRadius: "10px",
-                      height: "100%",
-                      background: "#1a7efb",
-                      transition: "width 0.2s",
-                    }}
-                  ></div>
-                </div>
-                <div className="mt-1" style={{ fontSize: "11px" }}>
-                  <span className="me-2">{uploadProgress}% Completed</span>
-                  <span>{(file.size / 1024).toFixed(2)} KB</span>
-                </div>
-              </div>
-            )}
-          </div> */}
-
             <input
               type="file"
               name="file"
