@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../landing/header/index.js";
+import BannerSection from "../landing/banner/index.js";
 
 const PagesRegister = () => {
   const context = useContext(AppSettings);
@@ -141,6 +142,7 @@ const PagesRegister = () => {
   return (
     <>
       <Header />
+      <BannerSection />
       <div className="register">
         <div className="register-content">
           <form onSubmit={handleSubmit} className="bg-gray-auth p-3 p-md-5">

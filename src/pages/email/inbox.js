@@ -7,6 +7,7 @@ import moment from "moment";
 import FormService from "../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 import { Badge } from "react-bootstrap";
+import Dropdown from "react-bootstrap/Dropdown";
 import "react-toastify/dist/ReactToastify.css";
 
 function EmailInbox() {
@@ -110,8 +111,6 @@ function EmailInbox() {
     console.log(ticket_id);
     if (ticket_id) {
       const result = ticketData.find((ticket) => ticket._id === ticket_id);
-      // const res = FormService.getInquiryByInquiryId(ticket_id);
-      // console.log(res);
 
       setTicketId(ticket_id);
       setSelectedTicket(result);
@@ -336,24 +335,21 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               to=""
-              className={`mailbox-toolbar-link ${
-                activeTab == "All" ? "active" : ""
-              } `}
+              className={`mailbox-toolbar-link ${activeTab == "All" ? "active" : ""
+                } `}
               onClick={handleShowAllTickets}
             >
               All
             </Link>
           </div>
           <div
-            className={`mailbox-toolbar-item ${
-              showTicketDetail ? "" : "d-none"
-            }`}
+            className={`mailbox-toolbar-item ${showTicketDetail ? "" : "d-none"
+              }`}
           >
             <Link
               to=""
-              className={`mailbox-toolbar-link ${
-                showTicketDetail ? "active" : ""
-              } `}
+              className={`mailbox-toolbar-link ${showTicketDetail ? "active" : ""
+                } `}
             >
               Detail
             </Link>
@@ -361,9 +357,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowApprovedTickets}
-              className={`mailbox-toolbar-link ${
-                activeTab == "Approved" ? "active" : ""
-              } `}
+              className={`mailbox-toolbar-link ${activeTab == "Approved" ? "active" : ""
+                } `}
             >
               Approved
             </Link>
@@ -371,9 +366,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowRejectedTickets}
-              className={`mailbox-toolbar-link ${
-                activeTab == "Rejected" ? "active" : ""
-              } `}
+              className={`mailbox-toolbar-link ${activeTab == "Rejected" ? "active" : ""
+                } `}
             >
               Rejected
             </Link>
@@ -424,7 +418,18 @@ function EmailInbox() {
                       className={
                         "mailbox-list-item" +
                         // (mail.unread ? " unread" : "") +
-                        (ticket?.documents ? " has-attachment" : "")
+                        (ticket?.documents ? " has-attachment" : "") +
+                        (Math.floor(
+                          (new Date() - new Date(ticket?.createdAt)) /
+                          (1000 * 60 * 60)
+                        ) > 45
+                          ? "mailbox-list-danger"
+                          : Math.floor(
+                            (new Date() - new Date(ticket?.createdAt)) /
+                            (1000 * 60 * 60)
+                          ) > 24
+                            ? "mailbox-list-warning"
+                            : "")
                       }
                     >
                       <div className="mailbox-checkbox">
@@ -475,9 +480,8 @@ function EmailInbox() {
             </PerfectScrollbar>
           </div>
           <div
-            className={`mailbox-content d-lg-block ${
-              showTicketDetail ? "" : "d-none"
-            }`}
+            className={`mailbox-content d-lg-block ${showTicketDetail ? "" : "d-none"
+              }`}
           >
             <PerfectScrollbar className="h-100">
               {ticketId ? (
@@ -613,8 +617,8 @@ function EmailInbox() {
                             <p className="text-black">
                               {selectedTicket?.details?.timeFromAbsence
                                 ? moment(
-                                    selectedTicket?.details?.timeFromAbsence
-                                  ).format("MMMM DD, YYYY")
+                                  selectedTicket?.details?.timeFromAbsence
+                                ).format("MMMM DD, YYYY")
                                 : ""}
                             </p>
                           </div>
@@ -625,8 +629,8 @@ function EmailInbox() {
                             <p className="text-black">
                               {selectedTicket?.details?.timeToAbsence
                                 ? moment(
-                                    selectedTicket?.details?.timeToAbsence
-                                  ).format("MMMM DD, YYYY")
+                                  selectedTicket?.details?.timeToAbsence
+                                ).format("MMMM DD, YYYY")
                                 : ""}
                             </p>
                           </div>
@@ -650,6 +654,11 @@ function EmailInbox() {
                         <p className="text-black">{selectedTicket?.email}</p>
                       </div>
                       <br />
+                      <div className="d-flex">
+                        <p className="text-black">Ticket Number:</p>
+                        <p className="text-black">{selectedTicket?._id}</p>
+                      </div>
+                      <br />
                       <br />
                       Enrollment Number: {selectedTicket?.enrollmentNumber}
                       <br />
@@ -664,24 +673,64 @@ function EmailInbox() {
                           borderTop: "1px solid",
                           borderColor: "gray",
                         }}
-                        className="pt-2"
+                        className="pt-2 d-flex gap-1"
                       >
-                        <a
-                          className="btn btn-info me-3"
-                          onClick={() =>
-                            handleInquiryAccept(selectedTicket?._id)
-                          }
-                        >
-                          Accept
-                        </a>
-                        <a
-                          className="btn btn-danger"
-                          onClick={() =>
-                            handleInquiryReject(selectedTicket?._id)
-                          }
-                        >
-                          Reject
-                        </a>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant="success"
+                            id="dropdown-basic"
+                            className="btn btn-info dropdown-toggle rounded-pill"
+                          >
+                            Accept
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu>
+                            <Dropdown.Item
+                              href="#/action-1"
+                              onClick={() =>
+                                handleInquiryAccept(selectedTicket?._id)
+                              }
+                            >
+                              Accept with Internal Note
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              href="#/action-2"
+                              onClick={() =>
+                                handleInquiryAccept(selectedTicket?._id)
+                              }
+                            >
+                              Accept with Email
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant="danger"
+                            id="dropdown-basic"
+                            className="btn btn-danger dropdown-toggle rounded-pill"
+                          >
+                            Reject
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu>
+                            <Dropdown.Item
+                              href="#/action-1"
+                              onClick={() =>
+                                handleInquiryReject(selectedTicket?._id)
+                              }
+                            >
+                              Accept with Internal Note
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              href="#/action-2"
+                              onClick={() =>
+                                handleInquiryReject(selectedTicket?._id)
+                              }
+                            >
+                              Accept with Email
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </div>
                     )}
                 </div>
