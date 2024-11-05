@@ -120,13 +120,13 @@
     & .mailbox-list-item {
       padding: $spacer;
       display: flex;
-
+      color: white;
       & + .mailbox-list-item {
         border-top: 1px solid var(--#{$prefix}border-color);
       }
-      &:hover {
-        background-color: rgba(var(--#{$prefix}inverse-rgb), 0.1);
-      }
+      // &:hover {
+      //   background-color: rgba(var(--#{$prefix}inverse-rgb), 0.1);
+      // }
       &.unread {
         & .mailbox-message {
           & .mailbox-title {
@@ -144,7 +144,6 @@
           position: absolute;
           top: rem(25px);
           text-align: center;
-          color: rgba(var(--#{$prefix}inverse-rgb), 0.5);
           width: rem(18px);
 
           @include fontawesome();
@@ -157,14 +156,17 @@
       }
     }
     & .mailbox-list-warning {
-      background-color: rgb(218, 150, 6) !important;
+      background-color: yellow !important;
     }
     & .mailbox-list-danger {
-      background-color: rgb(240, 55, 55) !important;
+      background-color: red !important;
     }
+    & .mailbox-list-general {
+      background-color: green !important;
+    }
+    
     & .mailbox-checkbox {
       position: relative;
-
       & + .mailbox-message {
         @if ($enable-rtl) {
           padding-right: $spacer * 0.5;
@@ -193,7 +195,7 @@
 
         & .mailbox-sender-name {
           font-weight: $font-weight-bold;
-          color: var(--#{$prefix}theme);
+          // color: var(--#{$prefix}theme);
           flex: 1;
 
           @if ($enable-rtl) {
@@ -204,7 +206,7 @@
         }
         & .mailbox-time {
           font-size: $font-size-base - rem(2px);
-          color: rgba(var(--#{$prefix}inverse-rgb), 0.5);
+          // color: rgba(var(--#{$prefix}inverse-rgb), 0.5);
           font-weight: $font-weight-base;
 
           @if ($enable-rtl) {
@@ -229,7 +231,7 @@
       & .mailbox-desc {
         position: relative;
         font-size: $font-size-base - rem(1px);
-        color: rgba(var(--#{$prefix}inverse-rgb), 0.5);
+        color: white;
         max-height: rem(42px);
         overflow: hidden;
       }
@@ -336,4 +338,5 @@
       }
     }
   }
+  
 }
