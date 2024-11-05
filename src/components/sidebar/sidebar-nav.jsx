@@ -102,7 +102,7 @@ function SidebarNav() {
       return {
         ...item,
         children: item.children.filter((child) => {
-          if (child.title === "Compose" && userRole !== 0) {
+          if (child.title === "Internal Message" && userRole !== 0) {
             return false;
           }
           return true;

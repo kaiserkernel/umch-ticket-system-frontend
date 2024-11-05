@@ -17,13 +17,17 @@ class FormSevice {
     const getInquiriesEndPoint = `/api/admin/inquiries/${id}/reject`;
     return await HttpService.patch(getInquiriesEndPoint);
   };
+  checkInquiry = async (id) => {
+    const checkInquiryByIdEndPoint = `/api/admin/inquiries/${id}/check`;
+    return await HttpService.patch(checkInquiryByIdEndPoint);
+  };
   getAllInquiriesByEnrollmentNumber = async (id) => {
     const getInquiriesByEnrollmentNumberEndPoint = `/api/admin/inquiries/${id}`;
     return await HttpService.get(getInquiriesByEnrollmentNumberEndPoint);
   };
   getInquiryByInquiryId = async (id) => {
-    const getInquiryByIdEndPoint = `/api/admin/inquiries/${id}`;
-    return await HttpService.patch(getInquiryByIdEndPoint);
+    const getInquiryByIdEndPoint = `/api/admin/inquiries/${id}/show`;
+    return await HttpService.get(getInquiryByIdEndPoint);
   };
 }
 
