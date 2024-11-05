@@ -26,7 +26,7 @@ function EmailInbox() {
   const [activeTab, setActiveTab] = useState("All");
   const [isTicketStatusChange, setTicketStatusChange] = useState(true);
 
-  const ticketStatus = ["Received", "Clicked", "Approved", "Rejected"];
+  const ticketStatus = ["Received", "Checked", "Approved", "Rejected"];
   const ticketStatusBadge = ["secondary", "success", "info", "danger"];
 
   useEffect(() => {
@@ -110,11 +110,14 @@ function EmailInbox() {
   const handleSelectTicket = async (ticket_id) => {
     console.log(ticket_id);
     if (ticket_id) {
-      const result = ticketData.find((ticket) => ticket._id === ticket_id);
+      // const result = ticketData.find((ticket) => ticket._id === ticket_id);
+      const res = await FormService.getInquiryByInquiryId(ticket_id);
+
+      console.log(res);
 
       setTicketId(ticket_id);
-      setSelectedTicket(result);
-      setSelectedTicketAttachments(result?.documents);
+      setSelectedTicket(res?.inquiry);
+      setSelectedTicketAttachments(res?.inquiry?.documents);
       setTicketStatusChange(true);
       if (isMobile) {
         console.log("mobile");
@@ -335,21 +338,24 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               to=""
-              className={`mailbox-toolbar-link ${activeTab == "All" ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                activeTab == "All" ? "active" : ""
+              } `}
               onClick={handleShowAllTickets}
             >
               All
             </Link>
           </div>
           <div
-            className={`mailbox-toolbar-item ${showTicketDetail ? "" : "d-none"
-              }`}
+            className={`mailbox-toolbar-item ${
+              showTicketDetail ? "" : "d-none"
+            }`}
           >
             <Link
               to=""
-              className={`mailbox-toolbar-link ${showTicketDetail ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                showTicketDetail ? "active" : ""
+              } `}
             >
               Detail
             </Link>
@@ -357,8 +363,9 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowApprovedTickets}
-              className={`mailbox-toolbar-link ${activeTab == "Approved" ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                activeTab == "Approved" ? "active" : ""
+              } `}
             >
               Approved
             </Link>
@@ -366,8 +373,9 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowRejectedTickets}
-              className={`mailbox-toolbar-link ${activeTab == "Rejected" ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                activeTab == "Rejected" ? "active" : ""
+              } `}
             >
               Rejected
             </Link>
@@ -388,7 +396,7 @@ function EmailInbox() {
                 to="/email/compose"
                 className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
               >
-                New Message <i className="fa fa-pen fs-12px ms-1"></i>
+                Internal Message <i className="fa fa-pen fs-12px ms-1"></i>
               </Link>
             )}
 
@@ -421,15 +429,15 @@ function EmailInbox() {
                         (ticket?.documents ? " has-attachment" : "") +
                         (Math.floor(
                           (new Date() - new Date(ticket?.createdAt)) /
-                          (1000 * 60 * 60)
+                            (1000 * 60 * 60)
                         ) > 45
                           ? "mailbox-list-danger"
                           : Math.floor(
-                            (new Date() - new Date(ticket?.createdAt)) /
-                            (1000 * 60 * 60)
-                          ) > 24
-                            ? "mailbox-list-warning"
-                            : "")
+                              (new Date() - new Date(ticket?.createdAt)) /
+                                (1000 * 60 * 60)
+                            ) > 24
+                          ? "mailbox-list-warning"
+                          : "")
                       }
                     >
                       <div className="mailbox-checkbox">
@@ -480,8 +488,9 @@ function EmailInbox() {
             </PerfectScrollbar>
           </div>
           <div
-            className={`mailbox-content d-lg-block ${showTicketDetail ? "" : "d-none"
-              }`}
+            className={`mailbox-content d-lg-block ${
+              showTicketDetail ? "" : "d-none"
+            }`}
           >
             <PerfectScrollbar className="h-100">
               {ticketId ? (
@@ -564,29 +573,33 @@ function EmailInbox() {
                     </div>
 
                     <div className="d-flex">
-                      {attachments.map((attachment, index) => (
-                        <div className="mailbox-detail-attachment" key={index}>
-                          <div className="mailbox-attachment">
-                            <a
-                              href="#"
-                              download
-                              onClick={(e) =>
-                                handleDownload(
-                                  host + attachment?.url,
-                                  attachment?.filename
-                                )
-                              }
-                            >
-                              <div className="document-file">
-                                <i className="fa fa-file-archive"></i>
-                              </div>
-                              <div className="document-name">
-                                {attachment?.filename}
-                              </div>
-                            </a>
+                      {attachments &&
+                        attachments.map((attachment, index) => (
+                          <div
+                            className="mailbox-detail-attachment"
+                            key={index}
+                          >
+                            <div className="mailbox-attachment">
+                              <a
+                                href="#"
+                                download
+                                onClick={(e) =>
+                                  handleDownload(
+                                    host + attachment?.url,
+                                    attachment?.filename
+                                  )
+                                }
+                              >
+                                <div className="document-file">
+                                  <i className="fa fa-file-archive"></i>
+                                </div>
+                                <div className="document-name">
+                                  {attachment?.filename}
+                                </div>
+                              </a>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                     {attachments.length != 0 ? (
                       <div
@@ -617,8 +630,8 @@ function EmailInbox() {
                             <p className="text-black">
                               {selectedTicket?.details?.timeFromAbsence
                                 ? moment(
-                                  selectedTicket?.details?.timeFromAbsence
-                                ).format("MMMM DD, YYYY")
+                                    selectedTicket?.details?.timeFromAbsence
+                                  ).format("MMMM DD, YYYY")
                                 : ""}
                             </p>
                           </div>
@@ -629,8 +642,8 @@ function EmailInbox() {
                             <p className="text-black">
                               {selectedTicket?.details?.timeToAbsence
                                 ? moment(
-                                  selectedTicket?.details?.timeToAbsence
-                                ).format("MMMM DD, YYYY")
+                                    selectedTicket?.details?.timeToAbsence
+                                  ).format("MMMM DD, YYYY")
                                 : ""}
                             </p>
                           </div>
@@ -640,23 +653,26 @@ function EmailInbox() {
                           {selectedTicket?.details?.comment}
                         </p>
                       </div>
-                      <p className="text-black">Regards,</p>
-                      <div className="d-flex">
-                        <p className="text-black">Name:</p>
-                        <p className="text-black">
-                          {selectedTicket?.firstName +
-                            " " +
-                            selectedTicket?.lastName}
-                        </p>
-                      </div>
-                      <div className="d-flex">
-                        <p className="text-black">Email:</p>
-                        <p className="text-black">{selectedTicket?.email}</p>
-                      </div>
-                      <br />
-                      <div className="d-flex">
-                        <p className="text-black">Ticket Number:</p>
-                        <p className="text-black">{selectedTicket?._id}</p>
+                      <div className="mt-5">
+                        <p className="text-black">Regards,</p>
+                        <div className="d-flex">
+                          <p className="text-black">Name:</p>
+                          <p className="text-black">
+                            {selectedTicket?.firstName +
+                              " " +
+                              selectedTicket?.lastName}
+                          </p>
+                        </div>
+                        <div className="d-flex">
+                          <p className="text-black">Email:</p>
+                          <p className="text-black">{selectedTicket?.email}</p>
+                        </div>
+                        <div className="d-flex">
+                          <p className="text-black">Ticket Number:</p>
+                          <p className="text-black">
+                            {selectedTicket?.inquiryNumber}
+                          </p>
+                        </div>
                       </div>
                       <br />
                       <br />
