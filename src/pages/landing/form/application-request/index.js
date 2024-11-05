@@ -86,7 +86,7 @@ const ApplicationRequests = () => {
       },
     },
 
-    change_teaching_hospital: {
+    2: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -266,7 +266,11 @@ const ApplicationRequests = () => {
   const content = {
     default: <Default />,
     1: <Absence applicationRequest={formInquiryData.applicationRequest} />,
-    change_teaching_hospital: <ChangeTeachingHospital />,
+    2: (
+      <ChangeTeachingHospital
+        applicationRequest={formInquiryData.applicationRequest}
+      />
+    ),
     change_study_group: <ChangeStudyGroup />,
     demonstrator_student: <DemonstratorStudent />,
     enrollment: <Enrollment />,
@@ -314,9 +318,7 @@ const ApplicationRequests = () => {
             >
               <option value="default">– Select –</option>
               <option value="1">Absence</option>
-              <option value="change_teaching_hospital">
-                Change of teaching hospital
-              </option>
+              <option value="2">Change of teaching hospital</option>
               <option value="change_study_group">Change of study group</option>
               <option value="demonstrator_student">Demonstrator student</option>
               <option value="enrollment">Enrollment</option>
