@@ -48,7 +48,7 @@ function Profile() {
 
             <div className="profile-content">
               <div className="profile-content-headerCaption">
-                Wellcome to your UMCH Ticket System
+                Welcome to your UMCH Ticket System
               </div>
 
               <div className="profile-content-textCaption">
