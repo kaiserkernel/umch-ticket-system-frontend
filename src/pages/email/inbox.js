@@ -217,7 +217,7 @@ function EmailInbox() {
             };
           });
           setTicketData(result);
-          handleSelectTicket(result[0]?._id)
+          handleSelectTicket(result[0]?._id);
           setUserPermissonCategory(res.userCategory);
         }
       } catch (err) {
@@ -232,7 +232,7 @@ function EmailInbox() {
         res.reverse();
         console.log(res);
         setTicketData(res);
-        handleSelectTicket(res[0]?._id)
+        handleSelectTicket(res[0]?._id);
       } catch (err) {
         console.log(err);
       }
@@ -292,8 +292,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id)
-
+      handleSelectTicket(filteredAllTickets[0]?._id);
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
@@ -306,8 +305,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id)
-
+      handleSelectTicket(filteredAllTickets[0]?._id);
     }
   };
 
@@ -325,8 +323,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id)
-
+      handleSelectTicket(filteredAllTickets[0]?._id);
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
@@ -338,8 +335,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id)
-
+      handleSelectTicket(filteredAllTickets[0]?._id);
     }
   };
 
@@ -355,16 +351,14 @@ function EmailInbox() {
       );
 
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id)
-
+      handleSelectTicket(filteredAllTickets[0]?._id);
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
       );
       console.log(allTickets);
       setTicketData(allTickets);
-      handleSelectTicket(allTickets[0]?._id)
-
+      handleSelectTicket(allTickets[0]?._id);
     }
   };
 
@@ -451,14 +445,14 @@ function EmailInbox() {
 
   const handleInquiryAccept = async (id) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       const res = await FormService.acceptInquiry(id);
       setTicketStatusChange(false);
       console.log(res?.message);
       console.log(res);
       successNotify(res?.message);
-      setLoading(false)
+      setLoading(false);
     } catch (err) {
       if (err?.message) {
         errorNotify(err?.message);
@@ -522,7 +516,7 @@ function EmailInbox() {
       <div className="mailbox">
         <div className="mailbox-toolbar">
           <div className="mailbox-toolbar-item">
-            <span className="mailbox-toolbar-text">Mailboxes</span>
+            <span className="mailbox-toolbar-text">TicketBoxes</span>
           </div>
           <div className="mailbox-toolbar-item">
             <Link
@@ -531,7 +525,7 @@ function EmailInbox() {
                 } `}
               onClick={handleShowAllTickets}
             >
-              All
+              New tickets
             </Link>
           </div>
           <div
@@ -602,14 +596,20 @@ function EmailInbox() {
               className="h-100"
               options={{ suppressScrollX: true }}
             >
-              <div className={userData?.role == 2 ? "mailbox-list-student" : "mailbox-list"}>
+              <div
+                className={
+                  userData?.role == 2 ? "mailbox-list-student" : "mailbox-list"
+                }
+              >
                 {ticketData && ticketData.length > 0 ? (
                   ticketData.map((ticket, index) => (
                     <div
                       key={index}
                       className={
-                        userData?.role == 2 ? "mailbox-list-item border-bottom" + (ticket?.documents ? " has-attachment " : "") :
-                          "mailbox-list-item border-bottom border-white" +
+                        userData?.role == 2
+                          ? "mailbox-list-item border-bottom" +
+                          (ticket?.documents ? " has-attachment " : "")
+                          : "mailbox-list-item border-bottom border-white" +
                           // (mail.unread ? " unread" : "") +
                           (ticket?.documents ? " has-attachment " : "") +
                           (Math.floor(
@@ -628,7 +628,11 @@ function EmailInbox() {
                       <div className="mailbox-checkbox">
                         <div className="form-check ">
                           <input
-                            className={"form-check-input " + userData?.role == 2 ? " " : ("border border-white")}
+                            className={
+                              "form-check-input " + userData?.role == 2
+                                ? " "
+                                : "border border-white"
+                            }
                             type="checkbox"
                             value=""
                             id={"mailCheckbox" + index}
@@ -662,7 +666,13 @@ function EmailInbox() {
                           </span>
                         </div>
 
-                        <div className={userData?.role == 2 ? "fw-bold" : "text-white fw-bold"}>
+                        <div
+                          className={
+                            userData?.role == 2
+                              ? "fw-bold"
+                              : "text-white fw-bold"
+                          }
+                        >
                           {
                             INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
                             "inquiryCategory"
@@ -671,15 +681,25 @@ function EmailInbox() {
                         </div>
                         <div className="mailbox-desc">{ticket?.email}</div>
                         {userData?.role != 2 ? (
-                          <DownTimer
-                            remainTime={getTimeRemain(
-                              new Date(ticket?.createdAt),
-                              new Date()
-                            )}
-                          />
+                          selectedTicket?.status == 0 ||
+                            selectedTicket?.status == 1 ? (
+                            <DownTimer
+                              remainTime={getTimeRemain(
+                                new Date(ticket?.createdAt),
+                                new Date()
+                              )}
+                            />
+                          ) : (
+                            <></>
+                          )
                         ) : (
                           <Badge
-                            style={{ fontSize: "14px", fontWeight: "300", float: "right" }}
+                            style={{
+                              marginTop: "13px",
+                              fontSize: "14px",
+                              fontWeight: "300",
+                              float: "right",
+                            }}
                             bg={ticketStatusBadge[selectedTicket?.status]}
                           >
                             {ticketStatus[selectedTicket?.status]}
