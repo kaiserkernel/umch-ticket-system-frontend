@@ -217,6 +217,7 @@ function EmailInbox() {
             };
           });
           setTicketData(result);
+          handleSelectTicket(result[0]?._id)
           setUserPermissonCategory(res.userCategory);
         }
       } catch (err) {
@@ -231,6 +232,7 @@ function EmailInbox() {
         res.reverse();
         console.log(res);
         setTicketData(res);
+        handleSelectTicket(res[0]?._id)
       } catch (err) {
         console.log(err);
       }
@@ -260,7 +262,7 @@ function EmailInbox() {
   const handleSelectTicket = async (ticket_id) => {
     console.log(ticket_id);
     if (ticket_id) {
-      // const result = ticketData.find((ticket) => ticket._id === ticket_id);
+      // const result = ticketData.find((ticket) => ticket?._id === ticket_id);
       const res = await FormService.getInquiryByInquiryId(ticket_id);
 
       console.log(res);
@@ -283,13 +285,15 @@ function EmailInbox() {
     setTicketId("");
     if (userRole != 2) {
       const allTickets = await FormService.getAllInquiries();
-      allTickets.inquiries.reverse();
+      allTickets?.inquiries?.reverse();
       console.log(allTickets);
-      const filteredAllTickets = allTickets.inquiries.filter(
+      const filteredAllTickets = allTickets?.inquiries?.filter(
         (ticket) => ticket.status === 2
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
+      handleSelectTicket(filteredAllTickets[0]?._id)
+
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
@@ -302,6 +306,8 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
+      handleSelectTicket(filteredAllTickets[0]?._id)
+
     }
   };
 
@@ -319,6 +325,8 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
+      handleSelectTicket(filteredAllTickets[0]?._id)
+
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
@@ -330,6 +338,8 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
+      handleSelectTicket(filteredAllTickets[0]?._id)
+
     }
   };
 
@@ -345,12 +355,16 @@ function EmailInbox() {
       );
 
       setTicketData(filteredAllTickets);
+      handleSelectTicket(filteredAllTickets[0]?._id)
+
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
       );
       console.log(allTickets);
       setTicketData(allTickets);
+      handleSelectTicket(allTickets[0]?._id)
+
     }
   };
 
@@ -593,32 +607,34 @@ function EmailInbox() {
               className="h-100"
               options={{ suppressScrollX: true }}
             >
-              <div className="mailbox-list">
+              <div className={userData?.role == 2 ? "mailbox-list-student" : "mailbox-list"}>
                 {ticketData && ticketData.length > 0 ? (
                   ticketData.map((ticket, index) => (
                     <div
                       key={index}
                       className={
-                        "mailbox-list-item border-bottom border-white" +
-                        // (mail.unread ? " unread" : "") +
-                        (ticket?.documents ? " has-attachment " : "") +
-                        (Math.floor(
-                          (new Date() - new Date(ticket?.createdAt)) /
+                        userData?.role == 2 ? "mailbox-list-item border-bottom" + (ticket?.documents ? " has-attachment " : "") :
+                          "mailbox-list-item border-bottom border-white" +
+                          // (mail.unread ? " unread" : "") +
+                          (ticket?.documents ? " has-attachment " : "") +
+                          (Math.floor(
+                            (new Date() - new Date(ticket?.createdAt)) /
                             (1000 * 60 * 60)
-                        ) > 45
-                          ? "mailbox-list-danger "
-                          : Math.floor(
+                          ) > 45
+                            ? "mailbox-list-danger "
+                            : Math.floor(
                               (new Date() - new Date(ticket?.createdAt)) /
-                                (1000 * 60 * 60)
+                              (1000 * 60 * 60)
                             ) > 24
-                          ? "mailbox-list-warning"
-                          : "mailbox-list-general")
+                              ? "mailbox-list-warning"
+                              : "mailbox-list-general")
+
                       }
                     >
                       <div className="mailbox-checkbox">
                         <div className="form-check ">
                           <input
-                            className="form-check-input border border-white"
+                            className={"form-check-input " + userData?.role == 2 ? " " : ("border border-white")}
                             type="checkbox"
                             value=""
                             id={"mailCheckbox" + index}
@@ -652,7 +668,7 @@ function EmailInbox() {
                           </span>
                         </div>
 
-                        <div className="text-white fw-bold">
+                        <div className={userData?.role == 2 ? "fw-bold" : "text-white fw-bold"}>
                           {
                             INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
                               "inquiryCategory"
@@ -668,7 +684,14 @@ function EmailInbox() {
                             )}
                           />
                         ) : (
-                          ticketStatus[ticket?.status]
+
+                          <Badge
+                            style={{ fontSize: "14px", fontWeight: "300", float: "right" }}
+                            bg={ticketStatusBadge[selectedTicket?.status]}
+                          >
+                            {ticketStatus[selectedTicket?.status]}
+                          </Badge>
+
                         )}
                       </div>
                     </div>
