@@ -120,7 +120,6 @@
     & .mailbox-list-item {
       padding: $spacer;
       display: flex;
-      color: white;
       & + .mailbox-list-item {
         border-top: 1px solid var(--#{$prefix}border-color);
       }
@@ -145,7 +144,6 @@
           top: rem(25px);
           text-align: center;
           width: rem(18px);
-
           @include fontawesome();
           @if ($enable-rtl) {
             right: 0;
@@ -157,12 +155,15 @@
     }
     & .mailbox-list-warning {
       background-color: yellow !important;
+      color: white !important;
     }
     & .mailbox-list-danger {
       background-color: red !important;
+      color: white !important;
     }
     & .mailbox-list-general {
       background-color: teal !important;
+      color: white !important;
     }
     
     & .mailbox-checkbox {
@@ -232,6 +233,122 @@
         position: relative;
         font-size: $font-size-base - rem(1px);
         color: white;
+        max-height: rem(42px);
+        overflow: hidden;
+      }
+    }
+  }
+  & .mailbox-list-student {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    color: black;
+    & .mailbox-list-item {
+      padding: $spacer;
+      display: flex;
+      color: black;
+      & + .mailbox-list-item {
+        border-top: 1px solid var(--#{$prefix}border-color);
+      }
+      // &:hover {
+      //   background-color: rgba(var(--#{$prefix}inverse-rgb), 0.1);
+      // }
+      &.unread {
+        & .mailbox-message {
+          & .mailbox-title {
+            font-weight: $font-weight-bold;
+            color: var(--#{$prefix}inverse);
+          }
+        }
+      }
+      &.active {
+        background: rgba(var(--#{$prefix}inverse-rgb), 0.1);
+      }
+      &.has-attachment {
+        & .mailbox-checkbox:after {
+          content: "\f0c1";
+          position: absolute;
+          top: rem(25px);
+          text-align: center;
+          width: rem(18px);
+          color: rgba(0, 0, 0, 0.1);
+          @include fontawesome();
+          @if ($enable-rtl) {
+            right: 0;
+          } @else {
+            left: 0;
+          }
+        }
+      }
+    }
+    
+    
+    & .mailbox-checkbox {
+      position: relative;
+      & + .mailbox-message {
+        @if ($enable-rtl) {
+          padding-right: $spacer * 0.5;
+        } @else {
+          padding-left: $spacer * 0.5;
+        }
+      }
+    }
+    & .mailbox-message {
+      flex: 1;
+
+      & .mailbox-list-item-link {
+        display: block;
+        color: var(--#{$prefix}inverse);
+        text-decoration: none;
+        position: relative;
+      }
+      & .mailbox-sender {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        @include media-breakpoint-down(lg) {
+          display: block;
+        }
+
+        & .mailbox-sender-name {
+          font-weight: $font-weight-bold;
+          // color: var(--#{$prefix}theme);
+          flex: 1;
+
+          @if ($enable-rtl) {
+            margin-left: auto;
+          } @else {
+            margin-right: auto;
+          }
+        }
+        & .mailbox-time {
+          font-size: $font-size-base - rem(2px);
+          // color: rgba(var(--#{$prefix}inverse-rgb), 0.5);
+          font-weight: $font-weight-base;
+
+          @if ($enable-rtl) {
+            padding-right: $spacer * 0.5;
+          } @else {
+            padding-left: $spacer * 0.5;
+          }
+        }
+      }
+      & .mailbox-title {
+        color: rgba(var(--#{$prefix}inverse-rgb), 0.75);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: rem(290px);
+
+        @include media-breakpoint-down(lg) {
+          max-width: initial;
+          white-space: initial;
+        }
+      }
+      & .mailbox-desc {
+        position: relative;
+        font-size: $font-size-base - rem(1px);
         max-height: rem(42px);
         overflow: hidden;
       }
