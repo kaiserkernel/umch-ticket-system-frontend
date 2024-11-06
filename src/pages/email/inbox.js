@@ -217,7 +217,7 @@ function EmailInbox() {
             };
           });
           setTicketData(result);
-          handleSelectTicket(result[0]._id)
+          handleSelectTicket(result[0]?._id)
           setUserPermissonCategory(res.userCategory);
         }
       } catch (err) {
@@ -232,7 +232,7 @@ function EmailInbox() {
         res.reverse();
         console.log(res);
         setTicketData(res);
-        handleSelectTicket(res[0]._id)
+        handleSelectTicket(res[0]?._id)
       } catch (err) {
         console.log(err);
       }
@@ -262,7 +262,7 @@ function EmailInbox() {
   const handleSelectTicket = async (ticket_id) => {
     console.log(ticket_id);
     if (ticket_id) {
-      // const result = ticketData.find((ticket) => ticket._id === ticket_id);
+      // const result = ticketData.find((ticket) => ticket?._id === ticket_id);
       const res = await FormService.getInquiryByInquiryId(ticket_id);
 
       console.log(res);
@@ -292,7 +292,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]._id)
+      handleSelectTicket(filteredAllTickets[0]?._id)
 
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
@@ -306,7 +306,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]._id)
+      handleSelectTicket(filteredAllTickets[0]?._id)
 
     }
   };
@@ -325,7 +325,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]._id)
+      handleSelectTicket(filteredAllTickets[0]?._id)
 
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
@@ -338,7 +338,7 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]._id)
+      handleSelectTicket(filteredAllTickets[0]?._id)
 
     }
   };
@@ -355,7 +355,7 @@ function EmailInbox() {
       );
 
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]._id)
+      handleSelectTicket(filteredAllTickets[0]?._id)
 
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
@@ -363,7 +363,7 @@ function EmailInbox() {
       );
       console.log(allTickets);
       setTicketData(allTickets);
-      handleSelectTicket(allTickets[0]._id)
+      handleSelectTicket(allTickets[0]?._id)
 
     }
   };
