@@ -122,7 +122,7 @@ function EmailInbox() {
     if (selectedTicket) {
       const ticketComponent =
         INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1]["subCategories"][
-        selectedTicket?.subCategory1 - 1
+          selectedTicket?.subCategory1 - 1
         ]["component"];
       console.log(ticketComponent);
       setContentTemplate(ticketComponent);
@@ -437,14 +437,14 @@ function EmailInbox() {
 
   const handleInquiryAccept = async (id) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       const res = await FormService.acceptInquiry(id);
       setTicketStatusChange(false);
       console.log(res?.message);
       console.log(res);
       successNotify(res?.message);
-      setLoading(false)
+      setLoading(false);
     } catch (err) {
       if (err?.message) {
         errorNotify(err?.message);
@@ -513,21 +513,24 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               to=""
-              className={`mailbox-toolbar-link ${activeTab == "All" ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                activeTab == "All" ? "active" : ""
+              } `}
               onClick={handleShowAllTickets}
             >
               All
             </Link>
           </div>
           <div
-            className={`mailbox-toolbar-item ${showTicketDetail ? "" : "d-none"
-              }`}
+            className={`mailbox-toolbar-item ${
+              showTicketDetail ? "" : "d-none"
+            }`}
           >
             <Link
               to=""
-              className={`mailbox-toolbar-link ${showTicketDetail ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                showTicketDetail ? "active" : ""
+              } `}
             >
               Detail
             </Link>
@@ -535,8 +538,9 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowApprovedTickets}
-              className={`mailbox-toolbar-link ${activeTab == "Approved" ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                activeTab == "Approved" ? "active" : ""
+              } `}
             >
               Approved
             </Link>
@@ -544,8 +548,9 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowRejectedTickets}
-              className={`mailbox-toolbar-link ${activeTab == "Rejected" ? "active" : ""
-                } `}
+              className={`mailbox-toolbar-link ${
+                activeTab == "Rejected" ? "active" : ""
+              } `}
             >
               Rejected
             </Link>
@@ -599,15 +604,15 @@ function EmailInbox() {
                         (ticket?.documents ? " has-attachment " : "") +
                         (Math.floor(
                           (new Date() - new Date(ticket?.createdAt)) /
-                          (1000 * 60 * 60)
+                            (1000 * 60 * 60)
                         ) > 45
                           ? "mailbox-list-danger "
                           : Math.floor(
-                            (new Date() - new Date(ticket?.createdAt)) /
-                            (1000 * 60 * 60)
-                          ) > 24
-                            ? "mailbox-list-warning"
-                            : "mailbox-list-general")
+                              (new Date() - new Date(ticket?.createdAt)) /
+                                (1000 * 60 * 60)
+                            ) > 24
+                          ? "mailbox-list-warning"
+                          : "mailbox-list-general")
                       }
                     >
                       <div className="mailbox-checkbox">
@@ -634,7 +639,7 @@ function EmailInbox() {
                             [
                             {
                               INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                              "subCategories"
+                                "subCategories"
                               ][ticket?.subCategory1 - 1]["subCategory1"]
                             }
                             ]
@@ -650,7 +655,7 @@ function EmailInbox() {
                         <div className="text-white fw-bold">
                           {
                             INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                            "inquiryCategory"
+                              "inquiryCategory"
                             ]
                           }
                         </div>
@@ -663,7 +668,7 @@ function EmailInbox() {
                             )}
                           />
                         ) : (
-                          ticketStatus(ticket?.status)
+                          ticketStatus[ticket?.status]
                         )}
                       </div>
                     </div>
@@ -681,8 +686,9 @@ function EmailInbox() {
           </div>
 
           <div
-            className={`mailbox-content d-lg-block ${showTicketDetail ? "" : "d-none"
-              }`}
+            className={`mailbox-content d-lg-block ${
+              showTicketDetail ? "" : "d-none"
+            }`}
           >
             {loading ? (
               <div className="d-flex justify-content-center align-items-center h-100">
@@ -760,9 +766,9 @@ function EmailInbox() {
                         <h4 className="mb-0">
                           {
                             INQUIRYCATEGORIES[
-                            selectedTicket?.inquiryCategory - 1
+                              selectedTicket?.inquiryCategory - 1
                             ]["subCategories"][
-                            selectedTicket?.subCategory1 - 1
+                              selectedTicket?.subCategory1 - 1
                             ]["subCategory1"]
                           }{" "}
                           Request from{" "}
