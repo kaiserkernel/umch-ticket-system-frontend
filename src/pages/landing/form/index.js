@@ -160,7 +160,7 @@ const FormSection = () => {
       },
     },
 
-    booking: {
+    2: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -175,7 +175,7 @@ const FormSection = () => {
         transition: { duration: 0.5 },
       },
     },
-    campus: {
+    3: {
       hidden: { scaleY: 0, opacity: 0 },
       visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
       exit: {
@@ -185,7 +185,7 @@ const FormSection = () => {
         transition: { duration: 0.5 },
       },
     },
-    complaints: {
+    4: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -201,7 +201,7 @@ const FormSection = () => {
       },
     },
 
-    internship: {
+    5: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -216,7 +216,7 @@ const FormSection = () => {
         transition: { duration: 0.5 },
       },
     },
-    medical: {
+    6: {
       hidden: { scaleY: 0, opacity: 0 },
       visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
       exit: {
@@ -226,7 +226,7 @@ const FormSection = () => {
         transition: { duration: 0.5 },
       },
     },
-    thesis: {
+    7: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -241,7 +241,7 @@ const FormSection = () => {
         transition: { duration: 0.5 },
       },
     },
-    other: {
+    8: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
@@ -259,13 +259,13 @@ const FormSection = () => {
   };
   const content = {
     1: <ApplicationRequests />,
-    booking: <BookRental />,
-    campus: <CampusIT />,
-    complaints: <Complaints />,
-    internship: <Internship />,
-    medical: <MedicalAbilities />,
-    thesis: <Thesis />,
-    other: <Other />,
+    2: <BookRental />,
+    3: <CampusIT />,
+    4: <Complaints />,
+    5: <Internship />,
+    6: <MedicalAbilities />,
+    7: <Thesis />,
+    8: <Other />,
   };
 
   return (
@@ -444,13 +444,13 @@ const FormSection = () => {
                     >
                       <option value="default">- Select -</option>
                       <option value="1">Applications and Requests</option>
-                      <option value="booking">Book rental UMCH library</option>
-                      <option value="campus">Campus IT</option>
-                      <option value="complaints">Complaints</option>
-                      <option value="internship">Internship</option>
-                      <option value="medical">Medical Abilities</option>
-                      <option value="thesis">Thesis</option>
-                      <option value="other">Other</option>
+                      <option value="2">Book rental UMCH library</option>
+                      <option value="3">Campus IT</option>
+                      <option value="4">Complaints</option>
+                      <option value="5">Internship</option>
+                      <option value="6">Medical Abilities</option>
+                      <option value="7">Thesis</option>
+                      <option value="8">Other</option>
                     </Form.Control>
                   </Form.Group>
                   {mainPageErrors.inquiryCategory && (

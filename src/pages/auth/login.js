@@ -70,7 +70,7 @@ function PagesLogin() {
         if (rememberMe) {
           localStorage.setItem("token", token);
         } else {
-          sessionStorage.setItem("token", token);
+          localStorage.setItem("token", token);
         }
 
         localStorage.setItem("isAuthenticated", true);

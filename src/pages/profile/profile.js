@@ -42,7 +42,6 @@ function Profile() {
                 </div> */}
 
                 <hr className="mt-4 mb-4" />
-
               </div>
             </div>
 
@@ -54,14 +53,25 @@ function Profile() {
               <div className="profile-content-textCaption">
                 What do you want to do next?
               </div>
-              {userData.role == 2 && <Link to="/home" className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mx-5 py-3 fs-20px text-white">
-                Create a new ticket
-              </Link>}
-              <Link to="/email/inbox" className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white">
+              {userData.role == 2 && (
+                <Link
+                  to="/home"
+                  className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mx-5 py-3 fs-20px text-white"
+                >
+                  Create a new ticket
+                </Link>
+              )}
+              <Link
+                to="/email/inbox"
+                className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white"
+              >
                 Open your latest ticket
               </Link>
-              <Link to="/email/inbox" className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mr-5 py-3 fs-20px text-white">
-                Check all ticket
+              <Link
+                to="/email/inbox"
+                className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mr-5 py-3 fs-20px text-white"
+              >
+                Check all tickets
               </Link>
               <Link className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white mb-5">
                 Edit your user profile
