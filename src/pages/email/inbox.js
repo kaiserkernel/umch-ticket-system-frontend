@@ -6,8 +6,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import FormService from "../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
-import { Badge } from "react-bootstrap";
-import Dropdown from "react-bootstrap/Dropdown";
+import { Badge, Form, Dropdown, Modal, Button } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 import { DownTimer } from "../../components/downTimer/downTimer.jsx";
 
@@ -25,6 +24,8 @@ import SyllabusAcademic from "./inquiryTemplate/syllabusAcademic.js";
 import TranscriptRecords from "./inquiryTemplate/transcriptRecords.js";
 import TransferTarguMures from "./inquiryTemplate/transferTarguMures.js";
 import Other from "./inquiryTemplate/other.js";
+import EmailTemplateModal from "./emailTemplateModal.js";
+import { components } from "react-select";
 
 const INQUIRYCATEGORIES = [
   {
@@ -86,8 +87,10 @@ const INQUIRYCATEGORIES = [
       },
     ],
   },
-
-  "Book rental UMCH library",
+  {
+    inquiryCategory: "Book rental UMCH library",
+    component: "",
+  },
   "Campus IT",
   "Complaints",
   "Internship",
@@ -97,14 +100,15 @@ const INQUIRYCATEGORIES = [
 ];
 
 function EmailInbox() {
+  const host = process.env.REACT_APP_API_URL;
   const context = useContext(AppSettings);
   const navigate = useNavigate();
+
   const [mailData, setMailData] = useState();
   const [ticketData, setTicketData] = useState();
   const [ticketId, setTicketId] = useState();
   const [selectedTicket, setSelectedTicket] = useState();
   const [attachments, setSelectedTicketAttachments] = useState([]);
-  const host = process.env.REACT_APP_API_URL;
 
   const [isMobile, setIsMobile] = useState(false);
   const [showTicketDetail, setShowTicketDetail] = useState(false);
@@ -112,6 +116,11 @@ function EmailInbox() {
   const [activeTab, setActiveTab] = useState("All");
   const [isTicketStatusChange, setTicketStatusChange] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const [actionBtnType, setActionBtnType] = useState();
+
+  const handleModalClose = () => setShow(false);
+  const handleModalShow = () => setShow(true);
 
   const ticketStatus = ["Received", "Checked", "Approved", "Rejected"];
   const ticketStatusBadge = ["secondary", "success", "info", "danger"];
@@ -199,45 +208,10 @@ function EmailInbox() {
     enrollmentNumber = userData?.enrollmentNumber;
   }
   useEffect(() => {
-    const getAllInquiries = async () => {
-      try {
-        const res = await FormService.getAllInquiries();
-        if (res?.inquiries) {
-          res.inquiries.reverse();
-          const result = res.inquiries.map((item1) => {
-            const match = res.inquiries.find(
-              (item2) =>
-                item2.inquiryCategory === item1.inquiryCategory &&
-                item2.subCategory1 === item1.subCategory1
-            );
+    handleShowNewTickets();
+  }, []);
 
-            return {
-              ...item1,
-              permission: match ? match.permission : null, // Add permission if found, otherwise null
-            };
-          });
-          setTicketData(result);
-          handleSelectTicket(result[0]?._id);
-          setUserPermissonCategory(res.userCategory);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    const getAllInquiriesByEnrollmentNumber = async () => {
-      try {
-        const res = await FormService.getAllInquiriesByEnrollmentNumber(
-          enrollmentNumber
-        );
-        res.reverse();
-        console.log(res);
-        setTicketData(res);
-        handleSelectTicket(res[0]?._id);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
+  const handleShowNewTickets = () => {
     if (userRole != 2) {
       getAllInquiries();
     } else {
@@ -250,10 +224,51 @@ function EmailInbox() {
       context.setAppContentFullHeight(false);
       context.setAppContentClass("");
     };
+  };
 
-    // eslint-disable-next-line
-  }, []);
+  const getAllInquiries = async () => {
+    try {
+      const res = await FormService.getAllInquiries();
+      if (res?.inquiries) {
+        res.inquiries.reverse();
+        const result = res.inquiries.map((item1) => {
+          const match = res.userCategory.find(
+            (item2) =>
+              item2.inquiryCategory === item1.inquiryCategory &&
+              item2.subCategory1 === item1.subCategory1
+          );
 
+          return {
+            ...item1,
+            permission: match ? match.permission : null, // Add permission if found, otherwise null
+          };
+        });
+
+        const newTickets = result.filter(
+          (ticket) => ticket.status === 0 || ticket.status === 1
+        );
+
+        setTicketData(newTickets);
+        // setSelectedTicket(newTickets[0]?._id);
+        setUserPermissonCategory(res.userCategory);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const getAllInquiriesByEnrollmentNumber = async () => {
+    try {
+      const res = await FormService.getAllInquiriesByEnrollmentNumber(
+        enrollmentNumber
+      );
+      res.reverse();
+      console.log(res);
+      setTicketData(res);
+      setSelectedTicket(res[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const handleClickOpenTicket = (e) => {
     e.preventDefault();
     navigate("/home", { replace: true });
@@ -261,6 +276,7 @@ function EmailInbox() {
 
   const handleSelectTicket = async (ticket_id) => {
     console.log(ticket_id);
+    setActionBtnType("");
     if (ticket_id) {
       // const result = ticketData.find((ticket) => ticket?._id === ticket_id);
       const res = await FormService.getInquiryByInquiryId(ticket_id);
@@ -292,7 +308,6 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id);
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
@@ -305,7 +320,6 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id);
     }
   };
 
@@ -323,7 +337,6 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id);
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
@@ -335,13 +348,12 @@ function EmailInbox() {
       );
       console.log(filteredAllTickets);
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id);
     }
   };
 
   const handleShowAllTickets = async () => {
     setActiveTab("All");
-    setSelectedTicket("");
+
     setTicketId("");
     if (userRole != 2) {
       const allTickets = await FormService.getAllInquiries();
@@ -351,14 +363,12 @@ function EmailInbox() {
       );
 
       setTicketData(filteredAllTickets);
-      handleSelectTicket(filteredAllTickets[0]?._id);
     } else {
       const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
       );
       console.log(allTickets);
       setTicketData(allTickets);
-      handleSelectTicket(allTickets[0]?._id);
     }
   };
 
@@ -445,14 +455,16 @@ function EmailInbox() {
 
   const handleInquiryAccept = async (id) => {
     try {
-      setLoading(true);
+      // setLoading(true);
+      handleModalShow(true);
+      setActionBtnType("accept");
+      // const res = await FormService.acceptInquiry(id);
+      // setTicketStatusChange(false);
+      // setSelectedTicket(res?.inquiry);
 
-      const res = await FormService.acceptInquiry(id);
-      setTicketStatusChange(false);
-      console.log(res?.message);
-      console.log(res);
-      successNotify(res?.message);
-      setLoading(false);
+      // successNotify(res?.message);
+      // handleShowNewTickets();
+      // setLoading(false);
     } catch (err) {
       if (err?.message) {
         errorNotify(err?.message);
@@ -473,9 +485,15 @@ function EmailInbox() {
 
   const handleInquiryReject = async (id) => {
     try {
-      const res = await FormService.rejectInquiry(id);
-      setTicketStatusChange(false);
-      successNotify(res?.message);
+      handleModalShow(true);
+      setActionBtnType("reject");
+      // setLoading(true);
+      // const res = await FormService.rejectInquiry(id);
+      // setTicketStatusChange(false);
+      // setSelectedTicket(res?.inquiry);
+      // successNotify(res?.message);
+
+      // setLoading(false);
     } catch (err) {
       if (err?.message) {
         errorNotify(err?.message);
@@ -613,22 +631,21 @@ function EmailInbox() {
                       className={
                         userData?.role == 2
                           ? "mailbox-list-item border-bottom" +
-                          (ticket?.documents ? " has-attachment " : "")
+                            (ticket?.documents ? " has-attachment " : "")
                           : "mailbox-list-item border-bottom border-white" +
-                          // (mail.unread ? " unread" : "") +
-                          (ticket?.documents ? " has-attachment " : "") +
-                          (Math.floor(
-                            (new Date() - new Date(ticket?.createdAt)) /
-                            (1000 * 60 * 60)
-                          ) > 45
-                            ? "mailbox-list-danger "
-                            : Math.floor(
+                            // (mail.unread ? " unread" : "") +
+                            (ticket?.documents ? " has-attachment " : "") +
+                            (Math.floor(
                               (new Date() - new Date(ticket?.createdAt)) /
-                              (1000 * 60 * 60)
-                            ) > 24
+                                (1000 * 60 * 60)
+                            ) > 45
+                              ? "mailbox-list-danger "
+                              : Math.floor(
+                                  (new Date() - new Date(ticket?.createdAt)) /
+                                    (1000 * 60 * 60)
+                                ) > 24
                               ? "mailbox-list-warning"
                               : "mailbox-list-general")
-
                       }
                     >
                       <div className="mailbox-checkbox">
@@ -687,8 +704,7 @@ function EmailInbox() {
                         </div>
                         <div className="mailbox-desc">{ticket?.email}</div>
                         {userData?.role != 2 ? (
-                          selectedTicket?.status == 0 ||
-                            selectedTicket?.status == 1 ? (
+                          ticket?.status == 0 || ticket?.status == 1 ? (
                             <DownTimer
                               remainTime={getTimeRemain(
                                 new Date(ticket?.createdAt),
@@ -699,7 +715,6 @@ function EmailInbox() {
                             <></>
                           )
                         ) : (
-
                           <Badge
                             style={{
                               marginTop: "13px",
@@ -707,11 +722,10 @@ function EmailInbox() {
                               fontWeight: "300",
                               float: "right",
                             }}
-                            bg={ticketStatusBadge[selectedTicket?.status]}
+                            bg={ticketStatusBadge[ticket?.status]}
                           >
-                            {ticketStatus[selectedTicket?.status]}
+                            {ticketStatus[ticket?.status]}
                           </Badge>
-
                         )}
                       </div>
                     </div>
@@ -735,8 +749,8 @@ function EmailInbox() {
           >
             {loading ? (
               <div className="d-flex justify-content-center align-items-center h-100">
-                <div class="spinner-grow " role="status">
-                  <span class="sr-only">Loading...</span>
+                <div className="spinner-grow " role="status">
+                  <span className="sr-only">Loading...</span>
                 </div>
               </div>
             ) : (
@@ -839,8 +853,6 @@ function EmailInbox() {
                             >
                               <div className="mailbox-attachment">
                                 <a
-                                  href="#"
-                                  download
                                   onClick={(e) =>
                                     handleDownload(
                                       host + attachment?.url,
@@ -897,108 +909,120 @@ function EmailInbox() {
                             </p>
                           </div>
                         </div>
-                        <br />
-                        <br />
                         Enrollment Number: {selectedTicket?.enrollmentNumber}
                         <br />
+                      </div>
+                      <div className=" border-top border-gray pt-3 mt-4">
+                        <Form.Group controlId="commentTextarea">
+                          <Form.Control
+                            as="textarea"
+                            rows={4}
+                            placeholder="Personal Note ..."
+                            style={{ borderColor: "gray !important" }}
+                            className="custom-textarea-input"
+                          />
+                        </Form.Group>
                       </div>
                     </div>
                     {userRole != 2 &&
                       selectedTicket?.status != 2 &&
-                      selectedTicket?.status != 3 &&
-                      isTicketStatusChange && (
-                        <div
-                          style={{
-                            borderTop: "1px solid",
-                            borderColor: "gray",
-                          }}
-                          className="pt-2 d-flex gap-3"
-                        >
+                      selectedTicket?.status != 3 && (
+                        <div className="pt-2 d-flex justify-content-end ">
                           <div
-                            class="btn-group w-100"
-                            role="group"
-                            aria-label="Basic example"
-                            style={{ maxWidth: "115px" }}
+                            className="d-flex gap-5 bg-white  position-fixed"
+                            style={{
+                              bottom: "30px",
+                              width: "inherit",
+                            }}
                           >
-                            <button
-                              type="button"
+                            <div
+                              className="btn-group w-100"
+                              role="group"
+                              aria-label="Basic example"
                               style={{
-                                backgroundColor: "#009be3",
-                                borderTopLeftRadius: "50px",
-                                borderBottomLeftRadius: "50px",
-                                borderRight: "1px solid orange",
+                                maxWidth: "115px",
                               }}
-                              className="btn btn-info btn-left mailbox-detail-button pl-5"
-                              onClick={() =>
-                                handleInquiryAccept(selectedTicket?._id)
-                              }
                             >
-                              Accept
-                            </button>
-                            <Dropdown type="button">
-                              {/* <button className="btn btn-info" style={{ backgroundColor: "#009be3" }}>Accept</button> */}
-                              <Dropdown.Toggle
-                                variant="success"
-                                id="dropdown-basic"
-                                className="btn btn-info dropdown-toggle"
+                              <button
+                                type="button"
                                 style={{
-                                  borderTopRightRadius: "50px",
-                                  borderBottomRightRadius: "50px",
+                                  backgroundColor: "#009be3",
+                                  borderTopLeftRadius: "50px",
+                                  borderBottomLeftRadius: "50px",
+                                  borderRight: "1px solid orange",
                                 }}
-                              ></Dropdown.Toggle>
+                                className="btn btn-info btn-left mailbox-detail-button pl-5"
+                                onClick={() =>
+                                  handleInquiryAccept(selectedTicket?._id)
+                                }
+                              >
+                                Accept
+                              </button>
+                              <Dropdown type="button">
+                                {/* <button className="btn btn-info" style={{ backgroundColor: "#009be3" }}>Accept</button> */}
+                                <Dropdown.Toggle
+                                  variant="success"
+                                  id="dropdown-basic"
+                                  className="btn btn-info dropdown-toggle"
+                                  style={{
+                                    borderTopRightRadius: "50px",
+                                    borderBottomRightRadius: "50px",
+                                  }}
+                                ></Dropdown.Toggle>
 
-                              <Dropdown.Menu>
-                                <Dropdown.Item href="#/action-1">
-                                  Accept with Internal Note
-                                </Dropdown.Item>
-                                <Dropdown.Item href="#/action-2">
-                                  Accept with Email
-                                </Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown>
-                          </div>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item href="#/action-1">
+                                    Accept with Internal Note
+                                  </Dropdown.Item>
+                                  <Dropdown.Item href="#/action-2">
+                                    Accept with Email
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            </div>
 
-                          <div
-                            class="btn-group w-100"
-                            role="group"
-                            aria-label="Basic example"
-                            style={{ maxWidth: "115px" }}
-                          >
-                            <button
-                              type="button"
-                              style={{
-                                backgroundColor: "#e00000",
-                                borderTopLeftRadius: "50px",
-                                borderBottomLeftRadius: "50px",
-                                borderRight: "1px solid orange",
-                              }}
-                              className="btn btn-danger btn-left"
-                              onClick={() =>
-                                handleInquiryReject(selectedTicket?._id)
-                              }
+                            <div
+                              className="btn-group w-100"
+                              role="group"
+                              aria-label="Basic example"
+                              style={{ maxWidth: "115px" }}
                             >
-                              Reject
-                            </button>
-                            <Dropdown type="button">
-                              <Dropdown.Toggle
-                                variant="danger"
-                                id="dropdown-basic"
-                                className="btn btn-danger dropdown-toggle"
+                              <button
+                                type="button"
                                 style={{
-                                  borderTopRightRadius: "50px",
-                                  borderBottomRightRadius: "50px",
+                                  backgroundColor: "#e00000",
+                                  borderTopLeftRadius: "50px",
+                                  borderBottomLeftRadius: "50px",
+                                  borderRight: "1px solid orange",
                                 }}
-                              ></Dropdown.Toggle>
+                                className="btn btn-danger btn-left"
+                                onClick={() =>
+                                  handleInquiryReject(selectedTicket?._id)
+                                }
+                              >
+                                Reject
+                              </button>
+                              <Dropdown type="button">
+                                <Dropdown.Toggle
+                                  variant="danger"
+                                  id="dropdown-basic"
+                                  className="btn btn-danger dropdown-toggle"
+                                  style={{
+                                    borderTopRightRadius: "50px",
+                                    borderBottomRightRadius: "50px",
+                                  }}
+                                ></Dropdown.Toggle>
 
-                              <Dropdown.Menu>
-                                <Dropdown.Item href="#/action-1">
-                                  Reject with Internal Note
-                                </Dropdown.Item>
-                                <Dropdown.Item href="#/action-2">
-                                  Reject with Email
-                                </Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item href="#/action-1">
+                                    Reject with Internal Note
+                                  </Dropdown.Item>
+                                  <Dropdown.Item href="#/action-2">
+                                    Reject with Email
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -1018,6 +1042,19 @@ function EmailInbox() {
           </div>
         </div>
       </div>
+      {actionBtnType && (
+        <EmailTemplateModal
+          show={show}
+          handleModalClose={handleModalClose}
+          actionBtnType={actionBtnType}
+          selectedTicket={selectedTicket}
+          setLoading={setLoading}
+          setTicketStatusChange={setTicketStatusChange}
+          successNotify={successNotify}
+          errorNotify={errorNotify}
+          setSelectedTicket={setSelectedTicket}
+        />
+      )}
     </div>
   );
 }

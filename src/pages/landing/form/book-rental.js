@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import styled from "styled-components";
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
+import { FormContext } from "./index";
+import FormService from "../../../sevices/form-service";
+import { ToastContainer, toast } from "react-toastify";
 
 const StyledDatePicker = styled(DatePicker)`
   border: 1px solid !important;
@@ -18,6 +21,120 @@ const StyledDatePicker = styled(DatePicker)`
 `;
 
 const BookRental = () => {
+  const {
+    isFormSubmit,
+    setIsFormSubmit,
+    setFormData,
+    formData,
+    mainPageErrors,
+  } = useContext(FormContext);
+
+  const [errors, setErrors] = useState({});
+  const [formDetailData, setformDetailData] = useState({
+    bookTitle: "",
+    periodFromTime: "",
+    agreement: "",
+    comment: "",
+  });
+
+  useEffect(() => {
+    setIsFormSubmit(false);
+    setErrors({});
+
+    return () => {
+      setIsFormSubmit(false);
+      setErrors({});
+    };
+  }, []);
+
+  const handleChange = (e) => {
+    setformDetailData({
+      ...formDetailData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  useEffect(() => {
+    const successNotify = (msg) => {
+      toast.info(msg, {
+        autoClose: 3000, // Duration in milliseconds
+      });
+    };
+
+    const errorNotify = (msg) => {
+      toast.warning(msg, {
+        autoClose: 3000, // Duration in milliseconds
+      });
+    };
+
+    const createTicket = async () => {
+      if (isFormSubmit != 0) {
+        if (validate()) {
+          if (Object.keys(mainPageErrors).length == 0) {
+            let jsonFormDetailData = JSON.stringify(formDetailData);
+
+            let bookRentalObject = { subCategory1: 1 };
+
+            const combinedFormData = Object.assign(
+              {},
+              formData,
+              bookRentalObject
+            );
+
+            const formDataToSend = new FormData();
+            for (const key in combinedFormData) {
+              formDataToSend.append(key, formData[key]);
+            }
+            formDataToSend.append("details", jsonFormDetailData);
+
+            try {
+              let res = await FormService.createInquiry(formDataToSend);
+              successNotify(res?.message);
+              setformDetailData({
+                ...formDetailData,
+                bookTitle: "",
+                periodFromTime: "",
+                agreement: "",
+                comment: "",
+              });
+
+              setFormData({
+                ...formData,
+                agreement: false,
+              });
+            } catch (err) {
+              const errors = err?.errors || err?.error;
+
+              if (typeof errors != "object") {
+                errorNotify(errors);
+              } else {
+                console.log(typeof errors);
+                errors.map((error) => {
+                  errorNotify(error.msg);
+                });
+              }
+            }
+          }
+        }
+      }
+    };
+    createTicket();
+  }, [isFormSubmit]);
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (formDetailData.bookTitle == "") {
+      newErrors.bookTitle = "This field is required";
+    }
+    if (!formDetailData.periodFromTime) {
+      newErrors.periodFromTime = "This field is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const today = dayjs().toDate();
   const [selectedDate, handleSelectDate] = useState(today);
 
@@ -51,6 +168,9 @@ const BookRental = () => {
             </Form.Label>
             <Form.Control
               as="select"
+              name="bookTitle"
+              onChange={handleChange}
+              value={formDetailData.bookTitle}
               style={{
                 appearance: "none", // Hides the default arrow
                 MozAppearance: "none", // For Firefox

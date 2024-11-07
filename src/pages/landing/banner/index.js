@@ -9,7 +9,7 @@ const BannerSection = () => {
       <div className="bg-header-positionRelative">
         <div className="bg-header-container">
           <img
-            src="assets/img/2023-05-05-UMFST-UMCH-Days-2023-5201-3.webp"
+            src="/assets/img/2023-05-05-UMFST-UMCH-Days-2023-5201-3.webp"
             alt="Sample Image 1"
             height={10}
             className="bg-header-img"
@@ -35,7 +35,7 @@ const BannerSection = () => {
         <div className="bg-header-mask-imgContainer">
           <img
             className="bg-header-mask-img"
-            src="assets/img/b-header.webp"
+            src="/assets/img/b-header.webp"
             alt="Sample Image 1"
             width={10}
             height={10}
@@ -47,7 +47,7 @@ const BannerSection = () => {
                 isVisible ? "fade-in-down" : ""
               }`}
             >
-              <img src="assets/img/Pen.svg" width={70} height={70} />
+              <img src="/assets/img/Pen.svg" width={70} height={70} />
               <div className="bg-header-img-headerCaption mt-2 mt-md-5">
                 Ticket System
               </div>

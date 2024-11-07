@@ -9,13 +9,13 @@ class FormSevice {
     const getInquiriesEndPoint = "/api/admin/inquiries";
     return await HttpService.get(getInquiriesEndPoint, payload);
   };
-  acceptInquiry = async (id) => {
-    const getInquiriesEndPoint = `/api/admin/inquiries/${id}/accept`;
-    return await HttpService.patch(getInquiriesEndPoint);
+  acceptInquiry = async (payload) => {
+    const getInquiriesEndPoint = `/api/admin/inquiries/accept`;
+    return await HttpService.post(getInquiriesEndPoint, payload);
   };
-  rejectInquiry = async (id) => {
-    const getInquiriesEndPoint = `/api/admin/inquiries/${id}/reject`;
-    return await HttpService.patch(getInquiriesEndPoint);
+  rejectInquiry = async (payload) => {
+    const getInquiriesEndPoint = `/api/admin/inquiries/reject`;
+    return await HttpService.post(getInquiriesEndPoint, payload);
   };
   checkInquiry = async (id) => {
     const checkInquiryByIdEndPoint = `/api/admin/inquiries/${id}/check`;
@@ -28,6 +28,10 @@ class FormSevice {
   getInquiryByInquiryId = async (id) => {
     const getInquiryByIdEndPoint = `/api/admin/inquiries/${id}/show`;
     return await HttpService.get(getInquiryByIdEndPoint);
+  };
+  reOpenTicket = async (payload) => {
+    const reOpenTicketEndPoint = "/api/admin/inquiries/reOpenTicket";
+    return await HttpService.post(reOpenTicketEndPoint, payload);
   };
 }
 

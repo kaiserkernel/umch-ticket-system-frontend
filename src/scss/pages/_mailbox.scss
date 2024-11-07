@@ -148,7 +148,8 @@
           @if ($enable-rtl) {
             right: 0;
           } @else {
-            left: 0;
+            bottom: 0;
+            right: 0;
           }
         }
       }
@@ -165,7 +166,7 @@
       background-color: teal !important;
       color: white !important;
     }
-    
+
     & .mailbox-checkbox {
       position: relative;
       & + .mailbox-message {
@@ -276,13 +277,13 @@
           @if ($enable-rtl) {
             right: 0;
           } @else {
-            left: 0;
+            bottom: 0;
+            right: 0;
           }
         }
       }
     }
-    
-    
+
     & .mailbox-checkbox {
       position: relative;
       & + .mailbox-message {
@@ -455,5 +456,4 @@
       }
     }
   }
-  
 }

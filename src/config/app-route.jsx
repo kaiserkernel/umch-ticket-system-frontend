@@ -13,6 +13,7 @@ import EmailCompose from "./../pages/email/compose.js";
 import EmailDetail from "./../pages/email/detail.js";
 import AdminLogin from "../pages/auth/adminLogin.js";
 import AccountManagement from "../pages/table/plugins.js";
+import TicketReopen from "../pages/ticket/reopen.js";
 
 const AppRoute = [
   {
@@ -32,6 +33,10 @@ const AppRoute = [
       { path: "admin", element: <AdminLogin /> },
       { path: "login", element: <Login /> },
       {
+        path: "ticket-reopen/:id",
+        element: <TicketReopen />,
+      },
+      {
         path: "profile",
         element: (
           <ProtectedRoute>
@@ -47,6 +52,7 @@ const AppRoute = [
           </ProtectedRoute>
         ),
       },
+
       {
         path: "email/*",
         children: [
