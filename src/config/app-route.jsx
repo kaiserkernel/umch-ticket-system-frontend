@@ -34,7 +34,11 @@ const AppRoute = [
       { path: "login", element: <Login /> },
       {
         path: "ticket-reopen/:id",
-        element: <TicketReopen />,
+        element:  (  
+        <ProtectedRoute>
+          <TicketReopen />
+        </ProtectedRoute>
+        )
       },
       {
         path: "profile",

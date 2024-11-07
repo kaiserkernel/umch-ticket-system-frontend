@@ -11,12 +11,11 @@ import Internship from "./internship";
 import MedicalAbilities from "./medical-abilities";
 import Thesis from "./thesis";
 import Other from "./other";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-import "bootstrap-icons/font/bootstrap-icons.css";
-
 import FormService from "../../../sevices/form-service";
+
+import "react-toastify/dist/ReactToastify.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import BeatLoader from "react-spinners/BeatLoader";
 
 export const FormContext = createContext();
 
@@ -27,7 +26,7 @@ const FormSection = () => {
   }
   const location = useLocation();
   const [isFormSubmit, setIsFormSubmit] = useState(0);
-
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: userData?.firstName,
     lastName: userData?.lastName,
@@ -276,6 +275,7 @@ const FormSection = () => {
         setFormData,
         formData,
         mainPageErrors,
+        setLoading,
       }}
     >
       <section className="form py-2 py-md-2">
@@ -540,15 +540,26 @@ const FormSection = () => {
               </p>
               <p className="mt-5 mt-md-5 pt-4 pt-md-4">Best regards</p>
               <p>UMFST-UMCH</p>
-              <div className="text-center">
-                <button
-                  onClick={handleSubmit}
-                  className="m-4 btn btn-primary ronded-pill px-4 py-2 default-bg"
-                  disabled={formData.agreement ? false : true}
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
                 >
-                  Send Request
-                </button>
-              </div>
+                  <BeatLoader size={15} />
+                </div>
+              ) : (
+                <div className="text-center">
+                  <button
+                    onClick={handleSubmit}
+                    className="m-4 btn btn-primary ronded-pill px-4 py-2 default-bg"
+                    disabled={formData.agreement ? false : true}
+                  >
+                    Send Request
+                  </button>
+                </div>
+              )}
             </Form>
           </div>
         </div>

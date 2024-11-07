@@ -3,6 +3,21 @@ import { Row, Col, Form } from "react-bootstrap";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
+
+const StyledDatePicker = styled(DatePicker)`
+  border: 1px solid !important;
+  padding: 8px !important;
+  border-radius: 0px !important;
+  outline: none !important;
+  width: 100% !important;
+
+  &:focus {
+    border-color: #2596be !important;
+  }
+`;
 
 const Enrollment = ({ applicationRequest }) => {
   const {
@@ -11,12 +26,14 @@ const Enrollment = ({ applicationRequest }) => {
     setFormData,
     formData,
     mainPageErrors,
+    setLoading,
   } = useContext(FormContext);
 
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
     nationality: "",
     currentYearOfStudy: "",
+    birthday: "",
     comment: "",
   });
 
@@ -125,7 +142,9 @@ const Enrollment = ({ applicationRequest }) => {
             });
 
             try {
+              setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setLoading(false);
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
@@ -140,6 +159,7 @@ const Enrollment = ({ applicationRequest }) => {
                 agreement: false,
               });
             } catch (err) {
+              setLoading(false);
               const errors = err?.errors || err?.error;
 
               if (typeof errors != "object") {
@@ -163,6 +183,9 @@ const Enrollment = ({ applicationRequest }) => {
 
     if (!formDetailData.nationality) {
       newErrors.nationality = "This field is required";
+    }
+    if (!formDetailData.birthday) {
+      newErrors.birthday = "This field is required";
     }
     if (
       formDetailData.currentYearOfStudy == "default" ||
@@ -235,7 +258,35 @@ const Enrollment = ({ applicationRequest }) => {
           )}
         </Col>
       </Row>
-
+      <Row className="mt-4 ">
+        <Col lg={12}>
+          <Form.Group controlId="">
+            <Form.Label className="input-label">
+              Date of Birthday
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <StyledDatePicker
+              selected={formDetailData.birthday}
+              onChange={(date) =>
+                setformDetailData({
+                  ...formDetailData,
+                  birthday: date,
+                })
+              }
+              name="diplomaCollectionDate"
+              dateFormat="yyyy/MM/dd"
+              isClearable
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              className="custom-input"
+            />
+          </Form.Group>
+          {errors.birthday && (
+            <p className="error-content">{errors.birthday}</p>
+          )}
+        </Col>
+      </Row>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
