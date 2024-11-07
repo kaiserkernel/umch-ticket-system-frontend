@@ -13,6 +13,11 @@ class FormSevice {
     const getInquiriesEndPoint = `/api/admin/inquiries/accept`;
     return await HttpService.post(getInquiriesEndPoint, payload);
   };
+
+  acceptEnrollmentInquiry = async (payload) => {
+    const acceptEnrollmentEndPoint = `/api/admin/inquiries/enrollment/accept`;
+    return await HttpService.post(acceptEnrollmentEndPoint, payload);
+  };
   rejectInquiry = async (payload) => {
     const getInquiriesEndPoint = `/api/admin/inquiries/reject`;
     return await HttpService.post(getInquiriesEndPoint, payload);

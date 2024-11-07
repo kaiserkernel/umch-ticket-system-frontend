@@ -200,7 +200,7 @@ function AdminLogin() {
                 />
               </Form.Group>
             </div>
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -213,7 +213,7 @@ function AdminLogin() {
                   Remember me
                 </label>
               </div>
-            </div>
+            </div> */}
             <button
               type="submit"
               className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"

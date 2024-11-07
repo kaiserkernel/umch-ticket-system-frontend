@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { Row, Col, Form } from "react-bootstrap";
 import moment from "moment";
 
 const Enrollment = ({ selectedTicket }) => {
@@ -17,6 +18,10 @@ const Enrollment = ({ selectedTicket }) => {
         </div>
       </div>
 
+      <p className="text-black fw-bold">Date of Birthday:</p>
+      <p className="text-black">
+        {moment(selectedTicket?.details?.birthday).format("MM-DD-YYYY")}
+      </p>
       <p className="text-black fw-bold">Comments:</p>
       <p className="text-black">{selectedTicket?.details?.comment}</p>
     </div>

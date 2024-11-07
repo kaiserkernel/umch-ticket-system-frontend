@@ -27,6 +27,7 @@ const TranscriptRecords = ({ applicationRequest }) => {
     setFormData,
     formData,
     mainPageErrors,
+    setLoading,
   } = useContext(FormContext);
 
   const [errors, setErrors] = useState({});
@@ -140,7 +141,9 @@ const TranscriptRecords = ({ applicationRequest }) => {
             });
 
             try {
+              setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setLoading(false);
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
