@@ -114,12 +114,6 @@ const EmailTemplateModal = ({
         <Modal.Title>Email Template</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ height: "450px" }}>
-        <div className="d-flex justify-content-end mb-2">
-          <a className="btn btn-info me-1">
-            {" "}
-            <i className="bi bi-pencil me-1"></i>Edit
-          </a>
-        </div>
         <Form.Group controlId="commentTextarea">
           <ReactQuill
             placeholder=""

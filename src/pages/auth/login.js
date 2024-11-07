@@ -148,31 +148,7 @@ function PagesLogin() {
                 sign in and provide the details of your inquiry so we can
                 address it promptly and effectively.
               </p>
-              <p className="text-inverse text-opacity-50 text-center sm-font">
-                ure you can easily reach our team for assistance with requests
-                and complaints. Please sign in and provide the details of your
-                inquiry so we can address it promptly and effectively.
-              </p>
             </div>
-            {/* {error && (
-            <p style={{ color: "red" }}>
-              <i className="bi bi-exclamation-triangle me-2"></i>
-              {error}
-            </p>
-          )} */}
-            {/* <div className="mb-3">
-            <label className="form-label">
-              Enrollment Number <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="enrollmentNumber"
-              onChange={handleChange}
-              value={formData.enrollmentNumber}
-              className="form-control form-control-lg bg-white bg-opacity-5"
-              placeholder=""
-            />
-          </div> */}
 
             <Form.Group controlId="enrollmentNumber">
               <Form.Label className="input-label">
@@ -188,20 +164,6 @@ function PagesLogin() {
               />
             </Form.Group>
             <div className="mb-3 mt-4">
-              {/* <div className="d-flex">
-              <label className="form-label">
-                Password <span className="text-danger">*</span>
-              </label>
-            </div>
-            <input
-              type="password"
-              name="password"
-              onChange={handleChange}
-              value={formData.password}
-              className="form-control form-control-lg bg-white bg-opacity-5"
-              placeholder=""
-            /> */}
-
               <Form.Group controlId="password">
                 <Form.Label className="input-label">
                   Password <span className="ms-1 required-label">*</span>
