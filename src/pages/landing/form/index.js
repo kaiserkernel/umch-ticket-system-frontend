@@ -35,7 +35,7 @@ const FormSection = () => {
     firstYearOfStudy: userData?.firstYearOfStudy,
     inquiryCategory: "default",
     subCategory2: "",
-    agreement: false,
+    agreement: false
   });
 
   const [mainPageErrors, setErrors] = useState({});
@@ -79,12 +79,12 @@ const FormSection = () => {
     if (e.target.name == "agreement") {
       setFormData({
         ...formData,
-        [e.target.name]: e.target.checked,
+        [e.target.name]: e.target.checked
       });
     } else {
       setFormData({
         ...formData,
-        [e.target.name]: e.target.value,
+        [e.target.name]: e.target.value
       });
     }
   };
@@ -140,8 +140,8 @@ const FormSection = () => {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
     1: {
       hidden: { height: 0, opacity: 0, originY: 0 },
@@ -149,14 +149,14 @@ const FormSection = () => {
         height: "auto",
         opacity: 1,
         originY: 0,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
 
     2: {
@@ -165,14 +165,14 @@ const FormSection = () => {
         scaleY: 1,
         opacity: 1,
         originY: 1,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
     3: {
       hidden: { scaleY: 0, opacity: 0 },
@@ -181,8 +181,8 @@ const FormSection = () => {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
     4: {
       hidden: { height: 0, opacity: 0, originY: 0 },
@@ -190,14 +190,14 @@ const FormSection = () => {
         height: "auto",
         opacity: 1,
         originY: 0,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
 
     5: {
@@ -206,14 +206,14 @@ const FormSection = () => {
         scaleY: 1,
         opacity: 1,
         originY: 1,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
     6: {
       hidden: { scaleY: 0, opacity: 0 },
@@ -222,8 +222,8 @@ const FormSection = () => {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
     7: {
       hidden: { height: 0, opacity: 0, originY: 0 },
@@ -231,14 +231,14 @@ const FormSection = () => {
         height: "auto",
         opacity: 1,
         originY: 0,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
     8: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
@@ -246,15 +246,15 @@ const FormSection = () => {
         scaleY: 1,
         opacity: 1,
         originY: 1,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
-    },
+        transition: { duration: 0.5 }
+      }
+    }
   };
   const content = {
     1: <ApplicationRequests />,
@@ -264,7 +264,7 @@ const FormSection = () => {
     5: <Internship />,
     6: <MedicalAbilities />,
     7: <Thesis />,
-    8: <Other />,
+    8: <Other />
   };
 
   return (
@@ -275,7 +275,7 @@ const FormSection = () => {
         setFormData,
         formData,
         mainPageErrors,
-        setLoading,
+        setLoading
       }}
     >
       <section className="form py-2 py-md-2">
@@ -397,7 +397,7 @@ const FormSection = () => {
                         backgroundColor: "white",
                         color: "black",
                         padding: "8px 12px",
-                        border: "1px solid #007bff",
+                        border: "1px solid #007bff"
                       }}
                       className="custom-input"
                       disabled
@@ -435,7 +435,7 @@ const FormSection = () => {
                         backgroundColor: "white",
                         color: "gray !important",
                         padding: "8px 12px",
-                        border: "1px solid #007bff",
+                        border: "1px solid #007bff"
                       }}
                       className="custom-input"
                       name="inquiryCategory"
@@ -544,7 +544,7 @@ const FormSection = () => {
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "center"
                   }}
                 >
                   <BeatLoader size={15} />
