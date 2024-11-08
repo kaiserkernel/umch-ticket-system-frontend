@@ -1,12 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import Canvas from "./canvas";
 import Default from "./default";
 import StreamingPanopto from "./streaming-panopto";
 
+import { FormContext } from "../index";
+
 const CampusIT = () => {
-  const [selectedEffect, setSelectedEffect] = useState("default");
+  const { isFormSubmit, setFormData, formData, mainPageErrors } =
+    useContext(FormContext);
+
+  const [formInquiryData, setFormInquiryData] = useState({
+    campusIT: "default"
+  });
+
+  const isFirstRender = useRef(true);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // Mark the initial render as complete.
+      return; // Skip running this effect on initial render.
+    }
+    console.log(isFormSubmit);
+    console.log(formData);
+    if (isFormSubmit != 0) {
+      console.log("sumbit is done");
+      if (validate()) {
+      }
+    }
+  }, [isFormSubmit]);
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (formInquiryData.campusIT == "default") {
+      newErrors.campusIT = "Applications and Requests is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    setFormInquiryData({
+      ...formInquiryData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   // Define animation variants for each collapse effect
   const variants = {
@@ -16,46 +58,46 @@ const CampusIT = () => {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
-    canvas: {
+    1: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
         opacity: 1,
         originY: 0,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
+        transition: { duration: 0.5 }
+      }
     },
 
-    streaming_panopto: {
+    2: {
       hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
       visible: {
         scaleY: 1,
         opacity: 1,
         originY: 1,
-        transition: { duration: 0.5 },
+        transition: { duration: 0.5 }
       },
       exit: {
         scaleY: 0,
         opacity: 0,
         originY: 0,
-        transition: { duration: 0.5 },
-      },
-    },
+        transition: { duration: 0.5 }
+      }
+    }
   };
 
   const content = {
     default: <Default />,
-    canvas: <Canvas />,
-    streaming_panopto: <StreamingPanopto />,
+    1: <Canvas campusIT={String(formInquiryData.campusIT)} />,
+    2: <StreamingPanopto campusIT={String(formInquiryData.campusIT)} />
   };
 
   return (
@@ -70,49 +112,41 @@ const CampusIT = () => {
             </Form.Label>
             <Form.Control
               as="select"
-              onChange={(e) => setSelectedEffect(e.target.value)}
-              value={selectedEffect}
+              name="campusIT"
+              onChange={handleChange}
+              value={formInquiryData.campusIT}
               style={{
                 appearance: "none", // Hides the default arrow
                 MozAppearance: "none", // For Firefox
                 WebkitAppearance: "none", // For Safari/Chrome
                 backgroundColor: "white",
-                color: "gray !important",
+                color: "gray !important"
                 // padding: "8px 12px",
                 // border: "1px solid #007bff",
               }}
               className="custom-input"
             >
               <option value="default">– Select –</option>
-              <option value="canvas">Canvas</option>
-              <option value="streaming_panopto">Streaming / Panopto</option>
+              <option value="1">Canvas</option>
+              <option value="2">Streaming / Panopto</option>
             </Form.Control>
           </Form.Group>
+          {errors.campusIT && (
+            <p className="error-content">{errors.campusIT}</p>
+          )}
         </Col>
       </Row>
       <AnimatePresence mode="wait">
-        {selectedEffect === "default" ? (
-          <motion.div
-            key="default"
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={variants.default}
-          >
-            <div>{content[selectedEffect]}</div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key={selectedEffect}
-            initial="hidden"
-            animate="visible"
-            //   exit={selectedEffect === "default" ? "exit" : false}
+        <motion.div
+          key={formInquiryData.campusIT}
+          initial="hidden"
+          animate="visible"
+          //   exit={selectedEffect === "default" ? "exit" : false}
 
-            variants={variants[selectedEffect] || variants.default}
-          >
-            <div>{content[selectedEffect]}</div>
-          </motion.div>
-        )}
+          variants={variants[formInquiryData.campusIT]}
+        >
+          <div>{content[formInquiryData.campusIT]}</div>
+        </motion.div>
       </AnimatePresence>
     </div>
   );

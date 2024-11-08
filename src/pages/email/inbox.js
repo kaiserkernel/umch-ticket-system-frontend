@@ -36,68 +36,113 @@ const INQUIRYCATEGORIES = [
       { subCategory1: "Absence", component: "Absence" },
       {
         subCategory1: "Change of teaching hospital",
-        component: "ChangeTeachingHospital",
+        component: "ChangeTeachingHospital"
       },
       {
         subCategory1: "Change of study group",
-        component: "ChangeStudyGroup",
+        component: "ChangeStudyGroup"
       },
       {
         subCategory1: "Demonstrator student",
-        component: "DemonstratorStudent",
+        component: "DemonstratorStudent"
       },
       {
         subCategory1: "Enrollment",
-        component: "Enrollment",
+        component: "Enrollment"
       },
       {
         subCategory1: "Exam inspection",
-        component: "ExamInspection",
+        component: "ExamInspection"
       },
       {
         subCategory1: "Online Catalogue (Carnet)",
-        component: "OnlineCatalogue",
+        component: "OnlineCatalogue"
       },
       {
         subCategory1: "Recognition of Courses",
-        component: "RecognitionCourses",
+        component: "RecognitionCourses"
       },
       {
         subCategory1: "Recognition of Internship",
-        component: "RecognitionInternship",
+        component: "RecognitionInternship"
       },
       {
         subCategory1: "Short term borrow of Diploma",
-        component: "ShotTermBorrowDiploma",
+        component: "ShotTermBorrowDiploma"
       },
       {
         subCategory1: "Syllabus of the academic year",
-        component: "SyllabusAcademic",
+        component: "SyllabusAcademic"
       },
       {
         subCategory1: "Transcript of Records",
-        component: "TranscriptRecords",
+        component: "TranscriptRecords"
       },
       {
         subCategory1: "Transfer to Targu Mures",
-        component: "TransferTarguMures",
+        component: "TransferTarguMures"
       },
       {
         subCategory1: "Other",
-        component: "Other",
-      },
-    ],
+        component: "ApplicationRequestOther"
+      }
+    ]
   },
   {
     inquiryCategory: "Book rental UMCH library",
     component: "",
+    subCategories: [{ subCategory1: "Default", component: "BookRental" }]
   },
-  "Campus IT",
-  "Complaints",
-  "Internship",
-  "Medical Abilities",
-  "Thesis",
-  "Other",
+  {
+    inquiryCategory: "Campus IT",
+    component: "",
+    subCategories: [
+      { subCategory1: "Campus", component: "CampusIT" },
+      { subCategory1: "Streaming / Panopto", component: "Streaming" }
+    ]
+  },
+  {
+    inquiryCategory: "Complaints",
+    component: "",
+    subCategories: [
+      { subCategory1: "Campus", component: "Campus" },
+      { subCategory1: "Dean’s Office", component: "DeanOffice" },
+      {
+        subCategory1: "German Teaching Department",
+        component: "GermanTeachingDepartment"
+      },
+      { subCategory1: "Teaching Hospital", component: "TeachingHospital" },
+      { subCategory1: "Teacher", component: "Teacher" },
+      {
+        subCategory1: "Online Catalouge (Carnet)",
+        component: "OnlineCatalouge"
+      },
+      { subCategory1: "Exam", component: "Exam" },
+      { subCategory1: "Other", component: "CaomplaintsOther" }
+    ]
+  },
+  {
+    inquiryCategory: "Internship",
+    component: "",
+    subCategories: [{ subCategory1: "Internship", component: "Internship" }]
+  },
+  {
+    inquiryCategory: "Medical Abilities",
+    component: "",
+    subCategories: [
+      { subCategory1: "Medical Abilities", component: "MedicalAbilities" }
+    ]
+  },
+  {
+    inquiryCategory: "Thesis",
+    component: "",
+    subCategories: [{ subCategory1: "Thesis", component: "Thesis" }]
+  },
+  {
+    inquiryCategory: "Other",
+    component: "",
+    subCategories: [{ subCategory1: "Other", component: "Other" }]
+  }
 ];
 
 function EmailInbox() {
@@ -213,6 +258,11 @@ function EmailInbox() {
   }, []);
 
   const handleShowNewTickets = () => {
+    setActiveTab("All");
+    setTicketId("");
+    setSelectedTicket("");
+    setShowTicketDetail(false);
+
     if (userRole != 2) {
       getAllInquiries();
     } else {
@@ -220,7 +270,7 @@ function EmailInbox() {
     }
 
     context.setAppContentFullHeight(true);
-    context.setAppContentClass("py-3 px-5");
+    context.setAppContentClass("py-3 px-1 px-md-5");
 
     return function cleanUp() {
       context.setAppContentFullHeight(false);
@@ -244,7 +294,7 @@ function EmailInbox() {
 
           return {
             ...item1,
-            permission: match ? match.permission : null, // Add permission if found, otherwise null
+            permission: match ? match.permission : null // Add permission if found, otherwise null
           };
         });
 
@@ -396,44 +446,6 @@ function EmailInbox() {
     setLoading(false);
   };
 
-  const handleShowAllTickets = async () => {
-    setLoading(true);
-    setActiveTab("All");
-
-    setTicketId("");
-    if (userRole != 2) {
-      try {
-        const allTickets = await FormService.getAllInquiries();
-        allTickets.reverse();
-        console.log(allTickets.inquiries);
-        const filteredAllTickets = allTickets.inquiries.filter(
-          (ticket) => ticket.status === 0 || ticket.status === 1
-        );
-
-        setTicketData(filteredAllTickets);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
-    } else {
-      try {
-        const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
-          enrollmentNumber
-        );
-        allTickets.reverse();
-        const filteredAllTickets = allTickets.filter(
-          (ticket) => ticket.status === 0 || ticket.status === 1
-        );
-
-        setTicketData(filteredAllTickets);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-      }
-    }
-    setLoading(false);
-  };
-
   const getTimeDifference = (startDate, endDate) => {
     // Convert both dates to milliseconds
     const diffInMs = endDate - startDate;
@@ -486,8 +498,8 @@ function EmailInbox() {
       const response = await fetch(fileUrl, {
         method: "GET",
         headers: {
-          "Content-Type": "application/octet-stream",
-        },
+          "Content-Type": "application/octet-stream"
+        }
       });
 
       // Ensure the request was successful
@@ -566,12 +578,12 @@ function EmailInbox() {
 
   const successNotify = (msg) => {
     toast.info(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
   const errorNotify = (msg) => {
     toast.warning(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
@@ -586,9 +598,9 @@ function EmailInbox() {
             <Link
               to=""
               className={`mailbox-toolbar-link ${
-                activeTab == "All" ? "active" : ""
+                activeTab == "All" && !showTicketDetail ? "active" : ""
               } `}
-              onClick={handleShowAllTickets}
+              onClick={handleShowNewTickets}
             >
               New tickets
             </Link>
@@ -611,7 +623,7 @@ function EmailInbox() {
             <Link
               onClick={handleShowApprovedTickets}
               className={`mailbox-toolbar-link ${
-                activeTab == "Approved" ? "active" : ""
+                activeTab == "Approved" && !showTicketDetail ? "active" : ""
               } `}
             >
               Approved
@@ -621,7 +633,7 @@ function EmailInbox() {
             <Link
               onClick={handleShowRejectedTickets}
               className={`mailbox-toolbar-link ${
-                activeTab == "Rejected" ? "active" : ""
+                activeTab == "Rejected" && !showTicketDetail ? "active" : ""
               } `}
             >
               Rejected
@@ -694,24 +706,6 @@ function EmailInbox() {
                               : "mailbox-list-general")
                       }
                     >
-                      <div className="mailbox-checkbox">
-                        <div className="form-check ">
-                          <input
-                            className={
-                              "form-check-input " + userData?.role == 2
-                                ? " "
-                                : "border border-white"
-                            }
-                            type="checkbox"
-                            value=""
-                            id={"mailCheckbox" + index}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={"mailCheckbox" + index}
-                          ></label>
-                        </div>
-                      </div>
                       <div
                         className="mailbox-message"
                         onClick={() => handleSelectTicket(ticket?._id)}
@@ -766,7 +760,7 @@ function EmailInbox() {
                               marginTop: "13px",
                               fontSize: "14px",
                               fontWeight: "300",
-                              float: "right",
+                              float: "right"
                             }}
                             bg={ticketStatusBadge[ticket?.status]}
                           >
@@ -799,7 +793,7 @@ function EmailInbox() {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100vh",
+                  height: "100vh"
                 }}
               >
                 <BeatLoader size={15} />
@@ -809,18 +803,15 @@ function EmailInbox() {
                 {ticketId ? (
                   <div className="mailbox-detail">
                     {userRole != 2 && (
-                      <div className="d-flex gap-5 mailbox-detail-header">
-                        <a className="btn btn-primary rounded-pill">
+                      <div className="mailbox-detail-header external-btn-container">
+                        <a className="btn btn-light rounded-pill mt-2">
                           Reply to the student
                         </a>
-                        <a className="btn btn-primary rounded-pill">
+                        <a className="btn btn-light rounded-pill mt-2">
                           Add internal note
                         </a>
-                        <a className="btn btn-primary rounded-pill">
+                        <a className="btn btn-primary rounded-pill mt-2">
                           Pass to another department
-                        </a>
-                        <a className="btn btn-light rounded-pill">
-                          Close the ticket
                         </a>
                       </div>
                     )}
@@ -887,7 +878,11 @@ function EmailInbox() {
 
                         {selectedTicket && (
                           <Badge
-                            style={{ fontSize: "14px", fontWeight: "300" }}
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "300",
+                              height: "25px"
+                            }}
                             bg={ticketStatusBadge[selectedTicket?.status]}
                           >
                             {ticketStatus[selectedTicket?.status]}
@@ -898,7 +893,6 @@ function EmailInbox() {
                       <div className="d-flex ">
                         {attachments &&
                           attachments.map((attachment, index) => (
-      
                             <div
                               className="mailbox-detail-attachment"
                               key={index}
@@ -975,7 +969,7 @@ function EmailInbox() {
                             position: "sticky",
                             bottom: "0px",
                             backgroundColor: "white",
-                            paddingBottom: "10px",
+                            paddingBottom: "10px"
                           }}
                         >
                           {contentTemplate == "Enrollment" && (
@@ -991,22 +985,12 @@ function EmailInbox() {
                               />
                             </Form.Group>
                           )}
-                          <div className="my-2 ">
-                            <Form.Group controlId="commentTextarea">
-                              <Form.Control
-                                as="textarea"
-                                rows={4}
-                                placeholder="Personal Note ..."
-                                style={{ borderColor: "gray !important" }}
-                                className="custom-textarea-input"
-                              />
-                            </Form.Group>
-                          </div>
+
                           <div className="pt-2 d-flex justify-content-end ">
                             <div
                               className="d-flex gap-3 bg-white"
                               style={{
-                                width: "inherit",
+                                width: "inherit"
                               }}
                             >
                               <div
@@ -1014,7 +998,7 @@ function EmailInbox() {
                                 role="group"
                                 aria-label="Basic example"
                                 style={{
-                                  maxWidth: "115px",
+                                  maxWidth: "115px"
                                 }}
                               >
                                 <button
@@ -1023,7 +1007,7 @@ function EmailInbox() {
                                     backgroundColor: "#009be3",
                                     borderTopLeftRadius: "50px",
                                     borderBottomLeftRadius: "50px",
-                                    borderRight: "1px solid orange",
+                                    borderRight: "1px solid orange"
                                   }}
                                   className="btn btn-info btn-left mailbox-detail-button pl-5"
                                   onClick={() =>
@@ -1040,7 +1024,7 @@ function EmailInbox() {
                                     className="btn btn-info dropdown-toggle"
                                     style={{
                                       borderTopRightRadius: "50px",
-                                      borderBottomRightRadius: "50px",
+                                      borderBottomRightRadius: "50px"
                                     }}
                                   ></Dropdown.Toggle>
 
@@ -1067,7 +1051,7 @@ function EmailInbox() {
                                     backgroundColor: "#e00000",
                                     borderTopLeftRadius: "50px",
                                     borderBottomLeftRadius: "50px",
-                                    borderRight: "1px solid orange",
+                                    borderRight: "1px solid orange"
                                   }}
                                   className="btn btn-danger btn-left"
                                   onClick={() =>
@@ -1083,7 +1067,7 @@ function EmailInbox() {
                                     className="btn btn-danger dropdown-toggle"
                                     style={{
                                       borderTopRightRadius: "50px",
-                                      borderBottomRightRadius: "50px",
+                                      borderBottomRightRadius: "50px"
                                     }}
                                   ></Dropdown.Toggle>
 

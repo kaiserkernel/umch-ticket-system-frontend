@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,12 +15,13 @@ const RecognitionCourses = ({ applicationRequest }) => {
     setFormData,
     formData,
     mainPageErrors,
-    setLoading,
+    setLoading
   } = useContext(FormContext);
 
+  const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
-    comment: "",
+    comment: ""
   });
 
   const [files, setFiles] = useState([]);
@@ -41,7 +42,7 @@ const RecognitionCourses = ({ applicationRequest }) => {
 
     setOriginalFiles((previousOriginalFiles) => [
       ...previousOriginalFiles,
-      newFile,
+      newFile
     ]);
 
     if (newFile) {
@@ -55,7 +56,7 @@ const RecognitionCourses = ({ applicationRequest }) => {
       const fileData = {
         file: newFile,
         previewUrl: previewUrl,
-        progress: 0,
+        progress: 0
       };
       setFiles((prevFiles) => [...prevFiles, fileData]);
       uploadFile(fileData);
@@ -87,20 +88,24 @@ const RecognitionCourses = ({ applicationRequest }) => {
   const handleChange = (e) => {
     setformDetailData({
       ...formDetailData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // Mark the initial render as complete.
+      return; // Skip running this effect on initial render.
+    }
     const successNotify = (msg) => {
       toast.info(msg, {
-        autoClose: 3000, // Duration in milliseconds
+        autoClose: 3000 // Duration in milliseconds
       });
     };
 
     const errorNotify = (msg) => {
       toast.warning(msg, {
-        autoClose: 3000, // Duration in milliseconds
+        autoClose: 3000 // Duration in milliseconds
       });
     };
 
@@ -112,15 +117,16 @@ const RecognitionCourses = ({ applicationRequest }) => {
 
             let applicationRequestObject = { subCategory1: applicationRequest };
 
+            const temp = formData;
             const combinedFormData = Object.assign(
               {},
-              formData,
+              temp,
               applicationRequestObject
             );
 
             const formDataToSend = new FormData();
             for (const key in combinedFormData) {
-              formDataToSend.append(key, formData[key]);
+              formDataToSend.append(key, combinedFormData[key]);
             }
             formDataToSend.append("details", jsonFormDetailData);
             originalFiles.forEach((file) => {
@@ -134,13 +140,13 @@ const RecognitionCourses = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                comment: "",
+                comment: ""
               });
               setFiles([]);
               setOriginalFiles([]);
               setFormData({
                 ...formData,
-                agreement: false,
+                agreement: false
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
@@ -241,7 +247,7 @@ const RecognitionCourses = ({ applicationRequest }) => {
                         style={{
                           background: "#eee",
                           height: "7px",
-                          width: "100%",
+                          width: "100%"
                         }}
                       >
                         <div
@@ -250,7 +256,7 @@ const RecognitionCourses = ({ applicationRequest }) => {
                             borderRadius: "10px",
                             height: "100%",
                             background: "#1a7efb",
-                            transition: "width 0.2s",
+                            transition: "width 0.2s"
                           }}
                         ></div>
                       </div>
@@ -274,7 +280,7 @@ const RecognitionCourses = ({ applicationRequest }) => {
                       borderRadius: "50%",
                       width: "20px",
                       height: "20px",
-                      cursor: "pointer",
+                      cursor: "pointer"
                     }}
                   >
                     &times;

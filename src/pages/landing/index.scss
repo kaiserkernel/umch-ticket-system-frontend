@@ -595,8 +595,19 @@ table td {
   font-size: 12px !important;
 }
 
-// @media (max-width: "376px") {
-//   .mailbox .mailbox-body {
-//     display: unset !important;
-//   }
-// }
+.external-btn-container {
+  display: flex;
+  gap: 20px;
+}
+
+@media (max-width: 376px) {
+  .external-btn-container {
+    display: flex !important;
+    flex-direction: column;
+  }
+}
+@media (min-width: 376px) {
+  .mailbox-content {
+    max-width: unset !important;
+  }
+}

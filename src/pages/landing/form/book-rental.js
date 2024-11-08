@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import styled from "styled-components";
@@ -27,14 +27,18 @@ const BookRental = () => {
     setFormData,
     formData,
     mainPageErrors,
+    setLoading
   } = useContext(FormContext);
 
+  const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
+  const today = dayjs().toDate();
+
   const [formDetailData, setformDetailData] = useState({
     bookTitle: "",
     periodFromTime: "",
     agreement: "",
-    comment: "",
+    comment: ""
   });
 
   useEffect(() => {
@@ -50,20 +54,24 @@ const BookRental = () => {
   const handleChange = (e) => {
     setformDetailData({
       ...formDetailData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false; // Mark the initial render as complete.
+      return; // Skip running this effect on initial render.
+    }
     const successNotify = (msg) => {
       toast.info(msg, {
-        autoClose: 3000, // Duration in milliseconds
+        autoClose: 3000 // Duration in milliseconds
       });
     };
 
     const errorNotify = (msg) => {
       toast.warning(msg, {
-        autoClose: 3000, // Duration in milliseconds
+        autoClose: 3000 // Duration in milliseconds
       });
     };
 
@@ -73,36 +81,37 @@ const BookRental = () => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let bookRentalObject = { subCategory1: 1 };
+            const temp = formData;
+            const combinedFormData = Object.assign({}, temp);
 
-            const combinedFormData = Object.assign(
-              {},
-              formData,
-              bookRentalObject
-            );
+            console.log(combinedFormData);
 
             const formDataToSend = new FormData();
             for (const key in combinedFormData) {
               formDataToSend.append(key, formData[key]);
             }
             formDataToSend.append("details", jsonFormDetailData);
+            formDataToSend.append("subCategory1", "1");
 
             try {
+              setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setLoading(false);
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
                 bookTitle: "",
                 periodFromTime: "",
                 agreement: "",
-                comment: "",
+                comment: ""
               });
 
               setFormData({
                 ...formData,
-                agreement: false,
+                agreement: false
               });
             } catch (err) {
+              setLoading(false);
               const errors = err?.errors || err?.error;
 
               if (typeof errors != "object") {
@@ -134,9 +143,6 @@ const BookRental = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  const today = dayjs().toDate();
-  const [selectedDate, handleSelectDate] = useState(today);
 
   const isWithinNext3WorkingDays = (date) => {
     let count = 0;
@@ -176,7 +182,7 @@ const BookRental = () => {
                 MozAppearance: "none", // For Firefox
                 WebkitAppearance: "none", // For Safari/Chrome
                 backgroundColor: "white",
-                color: "gray !important",
+                color: "gray !important"
                 // padding: "8px 12px",
                 // border: "1px solid #007bff",
               }}
@@ -226,6 +232,9 @@ const BookRental = () => {
               <option value="Biophysics Labora">Biophysics Labora</option>
             </Form.Control>
           </Form.Group>
+          {errors.bookTitle && (
+            <p className="error-content">{errors.bookTitle}</p>
+          )}
         </Col>
       </Row>
       <Row className="mt-4">
@@ -236,14 +245,22 @@ const BookRental = () => {
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker
-              selected={selectedDate}
-              onChange={(date) => handleSelectDate(date)}
+              selected={formDetailData.periodFromTime}
+              onChange={(date) =>
+                setformDetailData({
+                  ...formDetailData,
+                  periodFromTime: date
+                })
+              }
               filterDate={isWithinNext3WorkingDays}
               dateFormat="yyyy/MM/dd"
               isClearable
               className="custom-input"
             />
           </Form.Group>
+          {errors.periodFromTime && (
+            <p className="error-content">{errors.periodFromTime}</p>
+          )}
         </Col>
       </Row>
       <Row className="mt-5">
@@ -275,6 +292,9 @@ const BookRental = () => {
               as="textarea"
               rows={8}
               placeholder=""
+              name="comment"
+              value={formDetailData?.comment}
+              onChange={handleChange}
               className="custom-textarea-input"
             />
           </Form.Group>
