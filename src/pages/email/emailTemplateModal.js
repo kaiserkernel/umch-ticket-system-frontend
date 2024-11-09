@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
+import moment from "moment";
 import FormService from "../../sevices/form-service";
 
 const positionNames = [
@@ -15,96 +15,256 @@ const positionNames = [
   "UMCH IT-SUPPORT, UMFST - Rector (UMFST Targu Mures)"
 ];
 
-const emailTemplate = [
+const INQUIRYCATEGORIES = [
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Applications and Requests",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p>You are now in the teaching hospital [requested teaching hospital].</p> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p>You are now in study group  no. [requested group].</p> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p>You  are now demonstator student for [requested subject].</p> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept: `<p>Dear [Student's Name]<p><p>We are pleased to inform you that your request to review your exam has been approved. The exam review for the subject [Subject Name] has been scheduled as follows:</p><p><ul><li style="color:#002d47"><p style="color:#002d47">Date: [Date]</p></li><li><p>Time: [Time]</p></li><li><p>Location: [Location]</p></li></ul>.</p> <p>Button Please confirm  your attendance . If you are unable to attend at the scheduled time, please let us know as soon as possible.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>`,
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p>The following  subjects can be recognized as shown  [individual list attachment]</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p>The following  subjects can be recognized as shown  [individual list attachment]</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p>You can borrow your diploma in the interval of time  [interval of time requested].</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   },
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Book rental UMCH library",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   },
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Campus IT",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   },
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Complaints",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      },
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   },
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Internship",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   },
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Medical Abilities",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   },
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Thesis",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   },
   {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
-  },
-  {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
-  },
-  {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
-  },
-  {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
-  },
-  {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
-  },
-  {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
-  },
-  {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
-  },
-  {
-    accept:
-      "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p> Please make sure to inform your teachers about the decision and any subsequent steps you need to take.</p><p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
-    reject:
-      "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+    inquiryCategory: "Other",
+    component: "",
+    subCategories: [
+      {
+        accept:
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p>[Institution/Organization Name]<p><p>[Contact Information]</p>",
+
+        reject:
+          "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p>[Institution/Organization Name]</p><p>[Contact Information]</p>"
+      }
+    ]
   }
 ];
 const EmailTemplateModal = ({
@@ -122,14 +282,22 @@ const EmailTemplateModal = ({
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
   let subCategory1 = parseInt(selectedTicket?.subCategory1);
+  let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
+  let details = selectedTicket?.details;
 
   console.log(subCategory1);
   let data = "";
   if (actionBtnType == "accept" && subCategory1) {
-    data = emailTemplate[subCategory1 - 1]["accept"];
+    data =
+      INQUIRYCATEGORIES[inquiryCategory - 1]["subCategories"][subCategory1 - 1][
+        "accept"
+      ];
   }
   if (actionBtnType == "reject" && subCategory1) {
-    data = emailTemplate[subCategory1 - 1]["reject"];
+    data =
+      INQUIRYCATEGORIES[inquiryCategory - 1]["subCategories"][subCategory1 - 1][
+        "reject"
+      ];
   }
   useEffect(() => {
     let authUser = localStorage.getItem("userData");
@@ -155,6 +323,15 @@ const EmailTemplateModal = ({
           "/ticket-reopen/" +
           selectedTicket?._id +
           "'>Contact Us</a>"
+      )
+      .replace("[requested teaching hospital]", details?.changePartner)
+      .replace("[requested group]", details?.switchStudyGroup)
+      .replace("[requested subject]", details?.subject)
+      .replace("[Subject Name]", details?.subject)
+      .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+      .replace(
+        "[interval of time requested]",
+        moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
   }, [actionBtnType]);
@@ -194,6 +371,15 @@ const EmailTemplateModal = ({
             "/ticket-reopen/" +
             selectedTicket?._id +
             "'>Contact Us</a>"
+        )
+        .replace("[requested teaching hospital]", details?.changePartner)
+        .replace("[requested group]", details?.switchStudyGroup)
+        .replace("[requested subject]", details?.subject)
+        .replace("[Subject Name]", details?.subject)
+        .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+        .replace(
+          "[interval of time requested]",
+          moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
         );
     } catch (err) {
       console.log(err);
