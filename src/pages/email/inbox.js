@@ -23,8 +23,25 @@ import ShotTermBorrowDiploma from "./inquiryTemplate/shortTermBorrowDiploma.js";
 import SyllabusAcademic from "./inquiryTemplate/syllabusAcademic.js";
 import TranscriptRecords from "./inquiryTemplate/transcriptRecords.js";
 import TransferTarguMures from "./inquiryTemplate/transferTarguMures.js";
+import OtherApplicationRequest from "./inquiryTemplate/otherApplicationRequest.js";
+import BookRental from "./inquiryTemplate/bookRental.js";
+import Canvas from "./inquiryTemplate/canvas.js";
+import Streaming from "./inquiryTemplate/streamingPanopto.js";
+import Campus from "./inquiryTemplate/campus.js";
+import DeanOffice from "./inquiryTemplate/deanOffice.js";
+import GermanTeachingDepartment from "./inquiryTemplate/germanTeachingDepartment.js";
+import TeachingHospital from "./inquiryTemplate/teachingHospital.js";
+import Teacher from "./inquiryTemplate/teacher.js";
+import OnlineCatalougeComplaint from "./inquiryTemplate/onlineCatalougeComplaint.js";
+import Exam from "./inquiryTemplate/exam.js";
+import OtherComplaint from "./inquiryTemplate/otherComplaint.js";
+import Internship from "./inquiryTemplate/internship.js";
+import MedicalAbilities from "./inquiryTemplate/medicalAbilities.js";
+import Thesis from "./inquiryTemplate/thesis.js";
 import Other from "./inquiryTemplate/other.js";
+//////////////////////////
 import EmailTemplateModal from "./emailTemplateModal.js";
+
 import { components } from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -84,20 +101,22 @@ const INQUIRYCATEGORIES = [
       },
       {
         subCategory1: "Other",
-        component: "ApplicationRequestOther"
+        component: "OtherApplicationRequest"
       }
     ]
   },
   {
     inquiryCategory: "Book rental UMCH library",
     component: "",
-    subCategories: [{ subCategory1: "Default", component: "BookRental" }]
+    subCategories: [
+      { subCategory1: "Book rental UMCH library", component: "BookRental" }
+    ]
   },
   {
     inquiryCategory: "Campus IT",
     component: "",
     subCategories: [
-      { subCategory1: "Campus", component: "CampusIT" },
+      { subCategory1: "Canvas", component: "Canvas" },
       { subCategory1: "Streaming / Panopto", component: "Streaming" }
     ]
   },
@@ -115,10 +134,10 @@ const INQUIRYCATEGORIES = [
       { subCategory1: "Teacher", component: "Teacher" },
       {
         subCategory1: "Online Catalouge (Carnet)",
-        component: "OnlineCatalouge"
+        component: "OnlineCatalougeComplaint"
       },
       { subCategory1: "Exam", component: "Exam" },
-      { subCategory1: "Other", component: "CaomplaintsOther" }
+      { subCategory1: "Other", component: "OtherComplaint" }
     ]
   },
   {
@@ -236,10 +255,54 @@ function EmailInbox() {
       case "TransferTarguMures":
         return <TransferTarguMures selectedTicket={selectedTicket} />;
         break;
+      case "OtherApplicationRequest":
+        return <OtherApplicationRequest selectedTicket={selectedTicket} />;
+        break;
+      case "BookRental":
+        return <BookRental selectedTicket={selectedTicket} />;
+        break;
+      case "Canvas":
+        return <Canvas selectedTicket={selectedTicket} />;
+        break;
+      case "Streaming":
+        return <Streaming selectedTicket={selectedTicket} />;
+        break;
+      case "Campus":
+        return <Campus selectedTicket={selectedTicket} />;
+        break;
+      case "DeanOffice":
+        return <DeanOffice selectedTicket={selectedTicket} />;
+        break;
+      case "GermanTeachingDepartment":
+        return <GermanTeachingDepartment selectedTicket={selectedTicket} />;
+        break;
+      case "TeachingHospital":
+        return <TeachingHospital selectedTicket={selectedTicket} />;
+        break;
+      case "Teacher":
+        return <Teacher selectedTicket={selectedTicket} />;
+        break;
+      case "OnlineCatalougeComplaint":
+        return <OnlineCatalougeComplaint selectedTicket={selectedTicket} />;
+        break;
+      case "Exam":
+        return <Exam selectedTicket={selectedTicket} />;
+        break;
+      case "OtherComplaint":
+        return <OtherComplaint selectedTicket={selectedTicket} />;
+        break;
+      case "Internship":
+        return <Internship selectedTicket={selectedTicket} />;
+        break;
+      case "MedicalAbilities":
+        return <MedicalAbilities selectedTicket={selectedTicket} />;
+        break;
+      case "Thesis":
+        return <Thesis selectedTicket={selectedTicket} />;
+        break;
       case "Other":
         return <Other selectedTicket={selectedTicket} />;
         break;
-
       default:
         break;
     }
