@@ -75,6 +75,7 @@
     "react-select": "^5.8.2",
     "react-spinners": "^0.14.1",
     "react-tag-input-component": "^2.0.2",
+    "react-time-picker": "^7.0.0",
     "react-toastify": "^10.0.6",
     "stream-http": "^3.2.0",
     "styled-components": "^6.1.13"

@@ -8,6 +8,8 @@ import FormService from "../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 import { Badge, Form, Dropdown, Modal, Button } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { DownTimer } from "../../components/downTimer/downTimer.jsx";
 
 import Absence from "./inquiryTemplate/absence.js";
@@ -41,128 +43,13 @@ import Thesis from "./inquiryTemplate/thesis.js";
 import Other from "./inquiryTemplate/other.js";
 //////////////////////////
 import EmailTemplateModal from "./emailTemplateModal.js";
+import EnrollmentModal from "./enrollmentModal.js";
+import ExamInspectionModal from "./examInspectionModal.js";
+import TranscriptRecordsModal from "./transcriptRecordsModal.js";
 
 import { components } from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
-
-const INQUIRYCATEGORIES = [
-  {
-    inquiryCategory: "Applications and Requests",
-    component: "",
-    subCategories: [
-      { subCategory1: "Absence", component: "Absence" },
-      {
-        subCategory1: "Change of teaching hospital",
-        component: "ChangeTeachingHospital"
-      },
-      {
-        subCategory1: "Change of study group",
-        component: "ChangeStudyGroup"
-      },
-      {
-        subCategory1: "Demonstrator student",
-        component: "DemonstratorStudent"
-      },
-      {
-        subCategory1: "Enrollment",
-        component: "Enrollment"
-      },
-      {
-        subCategory1: "Exam inspection",
-        component: "ExamInspection"
-      },
-      {
-        subCategory1: "Online Catalogue (Carnet)",
-        component: "OnlineCatalogue"
-      },
-      {
-        subCategory1: "Recognition of Courses",
-        component: "RecognitionCourses"
-      },
-      {
-        subCategory1: "Recognition of Internship",
-        component: "RecognitionInternship"
-      },
-      {
-        subCategory1: "Short term borrow of Diploma",
-        component: "ShotTermBorrowDiploma"
-      },
-      {
-        subCategory1: "Syllabus of the academic year",
-        component: "SyllabusAcademic"
-      },
-      {
-        subCategory1: "Transcript of Records",
-        component: "TranscriptRecords"
-      },
-      {
-        subCategory1: "Transfer to Targu Mures",
-        component: "TransferTarguMures"
-      },
-      {
-        subCategory1: "Other",
-        component: "OtherApplicationRequest"
-      }
-    ]
-  },
-  {
-    inquiryCategory: "Book rental UMCH library",
-    component: "",
-    subCategories: [
-      { subCategory1: "Book rental UMCH library", component: "BookRental" }
-    ]
-  },
-  {
-    inquiryCategory: "Campus IT",
-    component: "",
-    subCategories: [
-      { subCategory1: "Canvas", component: "Canvas" },
-      { subCategory1: "Streaming / Panopto", component: "Streaming" }
-    ]
-  },
-  {
-    inquiryCategory: "Complaints",
-    component: "",
-    subCategories: [
-      { subCategory1: "Campus", component: "Campus" },
-      { subCategory1: "Dean’s Office", component: "DeanOffice" },
-      {
-        subCategory1: "German Teaching Department",
-        component: "GermanTeachingDepartment"
-      },
-      { subCategory1: "Teaching Hospital", component: "TeachingHospital" },
-      { subCategory1: "Teacher", component: "Teacher" },
-      {
-        subCategory1: "Online Catalouge (Carnet)",
-        component: "OnlineCatalougeComplaint"
-      },
-      { subCategory1: "Exam", component: "Exam" },
-      { subCategory1: "Other", component: "OtherComplaint" }
-    ]
-  },
-  {
-    inquiryCategory: "Internship",
-    component: "",
-    subCategories: [{ subCategory1: "Internship", component: "Internship" }]
-  },
-  {
-    inquiryCategory: "Medical Abilities",
-    component: "",
-    subCategories: [
-      { subCategory1: "Medical Abilities", component: "MedicalAbilities" }
-    ]
-  },
-  {
-    inquiryCategory: "Thesis",
-    component: "",
-    subCategories: [{ subCategory1: "Thesis", component: "Thesis" }]
-  },
-  {
-    inquiryCategory: "Other",
-    component: "",
-    subCategories: [{ subCategory1: "Other", component: "Other" }]
-  }
-];
+import { INQUIRYCATEGORIES } from "../../globalVariables.js";
 
 function EmailInbox() {
   const host = process.env.REACT_APP_API_URL;
@@ -184,11 +71,44 @@ function EmailInbox() {
   const [show, setShow] = useState(false);
   const [actionBtnType, setActionBtnType] = useState();
   const [studentNo, setStudentNo] = useState("");
+
+  const [unClickedNewTicketsCount, setUnClickedNewTicketsCount] = useState(0);
+  const [unClickedApprovedTicketsCount, setUnClickedApprovedTicketsCount] =
+    useState(0);
+  const [unClickedRejectTicketsCount, setUnClickedRejectTicketsCount] =
+    useState(0);
+
+  const [enrollmentModalShow, setEnrollmentModalShow] = useState(false);
+  const [examInspectionModalShow, setExamInspectionModalShow] = useState(false);
+
   const handleModalClose = () => setShow(false);
   const handleModalShow = () => setShow(true);
 
-  const ticketStatus = ["Received", "Checked", "Approved", "Rejected"];
-  const ticketStatusBadge = ["secondary", "success", "info", "danger"];
+  const handleEnrollmentModalShow = () => setEnrollmentModalShow(true);
+  const handleEnrollmentModalClose = () => setEnrollmentModalShow(false);
+
+  const handleExamInspectionModalShow = () => setExamInspectionModalShow(true);
+  const handleExamInspectionModalClose = () =>
+    setExamInspectionModalShow(false);
+
+  const ticketStatus = [
+    "Received",
+    "Checked",
+    "Approved",
+    "Rejected",
+    "Process",
+    "Done",
+    "Notify"
+  ];
+  const ticketStatusBadge = [
+    "secondary",
+    "success",
+    "info",
+    "danger",
+    "secondary",
+    "success",
+    "info"
+  ];
 
   const [contentTemplate, setContentTemplate] = useState("Absence");
 
@@ -213,6 +133,16 @@ function EmailInbox() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const handleCheckEnrollment = () => {
+    setActionBtnType("enrollment");
+    setEnrollmentModalShow(true);
+  };
+
+  const handleCheckExamInspection = () => {
+    setActionBtnType("examInspection");
+    setExamInspectionModalShow(true);
+  };
 
   const renderContentTemplate = () => {
     switch (contentTemplate) {
@@ -365,6 +295,24 @@ function EmailInbox() {
           (ticket) => ticket.status === 0 || ticket.status === 1
         );
 
+        const unClickedNewTickets = newTickets.filter(
+          (ticket) => ticket.isClicked === 0
+        );
+        const unClickedApprovedTickets = result.filter(
+          (ticket) =>
+            (ticket.isClicked === 0 && ticket.status === 2) ||
+            ticket.status === 5 ||
+            ticket.status === 6 ||
+            ticket.status === 7
+        );
+        const unClickedRejectTickets = result.filter(
+          (ticket) => ticket.isClicked === 0 && ticket.status === 3
+        );
+        console.log(result, "===unClickedApprovedTickets");
+
+        setUnClickedNewTicketsCount(unClickedNewTickets.length);
+        setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
+        setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
         setTicketData(newTickets);
         setLoading(false);
         // setSelectedTicket(newTickets[0]?._id);
@@ -386,6 +334,25 @@ function EmailInbox() {
       const newTickets = res.filter(
         (ticket) => ticket.status === 0 || ticket.status === 1
       );
+
+      const unClickedNewTickets = newTickets.filter(
+        (ticket) => ticket.isClicked === 0
+      );
+      const unClickedApprovedTickets = newTickets.filter(
+        (ticket) =>
+          (ticket.isClicked === 0 && ticket.status === 2) ||
+          ticket.status === 5 ||
+          ticket.status === 6 ||
+          ticket.status === 7
+      );
+      const unClickedRejectTickets = newTickets.filter(
+        (ticket) => ticket.isClicked === 0 && ticket.status === 3
+      );
+      console.log(newTickets, "===unClickedApprovedTickets");
+
+      setUnClickedNewTicketsCount(unClickedNewTickets.length);
+      setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
+      setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
       console.log(newTickets);
       setTicketData(newTickets);
       setSelectedTicket(newTickets[0]);
@@ -402,12 +369,42 @@ function EmailInbox() {
   };
 
   const handleSelectTicket = async (ticket_id) => {
+    const updatedTickets = ticketData.map((ticket) =>
+      ticket._id === ticket_id && userRole != 2
+        ? { ...ticket, isClicked: 1 }
+        : ticket
+    );
+    setTicketData(updatedTickets);
     setLoading(true);
     setActionBtnType("");
     let res = "";
     if (ticket_id) {
       try {
         res = await FormService.getInquiryByInquiryId(ticket_id);
+        if (
+          res?.inquiry?.status == 1 &&
+          res?.inquiry?.isClicked == 1 &&
+          res?.isOriginalClicked == false &&
+          unClickedNewTicketsCount >= 1
+        ) {
+          setUnClickedNewTicketsCount(unClickedNewTicketsCount - 1);
+        }
+        if (
+          res?.inquiry?.status == 2 &&
+          res?.inquiry?.isClicked == 1 &&
+          res?.isOriginalClicked == false &&
+          unClickedApprovedTicketsCount >= 1
+        ) {
+          setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount - 1);
+        }
+        if (
+          res?.inquiry?.status == 3 &&
+          res?.inquiry?.isClicked == 1 &&
+          res?.isOriginalClicked == false &&
+          unClickedRejectTicketsCount >= 1
+        ) {
+          setUnClickedRejectTicketsCount(unClickedRejectTicketsCount - 1);
+        }
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -437,9 +434,13 @@ function EmailInbox() {
       try {
         const allTickets = await FormService.getAllInquiries();
         allTickets?.inquiries?.reverse();
-        console.log(allTickets);
+
         const filteredAllTickets = allTickets?.inquiries?.filter(
-          (ticket) => ticket.status === 2
+          (ticket) =>
+            ticket.status === 2 ||
+            ticket.status === 5 ||
+            ticket.status === 6 ||
+            ticket.status === 7
         );
         console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
@@ -457,7 +458,11 @@ function EmailInbox() {
         allTickets.reverse();
         console.log(allTickets);
         const filteredAllTickets = allTickets.filter(
-          (ticket) => ticket.status === 2
+          (ticket) =>
+            ticket.status === 2 ||
+            ticket.status === 5 ||
+            ticket.status === 6 ||
+            ticket.status === 7
         );
         console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
@@ -505,6 +510,50 @@ function EmailInbox() {
       } catch (err) {
         setLoading(false);
       }
+    }
+    setLoading(false);
+  };
+
+  const handleProcessTranscriptRecord = async (id) => {
+    setLoading(true);
+    let res;
+    try {
+      res = await FormService.processTranscriptRecord(id);
+      setSelectedTicket(res?.inquiry);
+      setLoading(false);
+      successNotify(res?.message);
+    } catch (err) {
+      errorNotify(res?.message);
+      setLoading(false);
+    }
+    setLoading(false);
+  };
+
+  const handleDoneTranscriptRecord = async (id) => {
+    setLoading(true);
+    let res;
+    try {
+      res = await FormService.doneTranscriptRecord(id);
+      setSelectedTicket(res?.inquiry);
+      setLoading(false);
+      successNotify(res?.message);
+    } catch (err) {
+      errorNotify(res?.message);
+      setLoading(false);
+    }
+    setLoading(false);
+  };
+  const handleNotifyTranscriptRecord = async (id) => {
+    setLoading(true);
+    let res;
+    try {
+      res = await FormService.notifyTranscriptRecord(id);
+      setSelectedTicket(res?.inquiry);
+      setLoading(false);
+      successNotify(res?.message);
+    } catch (err) {
+      errorNotify(res?.message);
+      setLoading(false);
     }
     setLoading(false);
   };
@@ -654,18 +703,33 @@ function EmailInbox() {
     <div className="h-100 border border-gray">
       <div className="mailbox">
         <div className="mailbox-toolbar">
-          <div className="mailbox-toolbar-item">
+          <div className="mailbox-toolbar-item d-flex align-items-center">
             <span className="mailbox-toolbar-text">TicketBoxes</span>
           </div>
           <div className="mailbox-toolbar-item">
             <Link
               to=""
-              className={`mailbox-toolbar-link ${
+              className={`d-flex mailbox-toolbar-link ${
                 activeTab == "All" && !showTicketDetail ? "active" : ""
               } `}
               onClick={handleShowNewTickets}
             >
               New tickets
+              {userRole != 2 && (
+                <Badge
+                  pill
+                  bg="primary"
+                  className="ms-2"
+                  style={{
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  {unClickedNewTicketsCount}
+                </Badge>
+              )}
             </Link>
           </div>
           <div
@@ -685,33 +749,54 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowApprovedTickets}
-              className={`mailbox-toolbar-link ${
+              className={`d-flex mailbox-toolbar-link ${
                 activeTab == "Approved" && !showTicketDetail ? "active" : ""
               } `}
             >
               Approved
+              {userRole != 2 && (
+                <Badge
+                  pill
+                  bg="primary"
+                  className="ms-2"
+                  style={{
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  {unClickedApprovedTicketsCount}
+                </Badge>
+              )}
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowRejectedTickets}
-              className={`mailbox-toolbar-link ${
+              className={`d-flex mailbox-toolbar-link ${
                 activeTab == "Rejected" && !showTicketDetail ? "active" : ""
               } `}
             >
               Rejected
+              {userRole != 2 && (
+                <Badge
+                  pill
+                  bg="primary"
+                  className="ms-2"
+                  style={{
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  {unClickedRejectTicketsCount}
+                </Badge>
+              )}
             </Link>
           </div>
-          <div className="mailbox-toolbar-item">
-            <Link to="/email/inbox" className="mailbox-toolbar-link">
-              Drafts (1)
-            </Link>
-          </div>
-          <div className="mailbox-toolbar-item">
-            <Link to="/email/inbox" className="mailbox-toolbar-link">
-              Junk
-            </Link>
-          </div>
+
           <div className="mailbox-toolbar-item">
             {userData?.role != 2 && (
               <Link
@@ -754,8 +839,10 @@ function EmailInbox() {
                           ? "mailbox-list-item border-bottom" +
                             (ticket?.documents ? " has-attachment " : "")
                           : "mailbox-list-item border-bottom border-white" +
-                            // (mail.unread ? " unread" : "") +
-                            (ticket?.documents ? " has-attachment " : "") +
+                            (ticket?.documents &&
+                            (ticket?.status == 0 || ticket?.status == 1)
+                              ? " has-attachment "
+                              : "") +
                             (Math.floor(
                               (new Date() - new Date(ticket?.createdAt)) /
                                 (1000 * 60 * 60)
@@ -796,7 +883,9 @@ function EmailInbox() {
                           className={
                             userData?.role == 2
                               ? "fw-bold"
-                              : "text-white fw-bold"
+                              : ticket?.status == 0 || ticket?.status == 1
+                              ? "text-white fw-bold"
+                              : "fw-bold"
                           }
                         >
                           {
@@ -805,18 +894,89 @@ function EmailInbox() {
                             ]
                           }
                         </div>
-                        <div className="mailbox-desc">{ticket?.email}</div>
+                        <div
+                          className={
+                            userRole != 2 &&
+                            ticket?.status != 0 &&
+                            ticket?.status != 1
+                              ? "text-black"
+                              : "mailbox-desc"
+                          }
+                        >
+                          {ticket?.email}
+                        </div>
                         {userData?.role != 2 ? (
                           ticket?.status == 0 || ticket?.status == 1 ? (
-                            <DownTimer
-                              remainTime={getTimeRemain(
-                                new Date(ticket?.createdAt),
-                                new Date()
+                            <>
+                              <DownTimer
+                                remainTime={getTimeRemain(
+                                  new Date(ticket?.createdAt),
+                                  new Date()
+                                )}
+                              />
+                              {ticket?.isClicked == 1 ? (
+                                <Badge
+                                  style={{
+                                    marginTop: "13px",
+                                    fontSize: "14px",
+                                    fontWeight: "300",
+                                    float: "right"
+                                  }}
+                                  bg="primary"
+                                >
+                                  Viewed
+                                </Badge>
+                              ) : (
+                                <Badge
+                                  style={{
+                                    marginTop: "13px",
+                                    fontSize: "14px",
+                                    fontWeight: "300",
+                                    float: "right"
+                                  }}
+                                  bg="danger"
+                                >
+                                  No Viewed
+                                </Badge>
                               )}
-                            />
+                            </>
+                          ) : ticket?.isClicked ? (
+                            <Badge
+                              style={{
+                                marginTop: "13px",
+                                fontSize: "14px",
+                                fontWeight: "300",
+                                float: "right"
+                              }}
+                              bg="primary"
+                            >
+                              Viewd
+                            </Badge>
                           ) : (
-                            <></>
+                            <Badge
+                              style={{
+                                marginTop: "13px",
+                                fontSize: "14px",
+                                fontWeight: "300",
+                                float: "right"
+                              }}
+                              bg="danger"
+                            >
+                              No Viewd
+                            </Badge>
                           )
+                        ) : ticket.isClicked == 1 ? (
+                          <Badge
+                            style={{
+                              marginTop: "13px",
+                              fontSize: "14px",
+                              fontWeight: "300",
+                              float: "right"
+                            }}
+                            bg="primary"
+                          >
+                            Viewd
+                          </Badge>
                         ) : (
                           <Badge
                             style={{
@@ -825,9 +985,9 @@ function EmailInbox() {
                               fontWeight: "300",
                               float: "right"
                             }}
-                            bg={ticketStatusBadge[ticket?.status]}
+                            bg="danger"
                           >
-                            {ticketStatus[ticket?.status]}
+                            No Viewd
                           </Badge>
                         )}
                       </div>
@@ -992,6 +1152,39 @@ function EmailInbox() {
                       ) : (
                         <></>
                       )}
+                      {selectedTicket?.emailContent && (
+                        <Form.Group controlId="emailContent">
+                          <label>Email Content:</label>
+                          <ReactQuill
+                            placeholder=""
+                            value={selectedTicket?.emailContent}
+                            readOnly={true}
+                            theme="snow" // Ensure you use a valid theme to keep the styles
+                            style={{
+                              height: "auto", // Set a fixed height
+
+                              backgroundColor: "#f8f9fa" // Optional: Set a background to indicate read-only
+                            }}
+                          />
+                        </Form.Group>
+                      )}
+                      {selectedTicket?.reason && (
+                        <Form.Group controlId="reason" className="mt-4">
+                          <label>Ticket Reopen Reason:</label>
+                          <ReactQuill
+                            placeholder=""
+                            value={selectedTicket?.reason}
+                            readOnly={true}
+                            theme="snow" // Ensure you use a valid theme to keep the styles
+                            style={{
+                              height: "auto", // Set a fixed height
+
+                              backgroundColor: "#f8f9fa" // Optional: Set a background to indicate read-only
+                            }}
+                          />
+                        </Form.Group>
+                      )}
+
                       <div className="mailbox-detail-body mt-5 border-bottom border-gray ">
                         <p className="text-black">Hi Dear Admin,</p>
                         {renderContentTemplate()}
@@ -1035,20 +1228,6 @@ function EmailInbox() {
                             paddingBottom: "10px"
                           }}
                         >
-                          {contentTemplate == "Enrollment" && (
-                            <Form.Group controlId="studentNo">
-                              <Form.Control
-                                type="text"
-                                placeholder="Student No"
-                                name="studentNo"
-                                value={studentNo}
-                                onChange={(e) => setStudentNo(e.target.value)}
-                                style={{ borderColor: "gray !important" }}
-                                className="custom-textarea-input"
-                              />
-                            </Form.Group>
-                          )}
-
                           <div className="pt-2 d-flex justify-content-end ">
                             <div
                               className="d-flex gap-3 bg-white"
@@ -1056,94 +1235,196 @@ function EmailInbox() {
                                 width: "inherit"
                               }}
                             >
-                              <div
-                                className="btn-group w-100"
-                                role="group"
-                                aria-label="Basic example"
-                                style={{
-                                  maxWidth: "115px"
-                                }}
-                              >
-                                <button
-                                  type="button"
+                              {contentTemplate == "Enrollment" && (
+                                <div
+                                  className="btn-group w-100"
+                                  role="group"
+                                  aria-label="Basic example"
                                   style={{
-                                    backgroundColor: "#009be3",
-                                    borderTopLeftRadius: "50px",
-                                    borderBottomLeftRadius: "50px",
-                                    borderRight: "1px solid orange"
+                                    maxWidth: "115px"
                                   }}
-                                  className="btn btn-info btn-left mailbox-detail-button pl-5"
-                                  onClick={() =>
-                                    handleInquiryAccept(selectedTicket?._id)
-                                  }
                                 >
-                                  Accept
-                                </button>
-                                <Dropdown type="button">
-                                  {/* <button className="btn btn-info" style={{ backgroundColor: "#009be3" }}>Accept</button> */}
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id="dropdown-basic"
-                                    className="btn btn-info dropdown-toggle"
-                                    style={{
-                                      borderTopRightRadius: "50px",
-                                      borderBottomRightRadius: "50px"
-                                    }}
-                                  ></Dropdown.Toggle>
-
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">
-                                      Accept with Internal Note
-                                    </Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">
-                                      Accept with Email
-                                    </Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-
-                              <div
-                                className="btn-group w-100"
-                                role="group"
-                                aria-label="Basic example"
-                                style={{ maxWidth: "115px" }}
-                              >
-                                <button
-                                  type="button"
+                                  <button
+                                    type="button"
+                                    className="btn btn-info rounded-pill pl-5"
+                                    onClick={() =>
+                                      handleCheckEnrollment(selectedTicket?._id)
+                                    }
+                                  >
+                                    Check
+                                  </button>
+                                </div>
+                              )}
+                              {contentTemplate == "ExamInspection" && (
+                                <div
+                                  className="btn-group w-100"
+                                  role="group"
+                                  aria-label="Basic example"
                                   style={{
-                                    backgroundColor: "#e00000",
-                                    borderTopLeftRadius: "50px",
-                                    borderBottomLeftRadius: "50px",
-                                    borderRight: "1px solid orange"
+                                    maxWidth: "115px"
                                   }}
-                                  className="btn btn-danger btn-left"
-                                  onClick={() =>
-                                    handleInquiryReject(selectedTicket?._id)
-                                  }
                                 >
-                                  Reject
-                                </button>
-                                <Dropdown type="button">
-                                  <Dropdown.Toggle
-                                    variant="danger"
-                                    id="dropdown-basic"
-                                    className="btn btn-danger dropdown-toggle"
+                                  <button
+                                    type="button"
+                                    className="btn btn-info rounded-pill pl-5"
+                                    onClick={() =>
+                                      handleCheckExamInspection(
+                                        selectedTicket?._id
+                                      )
+                                    }
+                                  >
+                                    Check
+                                  </button>
+                                </div>
+                              )}
+                              {contentTemplate == "TranscriptRecords" && (
+                                <>
+                                  <div
+                                    className="btn-group w-100"
+                                    role="group"
+                                    aria-label="Basic example"
                                     style={{
-                                      borderTopRightRadius: "50px",
-                                      borderBottomRightRadius: "50px"
+                                      maxWidth: "115px"
                                     }}
-                                  ></Dropdown.Toggle>
+                                  >
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary rounded-pill pl-5"
+                                    >
+                                      Process
+                                    </button>
+                                  </div>
+                                  <div
+                                    className="btn-group w-100"
+                                    role="group"
+                                    aria-label="Basic example"
+                                    style={{
+                                      maxWidth: "115px"
+                                    }}
+                                  >
+                                    <button
+                                      type="button"
+                                      className="btn btn-primary rounded-pill pl-5"
+                                    >
+                                      Done
+                                    </button>
+                                  </div>
+                                  <div
+                                    className="btn-group w-100"
+                                    role="group"
+                                    aria-label="Basic example"
+                                    style={{
+                                      maxWidth: "115px"
+                                    }}
+                                  >
+                                    <button
+                                      type="button"
+                                      className="btn btn-info rounded-pill pl-5"
+                                    >
+                                      Notify
+                                    </button>
+                                  </div>
+                                </>
+                              )}
 
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">
-                                      Reject with Internal Note
-                                    </Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">
-                                      Reject with Email
-                                    </Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
+                              {contentTemplate != "Enrollment" &&
+                                contentTemplate != "ExamInspection" &&
+                                contentTemplate != "TranscriptRecords" && (
+                                  <>
+                                    <div
+                                      className="btn-group w-100"
+                                      role="group"
+                                      aria-label="Basic example"
+                                      style={{
+                                        maxWidth: "115px"
+                                      }}
+                                    >
+                                      <button
+                                        type="button"
+                                        style={{
+                                          backgroundColor: "#009be3",
+                                          borderTopLeftRadius: "50px",
+                                          borderBottomLeftRadius: "50px",
+                                          borderRight: "1px solid orange"
+                                        }}
+                                        className="btn btn-info btn-left mailbox-detail-button pl-5"
+                                        onClick={() =>
+                                          handleInquiryAccept(
+                                            selectedTicket?._id
+                                          )
+                                        }
+                                      >
+                                        Accept
+                                      </button>
+                                      <Dropdown type="button">
+                                        {/* <button className="btn btn-info" style={{ backgroundColor: "#009be3" }}>Accept</button> */}
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id="dropdown-basic"
+                                          className="btn btn-info dropdown-toggle"
+                                          style={{
+                                            borderTopRightRadius: "50px",
+                                            borderBottomRightRadius: "50px"
+                                          }}
+                                        ></Dropdown.Toggle>
+
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item href="#/action-1">
+                                            Accept with Internal Note
+                                          </Dropdown.Item>
+                                          <Dropdown.Item href="#/action-2">
+                                            Accept with Email
+                                          </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+
+                                    <div
+                                      className="btn-group w-100"
+                                      role="group"
+                                      aria-label="Basic example"
+                                      style={{ maxWidth: "115px" }}
+                                    >
+                                      <button
+                                        type="button"
+                                        style={{
+                                          backgroundColor: "#e00000",
+                                          borderTopLeftRadius: "50px",
+                                          borderBottomLeftRadius: "50px",
+                                          borderRight: "1px solid orange"
+                                        }}
+                                        className="btn btn-danger btn-left"
+                                        onClick={() =>
+                                          handleInquiryReject(
+                                            selectedTicket?._id
+                                          )
+                                        }
+                                      >
+                                        Reject
+                                      </button>
+                                      <Dropdown type="button">
+                                        <Dropdown.Toggle
+                                          variant="danger"
+                                          id="dropdown-basic"
+                                          className="btn btn-danger dropdown-toggle"
+                                          style={{
+                                            borderTopRightRadius: "50px",
+                                            borderBottomRightRadius: "50px"
+                                          }}
+                                        ></Dropdown.Toggle>
+
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item href="#/action-1">
+                                            Reject with Internal Note
+                                          </Dropdown.Item>
+                                          <Dropdown.Item href="#/action-2">
+                                            Reject with Email
+                                          </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  </>
+                                )}
                             </div>
                           </div>
                         </div>
@@ -1177,6 +1458,46 @@ function EmailInbox() {
           setSelectedTicket={setSelectedTicket}
           contentTemplate={contentTemplate}
           studentNo={studentNo}
+          unClickedApprovedTicketsCount={unClickedApprovedTicketsCount}
+          setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
+          unClickedRejectTicketsCount={unClickedRejectTicketsCount}
+          setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
+        />
+      )}
+      {actionBtnType && (
+        <EnrollmentModal
+          show={enrollmentModalShow}
+          handleModalClose={handleEnrollmentModalClose}
+          selectedTicket={selectedTicket}
+          setLoading={setLoading}
+          setTicketStatusChange={setTicketStatusChange}
+          successNotify={successNotify}
+          errorNotify={errorNotify}
+          setSelectedTicket={setSelectedTicket}
+          contentTemplate={contentTemplate}
+          studentNo={studentNo}
+          unClickedApprovedTicketsCount={unClickedApprovedTicketsCount}
+          setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
+          unClickedRejectTicketsCount={unClickedRejectTicketsCount}
+          setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
+        />
+      )}
+      {actionBtnType && (
+        <ExamInspectionModal
+          show={examInspectionModalShow}
+          handleModalClose={handleExamInspectionModalClose}
+          selectedTicket={selectedTicket}
+          setLoading={setLoading}
+          setTicketStatusChange={setTicketStatusChange}
+          successNotify={successNotify}
+          errorNotify={errorNotify}
+          setSelectedTicket={setSelectedTicket}
+          contentTemplate={contentTemplate}
+          studentNo={studentNo}
+          unClickedApprovedTicketsCount={unClickedApprovedTicketsCount}
+          setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
+          unClickedRejectTicketsCount={unClickedRejectTicketsCount}
+          setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
         />
       )}
     </div>

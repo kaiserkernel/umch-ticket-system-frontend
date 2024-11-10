@@ -21,7 +21,7 @@ const PagesRegister = () => {
     role: "2",
     enrollmentNumber: "",
     firstYearOfStudy: "2024",
-    avatar: null,
+    avatar: null
   });
 
   const [error, setError] = useState("");
@@ -37,7 +37,7 @@ const PagesRegister = () => {
       setImagePreview(imageUrl);
       setFormData({
         ...formData,
-        [name]: type === "file" ? files[0] : value,
+        [name]: type === "file" ? files[0] : value
       });
     }
   };
@@ -45,7 +45,7 @@ const PagesRegister = () => {
     const { name, value, type, files } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "file" ? files[0] : value,
+      [name]: type === "file" ? files[0] : value
     });
   };
 
@@ -59,7 +59,7 @@ const PagesRegister = () => {
       confirmPass,
       role,
       enrollmentNumber,
-      firstYearOfStudy,
+      firstYearOfStudy
     } = formData;
     if (
       !firstName ||
@@ -131,12 +131,12 @@ const PagesRegister = () => {
 
   const successNotify = (msg) => {
     toast.info(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
   const errorNotify = (msg) => {
     toast.warning(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
   return (
@@ -157,20 +157,6 @@ const PagesRegister = () => {
 
             <Row className="mt-2 mt-md-3 g-3">
               <Col lg={6}>
-                {/* <div className="mb-3">
-                <label className="input-label">
-                  First Name <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="custom-input"
-                  placeholder="First Name"
-                />
-               
-              </div> */}
                 <Form.Group controlId="firstName">
                   <Form.Label className="input-label">
                     First Name <span className="ms-1 required-label">*</span>
@@ -185,19 +171,6 @@ const PagesRegister = () => {
                 </Form.Group>
               </Col>
               <Col lg={6}>
-                {/* <div className="mb-3">
-                <label className="form-label">
-                  Last Name <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="form-control form-control-lg bg-white bg-opacity-5"
-                  placeholder="Last Name"
-                />
-              </div> */}
                 <Form.Group controlId="lastName">
                   <Form.Label className="input-label">
                     Last Name <span className="ms-1 required-label">*</span>
@@ -215,21 +188,6 @@ const PagesRegister = () => {
             </Row>
             <Row className="mt-4">
               <Col lg={12}>
-                {/* <div className="mb-3">
-                <label className="form-label">
-                  Email Address <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="form-control form-control-lg bg-white bg-opacity-5"
-                  placeholder="username@address.com"
-                />
-              </div>
-               */}
-
                 <Form.Group controlId="lastName">
                   <Form.Label className="input-label">
                     Email Address <span className="ms-1 required-label">*</span>
@@ -247,18 +205,6 @@ const PagesRegister = () => {
             </Row>
             <Row className="mt-2 g-3">
               <Col lg={6}>
-                {/* <div className="mb-3">
-                <label className="form-label">
-                  Password <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="form-control form-control-lg bg-white bg-opacity-5"
-                />
-              </div> */}
                 <Form.Group controlId="lastName">
                   <Form.Label className="input-label">
                     Password <span className="ms-1 required-label">*</span>
@@ -274,19 +220,6 @@ const PagesRegister = () => {
               </Col>
 
               <Col lg={6}>
-                {/* <div className="mb-3">
-                <label className="form-label">
-                  Confirm Password <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="confirmPass"
-                  value={formData.confirmPass}
-                  onChange={handleChange}
-                  className="form-control form-control-lg bg-white bg-opacity-5"
-                />
-              </div> */}
-
                 <Form.Group controlId="lastName">
                   <Form.Label className="input-label">
                     Confirm Password
@@ -305,18 +238,6 @@ const PagesRegister = () => {
 
             <Row className="mt-2 g-3">
               <Col lg={6}>
-                {/* <div className="mb-3">
-                  <label className="form-label">
-                    Enrollment Number <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="enrollmentNumber"
-                    value={formData.enrollmentNumber}
-                    onChange={handleChange}
-                    className="form-control form-control-lg bg-white bg-opacity-5"
-                  />
-                </div> */}
                 <Form.Group controlId="lastName">
                   <Form.Label className="input-label">
                     Enrollment Number
@@ -332,25 +253,6 @@ const PagesRegister = () => {
                 </Form.Group>
               </Col>
               <Col lg={6}>
-                {/* <div className="mb-3">
-                  <label className="form-label">
-                    First Year of Study <span className="text-danger">*</span>
-                  </label>
-                  <select
-                    className="form-select form-select-lg bg-white bg-opacity-5"
-                    name="firstYearOfStudy"
-                    value={formData.firstYearOfStudy}
-                    onChange={handleChange}
-                  >
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                  </select>
-                </div> */}
-
                 <Form.Group>
                   <Form.Label className="input-label">
                     First year of study
@@ -368,7 +270,7 @@ const PagesRegister = () => {
                       backgroundColor: "white",
                       color: "black",
                       padding: "8px 12px",
-                      border: "1px solid #007bff",
+                      border: "1px solid #007bff"
                     }}
                     className="custom-input"
                   >
@@ -406,7 +308,7 @@ const PagesRegister = () => {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        cursor: "pointer",
+                        cursor: "pointer"
                       }}
                     >
                       {imagePreview ? (
@@ -417,7 +319,7 @@ const PagesRegister = () => {
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
-                            objectPosition: "top",
+                            objectPosition: "top"
                           }}
                         />
                       ) : (
@@ -426,7 +328,7 @@ const PagesRegister = () => {
                             style={{
                               color: "#FF9C00",
                               fontSize: "18px",
-                              margin: "0 10px 0 0 ",
+                              margin: "0 10px 0 0 "
                             }}
                           >
                             Choose File
