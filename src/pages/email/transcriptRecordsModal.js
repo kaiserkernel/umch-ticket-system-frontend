@@ -2,17 +2,33 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import TimePicker from "react-time-picker";
+import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
 import moment from "moment";
+
 import FormService from "../../sevices/form-service";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   INQUIRYCATEGORIESEmailTemplates,
   POSITIONNAMES
 } from "../../globalVariables";
 
-const EmailTemplateModal = ({
+const StyledDatePicker = styled(DatePicker)`
+  border: 1px solid !important;
+  padding: 8px !important;
+  border-radius: 0px !important;
+  outline: none !important;
+  width: 100% !important;
+
+  &:focus {
+    border-color: #2596be !important;
+  }
+`;
+const ExamInspectionModal = ({
   show,
   handleModalClose,
-  actionBtnType,
   selectedTicket,
   setLoading,
   setTicketStatusChange,
@@ -27,24 +43,26 @@ const EmailTemplateModal = ({
   unClickedRejectTicketsCount
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
+  const [formData, setFormData] = useState({
+    examTime: "",
+    examDate: selectedTicket?.details?.examDate,
+    examLocation: "Administration Office"
+  });
+
   let subCategory1 = parseInt(selectedTicket?.subCategory1);
   let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
   let details = selectedTicket?.details;
 
-  console.log(subCategory1);
-  let data = "";
-  if (actionBtnType == "accept" && subCategory1) {
-    data =
-      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
-      ]["accept"];
-  }
-  if (actionBtnType == "reject" && subCategory1) {
-    data =
-      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
-      ]["reject"];
-  }
+  const data = INQUIRYCATEGORIESEmailTemplates[0]["subCategories"][5]["accept"];
+  console.log(data);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   useEffect(() => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
@@ -75,17 +93,20 @@ const EmailTemplateModal = ({
       .replace("[requested subject]", details?.subject)
       .replace("[Subject Name]", details?.subject)
       .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+      .replace("[Time]", moment(formData.examTime).format("hh:mm A"))
+      .replace("[Location]", formData.examLocation)
       .replace(
         "[interval of time requested]",
         moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
-  }, [actionBtnType]);
+  });
 
   const replaceEmailTemplate = (
     mailTemplateData,
     selectedTicket,
-    contentTemplate
+    contentTemplate,
+    formData
   ) => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
@@ -123,6 +144,8 @@ const EmailTemplateModal = ({
         .replace("[requested subject]", details?.subject)
         .replace("[Subject Name]", details?.subject)
         .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+        .replace("[Time]", moment(formData.examTime).format("hh:mm A"))
+        .replace("[Location]", formData.examLocation)
         .replace(
           "[interval of time requested]",
           moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
@@ -132,24 +155,16 @@ const EmailTemplateModal = ({
     }
 
     let payload = {};
-    if (contentTemplate == "Enrollment") {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        id: selectedTicket?._id,
-        studentNo: studentNo ? studentNo : "",
-        selectedTicket: selectedTicket
-      };
-    } else {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        id: selectedTicket?._id
-      };
-    }
-    return payload;
 
-    console.log(replaceSubject, "======replaced email template");
+    payload = {
+      replaceSubject: replaceSubject,
+      replacedEmailTemplate: replacedEmailTemplate,
+      id: selectedTicket?._id,
+      selectedTicket: selectedTicket,
+      formData: formData
+    };
+
+    return payload;
   };
   const handleSubmit = async () => {
     try {
@@ -159,28 +174,13 @@ const EmailTemplateModal = ({
       const payload = replaceEmailTemplate(
         mailTemplateData,
         selectedTicket,
-        contentTemplate
+        contentTemplate,
+        formData
       );
 
-      let res;
+      const res = await FormService.acceptExamInspectionInquiry(payload);
+      setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
 
-      if (actionBtnType == "accept") {
-        if (contentTemplate == "Enrollment") {
-          res = await FormService.acceptEnrollmentInquiry(payload);
-          setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-        } else {
-          try {
-            res = await FormService.acceptInquiry(payload);
-            setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-          } catch (err) {
-            console.log(err);
-          }
-        }
-      }
-      if (actionBtnType == "reject") {
-        res = await FormService.rejectInquiry(payload);
-        setUnClickedRejectTicketsCount(unClickedRejectTicketsCount + 1);
-      }
       setTicketStatusChange(false);
       setSelectedTicket(res?.inquiry);
 
@@ -191,20 +191,69 @@ const EmailTemplateModal = ({
   return (
     <Modal show={show} onHide={handleModalClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Email Template</Modal.Title>
+        <Modal.Title>Exam Inspection</Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ height: "450px" }}>
-        <Form.Group controlId="commentTextarea">
+      <Modal.Body style={{ height: "80%", overflow: "auto" }}>
+        <Form.Group controlId="">
+          <Form.Label className="input-label">
+            Exam Date
+            <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <StyledDatePicker
+            selected={formData?.examDate}
+            onChange={(date) =>
+              setFormData({
+                ...formData,
+                examDate: date
+              })
+            }
+            dateFormat="yyyy/MM/dd"
+            isClearable
+            className="custom-input"
+          />
+        </Form.Group>
+        <Form.Group className="mt-2">
+          <Form.Label className="input-label">
+            Exam Time: <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <StyledDatePicker
+            showTimeSelect
+            showTimeSelectOnly
+            name="examTime"
+            selected={formData.examTime}
+            onChange={(date) => setFormData({ ...formData, examTime: date })}
+            timeIntervals={15}
+            timeCaption="Time"
+            dateFormat="h:mm aa"
+            className="custom-input"
+          />
+        </Form.Group>
+        <Form.Group className="mt-2">
+          <Form.Label className="input-label">
+            Exam Location: <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            name="examLocation"
+            onChange={handleChange}
+            value={formData.examLocation}
+            placeholder=""
+            className="custom-input"
+          />
+        </Form.Group>
+
+        <Form.Group controlId="commentTextarea" className="mt-2">
+          <Form.Label className="input-label">Email Template</Form.Label>
           <ReactQuill
             placeholder=""
             value={mailTemplateData}
             onChange={(data) => setMailTemplateData(data)}
             name="mailTemplateData"
-            style={{ height: "300px" }}
+            style={{ height: "200px" }}
           />
         </Form.Group>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="mt-5">
         <Button variant="primary" onClick={handleSubmit}>
           Send
         </Button>
@@ -216,4 +265,4 @@ const EmailTemplateModal = ({
   );
 };
 
-export default EmailTemplateModal;
+export default ExamInspectionModal;

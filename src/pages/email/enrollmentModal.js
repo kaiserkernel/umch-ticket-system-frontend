@@ -9,10 +9,9 @@ import {
   POSITIONNAMES
 } from "../../globalVariables";
 
-const EmailTemplateModal = ({
+const EnrollmentModal = ({
   show,
   handleModalClose,
-  actionBtnType,
   selectedTicket,
   setLoading,
   setTicketStatusChange,
@@ -27,24 +26,27 @@ const EmailTemplateModal = ({
   unClickedRejectTicketsCount
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
+  const [formData, setFormData] = useState({
+    studentNo: studentNo,
+    nationality: selectedTicket?.details?.nationality,
+    currentYearOfStudy: selectedTicket?.details?.currentYearOfStudy,
+    birthday: moment(selectedTicket?.details?.birthday).format("MM-DD-YYYY")
+  });
+
   let subCategory1 = parseInt(selectedTicket?.subCategory1);
   let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
   let details = selectedTicket?.details;
 
-  console.log(subCategory1);
-  let data = "";
-  if (actionBtnType == "accept" && subCategory1) {
-    data =
-      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
-      ]["accept"];
-  }
-  if (actionBtnType == "reject" && subCategory1) {
-    data =
-      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
-      ]["reject"];
-  }
+  const data = INQUIRYCATEGORIESEmailTemplates[0]["subCategories"][4]["accept"];
+  console.log(data);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   useEffect(() => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
@@ -80,12 +82,13 @@ const EmailTemplateModal = ({
         moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
-  }, [actionBtnType]);
+  });
 
   const replaceEmailTemplate = (
     mailTemplateData,
     selectedTicket,
-    contentTemplate
+    contentTemplate,
+    formData
   ) => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
@@ -132,24 +135,17 @@ const EmailTemplateModal = ({
     }
 
     let payload = {};
-    if (contentTemplate == "Enrollment") {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        id: selectedTicket?._id,
-        studentNo: studentNo ? studentNo : "",
-        selectedTicket: selectedTicket
-      };
-    } else {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        id: selectedTicket?._id
-      };
-    }
-    return payload;
 
-    console.log(replaceSubject, "======replaced email template");
+    payload = {
+      replaceSubject: replaceSubject,
+      replacedEmailTemplate: replacedEmailTemplate,
+      id: selectedTicket?._id,
+      studentNo: studentNo ? studentNo : "",
+      selectedTicket: selectedTicket,
+      formData: formData
+    };
+
+    return payload;
   };
   const handleSubmit = async () => {
     try {
@@ -159,28 +155,13 @@ const EmailTemplateModal = ({
       const payload = replaceEmailTemplate(
         mailTemplateData,
         selectedTicket,
-        contentTemplate
+        contentTemplate,
+        formData
       );
 
-      let res;
+      const res = await FormService.acceptEnrollmentInquiry(payload);
+      setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
 
-      if (actionBtnType == "accept") {
-        if (contentTemplate == "Enrollment") {
-          res = await FormService.acceptEnrollmentInquiry(payload);
-          setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-        } else {
-          try {
-            res = await FormService.acceptInquiry(payload);
-            setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-          } catch (err) {
-            console.log(err);
-          }
-        }
-      }
-      if (actionBtnType == "reject") {
-        res = await FormService.rejectInquiry(payload);
-        setUnClickedRejectTicketsCount(unClickedRejectTicketsCount + 1);
-      }
       setTicketStatusChange(false);
       setSelectedTicket(res?.inquiry);
 
@@ -191,20 +172,74 @@ const EmailTemplateModal = ({
   return (
     <Modal show={show} onHide={handleModalClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Email Template</Modal.Title>
+        <Modal.Title>Student Informatioin for PDF</Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ height: "450px" }}>
-        <Form.Group controlId="commentTextarea">
+      <Modal.Body style={{ height: "80%", overflow: "auto" }}>
+        <Form.Group>
+          <Form.Label className="input-label">
+            Student No <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            name="studentNo"
+            onChange={handleChange}
+            value={formData.studentNo}
+            placeholder="Student No"
+            className="custom-input"
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label className="input-label">
+            Nationality <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            name="nationality"
+            onChange={handleChange}
+            value={formData.nationality}
+            placeholder="Nationality"
+            className="custom-input"
+          />
+        </Form.Group>
+        <Form.Group className="mt-2">
+          <Form.Label className="input-label">
+            Current Year of Study <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            name="currentYearOfStudy"
+            onChange={handleChange}
+            value={formData.currentYearOfStudy}
+            placeholder="Current Year Of Study"
+            className="custom-input"
+          />
+        </Form.Group>
+        <Form.Group className="mt-2">
+          <Form.Label className="input-label">
+            Date of Birthday <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            name="birthday"
+            onChange={handleChange}
+            value={formData.birthday}
+            placeholder="Birthday"
+            className="custom-input"
+          />
+        </Form.Group>
+
+        <Form.Group controlId="commentTextarea" className="mt-2">
+          <Form.Label className="input-label">Email Template</Form.Label>
           <ReactQuill
             placeholder=""
             value={mailTemplateData}
             onChange={(data) => setMailTemplateData(data)}
             name="mailTemplateData"
-            style={{ height: "300px" }}
+            style={{ height: "200px" }}
           />
         </Form.Group>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="mt-5">
         <Button variant="primary" onClick={handleSubmit}>
           Send
         </Button>
@@ -216,4 +251,4 @@ const EmailTemplateModal = ({
   );
 };
 
-export default EmailTemplateModal;
+export default EnrollmentModal;

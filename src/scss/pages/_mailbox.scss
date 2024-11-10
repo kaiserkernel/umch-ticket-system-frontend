@@ -26,6 +26,7 @@
     }
     & .mailbox-toolbar-item {
       padding: $spacer * 0.5;
+      display: flex;
     }
     & .mailbox-toolbar-link {
       color: rgba(var(--#{$prefix}inverse-rgb), 0.75);
