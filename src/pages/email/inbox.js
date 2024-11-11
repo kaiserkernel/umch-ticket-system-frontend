@@ -113,13 +113,22 @@ function EmailInbox() {
   const [contentTemplate, setContentTemplate] = useState("Absence");
 
   useEffect(() => {
-    if (selectedTicket) {
-      const ticketComponent =
+    try {
+      if (
+        selectedTicket &&
         INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1]["subCategories"][
           selectedTicket?.subCategory1 - 1
-        ]["component"];
-      console.log(ticketComponent);
-      setContentTemplate(ticketComponent);
+        ]
+      ) {
+        const ticketComponent =
+          INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1][
+            "subCategories"
+          ][selectedTicket?.subCategory1 - 1]["component"];
+        console.log(ticketComponent);
+        setContentTemplate(ticketComponent);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }, [selectedTicket]);
 
@@ -134,6 +143,17 @@ function EmailInbox() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const getPermissionOfTicket = (ticket, userPermission) => {
+    const permission = userPermission.find(
+      (p) =>
+        p.inquiryCategory === ticket.inquiryCategory &&
+        p.subCategory1 === ticket.subCategory1
+    );
+
+    // If no permission found, default to 'None'
+    const ticketPermission = permission ? permission.permission : "None";
+    return ticketPermission;
+  };
   const handleCheckEnrollment = () => {
     setActionBtnType("enrollment");
     setEnrollmentModalShow(true);
@@ -277,22 +297,26 @@ function EmailInbox() {
       const res = await FormService.getAllInquiries();
 
       if (res?.inquiries) {
-        res.inquiries.reverse();
-        const result = res.inquiries.map((item1) => {
-          const match = res.userCategory.find(
-            (item2) =>
-              item2.inquiryCategory === item1.inquiryCategory &&
-              item2.subCategory1 === item1.subCategory1
-          );
+        let result = res.inquiries.reverse();
+        // const result = res.inquiries.map((item1) => {
+        //   const match = res.userCategory.find(
+        //     (item2) =>
+        //       item2.inquiryCategory === item1.inquiryCategory &&
+        //       item2.subCategory1 === item1.subCategory1
+        //   );
 
-          return {
-            ...item1,
-            permission: match ? match.permission : null // Add permission if found, otherwise null
-          };
-        });
+        //   return {
+        //     ...item1,
+        //     permission: match ? match.permission : null // Add permission if found, otherwise null
+        //   };
+        // });
 
         const newTickets = result.filter(
-          (ticket) => ticket.status === 0 || ticket.status === 1
+          (ticket) =>
+            ticket.status === 0 ||
+            ticket.status === 1 ||
+            ticket.status === 4 ||
+            ticket.status === 5
         );
 
         const unClickedNewTickets = newTickets.filter(
@@ -300,10 +324,8 @@ function EmailInbox() {
         );
         const unClickedApprovedTickets = result.filter(
           (ticket) =>
-            (ticket.isClicked === 0 && ticket.status === 2) ||
-            ticket.status === 5 ||
-            ticket.status === 6 ||
-            ticket.status === 7
+            ticket.isClicked === 0 &&
+            (ticket.status === 2 || ticket.status === 6)
         );
         const unClickedRejectTickets = result.filter(
           (ticket) => ticket.isClicked === 0 && ticket.status === 3
@@ -340,10 +362,7 @@ function EmailInbox() {
       );
       const unClickedApprovedTickets = newTickets.filter(
         (ticket) =>
-          (ticket.isClicked === 0 && ticket.status === 2) ||
-          ticket.status === 5 ||
-          ticket.status === 6 ||
-          ticket.status === 7
+          ticket.isClicked === 0 && (ticket.status === 2 || ticket.status === 6)
       );
       const unClickedRejectTickets = newTickets.filter(
         (ticket) => ticket.isClicked === 0 && ticket.status === 3
@@ -377,6 +396,7 @@ function EmailInbox() {
     setTicketData(updatedTickets);
     setLoading(true);
     setActionBtnType("");
+    setTicketId(ticket_id);
     let res = "";
     if (ticket_id) {
       try {
@@ -390,7 +410,7 @@ function EmailInbox() {
           setUnClickedNewTicketsCount(unClickedNewTicketsCount - 1);
         }
         if (
-          res?.inquiry?.status == 2 &&
+          (res?.inquiry?.status == 2 || res?.inquiry?.status == 6) &&
           res?.inquiry?.isClicked == 1 &&
           res?.isOriginalClicked == false &&
           unClickedApprovedTicketsCount >= 1
@@ -405,16 +425,16 @@ function EmailInbox() {
         ) {
           setUnClickedRejectTicketsCount(unClickedRejectTicketsCount - 1);
         }
+        successNotify(res?.message);
         setLoading(false);
+        setSelectedTicket(res?.inquiry);
+        setSelectedTicketAttachments(res?.inquiry?.documents);
+        setTicketStatusChange(true);
       } catch (err) {
         console.log(err);
         setLoading(false);
+        successNotify(err?.message);
       }
-
-      setTicketId(ticket_id);
-      setSelectedTicket(res?.inquiry);
-      setSelectedTicketAttachments(res?.inquiry?.documents);
-      setTicketStatusChange(true);
 
       if (isMobile) {
         console.log("mobile");
@@ -436,11 +456,7 @@ function EmailInbox() {
         allTickets?.inquiries?.reverse();
 
         const filteredAllTickets = allTickets?.inquiries?.filter(
-          (ticket) =>
-            ticket.status === 2 ||
-            ticket.status === 5 ||
-            ticket.status === 6 ||
-            ticket.status === 7
+          (ticket) => ticket.status === 2 || ticket.status === 6
         );
         console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
@@ -519,6 +535,7 @@ function EmailInbox() {
     let res;
     try {
       res = await FormService.processTranscriptRecord(id);
+
       setSelectedTicket(res?.inquiry);
       setLoading(false);
       successNotify(res?.message);
@@ -534,6 +551,7 @@ function EmailInbox() {
     let res;
     try {
       res = await FormService.doneTranscriptRecord(id);
+
       setSelectedTicket(res?.inquiry);
       setLoading(false);
       successNotify(res?.message);
@@ -543,16 +561,20 @@ function EmailInbox() {
     }
     setLoading(false);
   };
+
   const handleNotifyTranscriptRecord = async (id) => {
-    setLoading(true);
-    let res;
     try {
-      res = await FormService.notifyTranscriptRecord(id);
-      setSelectedTicket(res?.inquiry);
-      setLoading(false);
-      successNotify(res?.message);
+      handleModalShow(true);
+      setActionBtnType("notify");
+      let res;
+      // res = await FormService.notifyTranscriptRecord(id);
+      // setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
+
+      // setSelectedTicket(res?.inquiry);
+      // setLoading(false);
+      // successNotify(res?.message);
     } catch (err) {
-      errorNotify(res?.message);
+      errorNotify(err?.message);
       setLoading(false);
     }
     setLoading(false);
@@ -608,10 +630,10 @@ function EmailInbox() {
     try {
       // Fetch the file from the URL as a Blob
       const response = await fetch(fileUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream"
-        }
+        method: "GET"
+        // headers: {
+        //   "Content-Type": "application/octet-stream"
+        // }
       });
 
       // Ensure the request was successful
@@ -840,7 +862,10 @@ function EmailInbox() {
                             (ticket?.documents ? " has-attachment " : "")
                           : "mailbox-list-item border-bottom border-white" +
                             (ticket?.documents &&
-                            (ticket?.status == 0 || ticket?.status == 1)
+                            (ticket?.status == 0 ||
+                              ticket?.status == 1 ||
+                              ticket?.status == 4 ||
+                              ticket?.status == 5)
                               ? " has-attachment "
                               : "") +
                             (Math.floor(
@@ -864,11 +889,13 @@ function EmailInbox() {
                         <div className="mailbox-sender">
                           <span className="mailbox-sender-name">
                             [
-                            {
-                              INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                                "subCategories"
-                              ][ticket?.subCategory1 - 1]["subCategory1"]
-                            }
+                            {INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                              "subCategories"
+                            ][ticket?.subCategory1 - 1]["subCategory1"]
+                              ? INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                                  "subCategories"
+                                ][ticket?.subCategory1 - 1]["subCategory1"]
+                              : ""}
                             ]
                           </span>
                           <span className="mailbox-time">
@@ -883,7 +910,10 @@ function EmailInbox() {
                           className={
                             userData?.role == 2
                               ? "fw-bold"
-                              : ticket?.status == 0 || ticket?.status == 1
+                              : ticket?.status == 0 ||
+                                ticket?.status == 1 ||
+                                ticket?.status == 4 ||
+                                ticket?.status == 5
                               ? "text-white fw-bold"
                               : "fw-bold"
                           }
@@ -898,7 +928,9 @@ function EmailInbox() {
                           className={
                             userRole != 2 &&
                             ticket?.status != 0 &&
-                            ticket?.status != 1
+                            ticket?.status != 1 &&
+                            ticket?.status != 4 &&
+                            ticket?.status != 5
                               ? "text-black"
                               : "mailbox-desc"
                           }
@@ -906,7 +938,10 @@ function EmailInbox() {
                           {ticket?.email}
                         </div>
                         {userData?.role != 2 ? (
-                          ticket?.status == 0 || ticket?.status == 1 ? (
+                          ticket?.status == 0 ||
+                          ticket?.status == 1 ||
+                          ticket?.status == 4 ||
+                          ticket?.status == 5 ? (
                             <>
                               <DownTimer
                                 remainTime={getTimeRemain(
@@ -950,7 +985,7 @@ function EmailInbox() {
                               }}
                               bg="primary"
                             >
-                              Viewd
+                              Viewed
                             </Badge>
                           ) : (
                             <Badge
@@ -962,7 +997,7 @@ function EmailInbox() {
                               }}
                               bg="danger"
                             >
-                              No Viewd
+                              No Viewed
                             </Badge>
                           )
                         ) : ticket.isClicked == 1 ? (
@@ -1289,7 +1324,16 @@ function EmailInbox() {
                                   >
                                     <button
                                       type="button"
-                                      className="btn btn-secondary rounded-pill pl-5"
+                                      className={
+                                        selectedTicket?.status == 4 ||
+                                        selectedTicket?.status == 5 ||
+                                        selectedTicket?.status == 6
+                                          ? "d-none"
+                                          : "btn btn-secondary rounded-pill pl-5"
+                                      }
+                                      onClick={() => {
+                                        handleProcessTranscriptRecord(ticketId);
+                                      }}
                                     >
                                       Process
                                     </button>
@@ -1304,7 +1348,15 @@ function EmailInbox() {
                                   >
                                     <button
                                       type="button"
-                                      className="btn btn-primary rounded-pill pl-5"
+                                      onClick={() => {
+                                        handleDoneTranscriptRecord(ticketId);
+                                      }}
+                                      className={
+                                        selectedTicket?.status == 5 ||
+                                        selectedTicket?.status == 6
+                                          ? "d-none"
+                                          : "btn btn-primary rounded-pill pl-5"
+                                      }
                                     >
                                       Done
                                     </button>
@@ -1319,7 +1371,14 @@ function EmailInbox() {
                                   >
                                     <button
                                       type="button"
-                                      className="btn btn-info rounded-pill pl-5"
+                                      className={
+                                        selectedTicket?.status == 6
+                                          ? "d-none"
+                                          : "btn btn-info rounded-pill pl-5"
+                                      }
+                                      onClick={() => {
+                                        handleNotifyTranscriptRecord(ticketId);
+                                      }}
                                     >
                                       Notify
                                     </button>
@@ -1329,7 +1388,21 @@ function EmailInbox() {
 
                               {contentTemplate != "Enrollment" &&
                                 contentTemplate != "ExamInspection" &&
-                                contentTemplate != "TranscriptRecords" && (
+                                contentTemplate != "TranscriptRecords" &&
+                                ((getPermissionOfTicket(
+                                  selectedTicket,
+                                  userPermissionCategory
+                                ) != "None" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Passive" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Active") ||
+                                  (userData?.role == 0 &&
+                                    userData?.position == 1)) && (
                                   <>
                                     <div
                                       className="btn-group w-100"
@@ -1468,6 +1541,7 @@ function EmailInbox() {
         <EnrollmentModal
           show={enrollmentModalShow}
           handleModalClose={handleEnrollmentModalClose}
+          actionBtnType={actionBtnType}
           selectedTicket={selectedTicket}
           setLoading={setLoading}
           setTicketStatusChange={setTicketStatusChange}
@@ -1486,6 +1560,7 @@ function EmailInbox() {
         <ExamInspectionModal
           show={examInspectionModalShow}
           handleModalClose={handleExamInspectionModalClose}
+          actionBtnType={actionBtnType}
           selectedTicket={selectedTicket}
           setLoading={setLoading}
           setTicketStatusChange={setTicketStatusChange}

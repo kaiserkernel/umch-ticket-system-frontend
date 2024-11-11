@@ -29,6 +29,7 @@ const StyledDatePicker = styled(DatePicker)`
 const ExamInspectionModal = ({
   show,
   handleModalClose,
+  actionBtnType,
   selectedTicket,
   setLoading,
   setTicketStatusChange,
@@ -82,25 +83,23 @@ const ExamInspectionModal = ({
       .replace("[Contact Information]", authUser?.email)
       .replace(
         "[contact us]",
-        "<a href='" +
-          process.env.REACT_APP_URL +
-          "/ticket-reopen/" +
-          selectedTicket?._id +
-          "'>Contact Us</a>"
+        actionBtnType == "reject"
+          ? `<a href='${process.env.REACT_APP_URL}/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
+          : `<a href='${process.env.REACT_APP_URL}/home'>Contact Us</a>`
       )
       .replace("[requested teaching hospital]", details?.changePartner)
       .replace("[requested group]", details?.switchStudyGroup)
       .replace("[requested subject]", details?.subject)
       .replace("[Subject Name]", details?.subject)
-      .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+      .replace("[Date]", moment(formData?.examDate).format("MM/DD/YYYY"))
       .replace("[Time]", moment(formData.examTime).format("hh:mm A"))
       .replace("[Location]", formData.examLocation)
       .replace(
         "[interval of time requested]",
-        moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+        moment(details?.diplomaCollectionDate).format("MM/DD/YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
-  });
+  }, [formData]);
 
   const replaceEmailTemplate = (
     mailTemplateData,
@@ -196,7 +195,7 @@ const ExamInspectionModal = ({
       <Modal.Body style={{ height: "80%", overflow: "auto" }}>
         <Form.Group controlId="">
           <Form.Label className="input-label">
-            Exam Date
+            Appointment Date for Exam Inspection:
             <span className="ms-1 required-label">*</span>
           </Form.Label>
           <StyledDatePicker
@@ -214,7 +213,8 @@ const ExamInspectionModal = ({
         </Form.Group>
         <Form.Group className="mt-2">
           <Form.Label className="input-label">
-            Exam Time: <span className="ms-1 required-label">*</span>
+            Appointment Date for Exam Inspection:{" "}
+            <span className="ms-1 required-label">*</span>
           </Form.Label>
           <StyledDatePicker
             showTimeSelect

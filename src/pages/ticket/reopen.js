@@ -10,6 +10,7 @@ import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
 import formService from "../../sevices/form-service.js";
+import BeatLoader from "react-spinners/BeatLoader";
 
 function PagesLogin() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ function PagesLogin() {
   const context = useContext(AppSettings);
 
   const [reason, setReason] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     context.setAppHeaderNone(true);
@@ -30,21 +32,6 @@ function PagesLogin() {
     };
 
     // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    const path = location.pathname;
-    const pathArray = path.split("/");
-    console.log(pathArray);
-
-    const reOpenTicket = async (ticket_id) => {
-      const payload = {
-        ticket_id: ticket_id
-      };
-      const res = await formService.reOpenTicket(payload);
-    };
-
-    reOpenTicket(pathArray[2]);
   }, []);
 
   const successNotify = (msg) => {
@@ -68,6 +55,7 @@ function PagesLogin() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const path = location.pathname;
     const pathArray = path.split("/");
     const payload = {
@@ -77,9 +65,11 @@ function PagesLogin() {
     try {
       const res = await formService.reOpenTicket(payload);
       successNotify(res?.message);
+      setLoading(false);
     } catch (err) {
       console.log(err);
       errorNotify(err?.message);
+      setLoading(false);
     }
   };
 
@@ -130,9 +120,24 @@ function PagesLogin() {
             <Row>
               <Col lg={12}>
                 <div className="d-flex justify-content-end mt-3 gap-3">
-                  <a className="btn btn-primary" onClick={handleSubmit}>
-                    Submit
-                  </a>
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center"
+                        }}
+                      >
+                        <BeatLoader color="white" size={10} />
+                      </div>
+                    ) : (
+                      <span>Submit</span>
+                    )}
+                  </button>
                   <a className="btn btn-info" onClick={handleGoToDashboard}>
                     Go to Dashboard
                   </a>

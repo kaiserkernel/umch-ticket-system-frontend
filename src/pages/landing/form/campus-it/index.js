@@ -103,6 +103,14 @@ const CampusIT = () => {
   return (
     <div className="pt-5">
       <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Campus IT</h1>
+      <div>
+        <p>Dear Students,</p>
+        <p>
+          If you have technical questions or have noticed any technical issues
+          you'd like to report, please select the appropriate form. The UMCH
+          Tech Team will do its best to assist you as quickly as possible.
+        </p>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group>

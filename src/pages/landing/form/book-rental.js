@@ -165,6 +165,19 @@ const BookRental = () => {
   return (
     <div className="pt-5">
       <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Book rental UMCH library</h1>
+
+      <div>
+        <p>Dear Students,</p>
+        <p>
+          You are welcome to borrow a book from the UMCH library using this
+          form.
+        </p>
+        <p>
+          Please select a book from the list provided. The Study Secretariat
+          will contact you once the book is ready for pickup.
+        </p>
+        <p>Happy studying!</p>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group>

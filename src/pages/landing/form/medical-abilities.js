@@ -184,6 +184,14 @@ const MedicalAbilities = () => {
   return (
     <div className="pt-5">
       <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Medical abilities</h1>
+      <div>
+        <p>Dear Students,</p>
+        <p>
+          Please use this form to submit your medical abilities in summer and
+          provide us with the name of your teaching hospital. We wish you lots
+          of success and enjoyment!
+        </p>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="firstName">

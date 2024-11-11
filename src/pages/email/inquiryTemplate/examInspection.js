@@ -9,7 +9,9 @@ const ExamInspection = ({ selectedTicket }) => {
       <div className="d-flex">
         <div className=" flex-grow-1">
           <p className="text-black fw-bold">Exam Date:</p>
-          <p className="text-black">{selectedTicket?.details?.examDate}</p>
+          <p className="text-black">
+            {moment(selectedTicket?.details?.examDate).format("MM/DD/YYYY")}
+          </p>
         </div>
         <div className="flex-grow-1">
           <p className="text-black fw-bold">Specification of exam:</p>

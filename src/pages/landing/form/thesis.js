@@ -201,7 +201,18 @@ const Thesis = () => {
   return (
     <div className="pt-5">
       <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Thesis</h1>
-
+      <div>
+        <p>Dear Students,</p>
+        <p>Congratulations on reaching the final year of your studies.</p>
+        <p>
+          Please use this form to register your thesis topic with us. Be sure to
+          include the title of your thesis, the name of your coordinator at the
+          teaching hospital, as well as the subject or department you’re working
+          within. Additionally, please provide the name of your UMFST faculty
+          coordinator.
+        </p>
+        <p>We wish you much success as you approach this final milestone!</p>
+      </div>
       <Row className="mt-2 g-4 g-md-4">
         <Col lg={6}>
           <Form.Group controlId="firstName">

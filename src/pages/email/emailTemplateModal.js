@@ -45,6 +45,13 @@ const EmailTemplateModal = ({
         subCategory1 - 1
       ]["reject"];
   }
+
+  if (actionBtnType == "notify" && subCategory1) {
+    data =
+      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
+        subCategory1 - 1
+      ]["notify"];
+  }
   useEffect(() => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
@@ -64,11 +71,9 @@ const EmailTemplateModal = ({
       .replace("[Contact Information]", authUser?.email)
       .replace(
         "[contact us]",
-        "<a href='" +
-          process.env.REACT_APP_URL +
-          "/ticket-reopen/" +
-          selectedTicket?._id +
-          "'>Contact Us</a>"
+        actionBtnType == "reject"
+          ? `<a href='${process.env.REACT_APP_URL}/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
+          : `<a href='${process.env.REACT_APP_URL}/home'>Contact Us</a>`
       )
       .replace("[requested teaching hospital]", details?.changePartner)
       .replace("[requested group]", details?.switchStudyGroup)
@@ -112,26 +117,31 @@ const EmailTemplateModal = ({
         .replace("[Contact Information]", authUser?.email)
         .replace(
           "[contact us]",
-          "<a href='" +
-            process.env.REACT_APP_URL +
-            "/ticket-reopen/" +
-            selectedTicket?._id +
-            "'>Contact Us</a>"
+          actionBtnType == "reject"
+            ? `<a href='${process.env.REACT_APP_URL}/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
+            : `<a href='${process.env.REACT_APP_URL}/home'>Contact Us</a>`
         )
         .replace("[requested teaching hospital]", details?.changePartner)
         .replace("[requested group]", details?.switchStudyGroup)
         .replace("[requested subject]", details?.subject)
         .replace("[Subject Name]", details?.subject)
-        .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+        .replace("[Date]", moment(details?.examDate).format("MM/DD/YYYY"))
         .replace(
           "[interval of time requested]",
-          moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+          moment(details?.diplomaCollectionDate).format("MM/DD/YYYY")
         );
     } catch (err) {
       console.log(err);
     }
 
     let payload = {};
+    if (contentTemplate == "TranscriptRecords") {
+      payload = {
+        replaceSubject: replaceSubject,
+        replacedEmailTemplate: replacedEmailTemplate,
+        id: selectedTicket?._id
+      };
+    }
     if (contentTemplate == "Enrollment") {
       payload = {
         replaceSubject: replaceSubject,
@@ -147,9 +157,10 @@ const EmailTemplateModal = ({
         id: selectedTicket?._id
       };
     }
-    return payload;
+    console.log(actionBtnType, "==========action btn type");
+    console.log(payload, "======replaced email template");
 
-    console.log(replaceSubject, "======replaced email template");
+    return payload;
   };
   const handleSubmit = async () => {
     try {
@@ -173,13 +184,20 @@ const EmailTemplateModal = ({
             res = await FormService.acceptInquiry(payload);
             setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
           } catch (err) {
-            console.log(err);
+            console.log(err, "=====approve error");
           }
         }
       }
       if (actionBtnType == "reject") {
         res = await FormService.rejectInquiry(payload);
         setUnClickedRejectTicketsCount(unClickedRejectTicketsCount + 1);
+      }
+
+      if (actionBtnType == "notify") {
+        try {
+          res = await FormService.notifyTranscriptRecord(payload);
+          setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
+        } catch (err) {}
       }
       setTicketStatusChange(false);
       setSelectedTicket(res?.inquiry);
