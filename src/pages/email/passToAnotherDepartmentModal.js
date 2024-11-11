@@ -43,6 +43,7 @@ const PassToAnotherDepartmentModal = ({
       const res = await formService.sendPassEmail(payload);
       successNotify(res?.message);
       setLoading(false);
+      handleModalClose();
     } catch (err) {
       errorNotify(err?.message);
       setLoading(false);
