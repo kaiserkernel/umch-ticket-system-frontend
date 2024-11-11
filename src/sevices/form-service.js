@@ -62,6 +62,10 @@ class FormSevice {
     const getAdminUsersEndPoint = "/api/admin/get-users";
     return await HttpService.get(getAdminUsersEndPoint);
   };
+  sendPassEmail = async (payload) => {
+    const sendPassEmailEndpoint = "/api/admin/send-pass-email";
+    return await HttpService.post(sendPassEmailEndpoint, payload);
+  };
 }
 
 export default new FormSevice();

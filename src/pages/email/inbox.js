@@ -1597,6 +1597,7 @@ function EmailInbox() {
       <PassToAnotherDepartmentModal
         show={passToAnotherDepartmentModalShow}
         handleModalClose={handlePassToAnotherDepartmentModalClose}
+        selectedTicket={selectedTicket}
       />
     </div>
   );
