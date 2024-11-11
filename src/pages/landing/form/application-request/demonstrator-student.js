@@ -176,6 +176,23 @@ const DemonstratorStudent = ({ applicationRequest }) => {
   };
   return (
     <div className="">
+      <div className="mt-5">
+        <p> Dear Student,</p>
+        <p>
+          We are very pleased that you are interested in applying as a
+          Demonstrator-Student.
+        </p>
+        <p>
+          Please remember the application deadline as announced by the Student
+          Secretariat.
+        </p>
+        <p>
+          Choose a subject that has most interested you in your previous years
+          of study. We will collect and review all applications and get back to
+          you on our e-learning platform after the communicated deadline.
+        </p>
+        <p>Thank you, and good luck!</p>
+      </div>
       <Row className="mt-2 g-4 g-md-4">
         <Col lg={12}>
           <Form.Group controlId="">

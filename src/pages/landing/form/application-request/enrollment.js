@@ -207,6 +207,18 @@ const Enrollment = ({ applicationRequest }) => {
   };
   return (
     <div className="">
+      <div className="mt-5">
+        <p> Dear Student,</p>
+        <p>
+          With this form, we are happy to prepare your Enrollment Paper for you.
+          Please fill out the required fields.
+        </p>
+        <p>
+          Please note that the request for an Enrollment Paper can only be made
+          once a year and it remains valid for one academic year.
+        </p>
+        <p>Thank you very much.</p>
+      </div>
       <Row className="mt-2 g-4 g-md-4">
         <Col lg={6}>
           <Form.Group controlId="">

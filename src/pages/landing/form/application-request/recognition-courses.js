@@ -175,6 +175,22 @@ const RecognitionCourses = ({ applicationRequest }) => {
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div className="my-5">
+        <p> Dear Student,</p>
+        <p>
+          With this application, you can request a review to see if your
+          previously completed courses can be credited.
+        </p>
+        <p>
+          For this, we will need the following documents from your previous
+          university:
+        </p>
+        <ul className="p">
+          <li>Syllabus</li>
+          <li>Transcript of Records</li>
+          <li>Curriculum</li>
+        </ul>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">

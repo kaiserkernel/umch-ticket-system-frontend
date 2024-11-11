@@ -171,6 +171,14 @@ const OnlineCatalogue = ({ applicationRequest }) => {
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div className="my-5">
+        <p> Dear Student,</p>
+        <p>
+          If you have found corrections, requests for changes, or missing grades
+          in the online catalog Carnet, please feel free to contact us. We will
+          gladly assist in resolving the issue.
+        </p>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
