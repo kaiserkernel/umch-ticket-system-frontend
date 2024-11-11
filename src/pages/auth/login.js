@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
+import BeatLoader from "react-spinners/BeatLoader";
 
 function PagesLogin() {
   const navigate = useNavigate();
@@ -15,11 +16,12 @@ function PagesLogin() {
   const { setIsAuthenticated } = useAuth();
   const [redirect, setRedirect] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     enrollmentNumber: "",
     password: "",
     role: "2",
-    rememberMe: false,
+    rememberMe: false
   });
 
   const [rememberMe, setRememberMe] = useState(false);
@@ -30,7 +32,7 @@ function PagesLogin() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
   };
 
@@ -56,11 +58,13 @@ function PagesLogin() {
 
     setFormData({
       ...formData,
-      rememberMe: rememberMe,
+      rememberMe: rememberMe
     });
 
     try {
+      setLoading(true);
       const response = await AuthService.login(formData);
+      setLoading(false);
       if (response?.success) {
         successNotify("Login is successfully.");
 
@@ -105,13 +109,13 @@ function PagesLogin() {
 
   const successNotify = (msg) => {
     toast.info(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
   const errorNotify = (msg) => {
     toast.warning(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
@@ -196,7 +200,18 @@ function PagesLogin() {
               type="submit"
               className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
             >
-              Sign In
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center"
+                  }}
+                >
+                  <BeatLoader color="white" size={10} />
+                </div>
+              ) : (
+                <span>Sign In</span>
+              )}
             </button>
 
             <p className="sm-font mt-3 text-center">

@@ -58,6 +58,10 @@ class FormSevice {
       "/api/admin/inquiries/notifyTranscriptRecord";
     return await HttpService.post(notifyTranscriptRecordEndpoint, payload);
   };
+  getAdminUsers = async () => {
+    const getAdminUsersEndPoint = "/api/admin/get-users";
+    return await HttpService.get(getAdminUsersEndPoint);
+  };
 }
 
 export default new FormSevice();

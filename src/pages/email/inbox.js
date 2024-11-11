@@ -46,6 +46,7 @@ import EmailTemplateModal from "./emailTemplateModal.js";
 import EnrollmentModal from "./enrollmentModal.js";
 import ExamInspectionModal from "./examInspectionModal.js";
 import TranscriptRecordsModal from "./transcriptRecordsModal.js";
+import PassToAnotherDepartmentModal from "./passToAnotherDepartmentModal.js";
 
 import { components } from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -80,7 +81,10 @@ function EmailInbox() {
 
   const [enrollmentModalShow, setEnrollmentModalShow] = useState(false);
   const [examInspectionModalShow, setExamInspectionModalShow] = useState(false);
-
+  const [
+    passToAnotherDepartmentModalShow,
+    setPassToAnotherDepartmentModalShow
+  ] = useState(false);
   const handleModalClose = () => setShow(false);
   const handleModalShow = () => setShow(true);
 
@@ -90,6 +94,13 @@ function EmailInbox() {
   const handleExamInspectionModalShow = () => setExamInspectionModalShow(true);
   const handleExamInspectionModalClose = () =>
     setExamInspectionModalShow(false);
+
+  const handlePassToAnotherDepartmentModalShow = () => {
+    setPassToAnotherDepartmentModalShow(true);
+  };
+  const handlePassToAnotherDepartmentModalClose = () => {
+    setPassToAnotherDepartmentModalShow(false);
+  };
 
   const ticketStatus = [
     "Received",
@@ -721,6 +732,10 @@ function EmailInbox() {
     });
   };
 
+  const handlePassToAnotherDepartment = () => {
+    setPassToAnotherDepartmentModalShow(true);
+  };
+
   return (
     <div className="h-100 border border-gray">
       <div className="mailbox">
@@ -1010,7 +1025,7 @@ function EmailInbox() {
                             }}
                             bg="primary"
                           >
-                            Viewd
+                            Viewed
                           </Badge>
                         ) : (
                           <Badge
@@ -1022,7 +1037,7 @@ function EmailInbox() {
                             }}
                             bg="danger"
                           >
-                            No Viewd
+                            No Viewed
                           </Badge>
                         )}
                       </div>
@@ -1068,7 +1083,10 @@ function EmailInbox() {
                         <a className="btn btn-light rounded-pill mt-2">
                           Add internal note
                         </a>
-                        <a className="btn btn-primary rounded-pill mt-2">
+                        <a
+                          className="btn btn-primary rounded-pill mt-2"
+                          onClick={handlePassToAnotherDepartment}
+                        >
                           Pass to another department
                         </a>
                       </div>
@@ -1575,6 +1593,11 @@ function EmailInbox() {
           setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
         />
       )}
+
+      <PassToAnotherDepartmentModal
+        show={passToAnotherDepartmentModalShow}
+        handleModalClose={handlePassToAnotherDepartmentModalClose}
+      />
     </div>
   );
 }

@@ -8,6 +8,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
+import BeatLoader from "react-spinners/BeatLoader";
+import { setDefaultLocale } from "react-datepicker";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -18,8 +20,10 @@ function AdminLogin() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    rememberMe: false,
+    rememberMe: false
   });
+
+  const [loading, setLoading] = useState(false);
 
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -29,7 +33,7 @@ function AdminLogin() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
   };
 
@@ -55,11 +59,13 @@ function AdminLogin() {
 
     setFormData({
       ...formData,
-      rememberMe: rememberMe,
+      rememberMe: rememberMe
     });
 
     try {
+      setLoading(true);
       const response = await AuthService.adminLogin(formData);
+      setLoading(false);
       if (response?.success) {
         successNotify("Login is successfully.");
 
@@ -104,13 +110,13 @@ function AdminLogin() {
 
   const successNotify = (msg) => {
     toast.info(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
   const errorNotify = (msg) => {
     toast.warning(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
@@ -218,7 +224,18 @@ function AdminLogin() {
               type="submit"
               className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
             >
-              Sign In
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center"
+                  }}
+                >
+                  <BeatLoader color="white" size={10} />
+                </div>
+              ) : (
+                <span>Sign In</span>
+              )}
             </button>
             <div className="text-center text-inverse text-opacity-50">
               Don't have an account yet?{" "}
