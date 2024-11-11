@@ -3,10 +3,17 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import Select from "react-select";
 
 import formService from "../../sevices/form-service";
+import BeatLoader from "react-spinners/BeatLoader";
+import { ToastContainer, toast } from "react-toastify";
 
-const PassToAnotherDepartmentModal = ({ show, handleModalClose }) => {
+const PassToAnotherDepartmentModal = ({
+  show,
+  handleModalClose,
+  selectedTicket
+}) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [adminEmails, setAdminEmails] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getAdminUsers = async () => {
@@ -25,8 +32,35 @@ const PassToAnotherDepartmentModal = ({ show, handleModalClose }) => {
     };
     getAdminUsers();
   }, []);
-  const handlePass = () => {
+
+  const handlePass = async () => {
+    const payload = {
+      selectedOptions: selectedOptions,
+      selectedTicket: selectedTicket
+    };
+    try {
+      setLoading(true);
+      const res = await formService.sendPassEmail(payload);
+      successNotify(res?.message);
+      setLoading(false);
+    } catch (err) {
+      errorNotify(err?.message);
+      setLoading(false);
+    }
+    setLoading(false);
     console.log(selectedOptions);
+  };
+
+  const successNotify = (msg) => {
+    toast.info(msg, {
+      autoClose: 5000 // Duration in milliseconds
+    });
+  };
+
+  const errorNotify = (msg) => {
+    toast.warning(msg, {
+      autoClose: 5000 // Duration in milliseconds
+    });
   };
 
   return (
@@ -52,7 +86,18 @@ const PassToAnotherDepartmentModal = ({ show, handleModalClose }) => {
       <Modal.Footer>
         <div className="d-flex justify-content-end gap-3">
           <a className="btn btn-info" onClick={handlePass}>
-            Pass
+            {loading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center"
+                }}
+              >
+                <BeatLoader color="white" size={10} />
+              </div>
+            ) : (
+              <span>Pass </span>
+            )}
           </a>
           <a className="btn btn-success" onClick={handleModalClose}>
             Close
