@@ -268,7 +268,7 @@ const Enrollment = ({ applicationRequest }) => {
         <Col lg={12}>
           <Form.Group controlId="">
             <Form.Label className="input-label">
-              Date of Birthday
+              Date of Birth
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker

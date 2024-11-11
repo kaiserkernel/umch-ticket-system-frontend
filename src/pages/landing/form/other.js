@@ -110,6 +110,18 @@ const Other = () => {
 
   return (
     <div className="">
+      <div className="mt-5">
+        <p>Dear Students,</p>
+        <p>We are here for you and happy to help.</p>
+        <p>
+          In this form, please feel free to share your wishes, suggestions,
+          concerns, or requests with us.
+        </p>
+        <p>
+          Thank you for your trust. We’ll get back to you shortly with a
+          response.
+        </p>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">

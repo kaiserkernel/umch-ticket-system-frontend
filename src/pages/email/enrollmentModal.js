@@ -9,9 +9,26 @@ import {
   POSITIONNAMES
 } from "../../globalVariables";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
+
+const StyledDatePicker = styled(DatePicker)`
+  border: 1px solid !important;
+  padding: 8px !important;
+  border-radius: 0px !important;
+  outline: none !important;
+  width: 100% !important;
+
+  &:focus {
+    border-color: #2596be !important;
+  }
+`;
+
 const EnrollmentModal = ({
   show,
   handleModalClose,
+  actionBtnType,
   selectedTicket,
   setLoading,
   setTicketStatusChange,
@@ -27,10 +44,10 @@ const EnrollmentModal = ({
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
   const [formData, setFormData] = useState({
-    studentNo: studentNo,
+    studentNo: selectedTicket?.enrollmentNumber,
     nationality: selectedTicket?.details?.nationality,
     currentYearOfStudy: selectedTicket?.details?.currentYearOfStudy,
-    birthday: moment(selectedTicket?.details?.birthday).format("MM-DD-YYYY")
+    birthday: moment(selectedTicket?.details?.birthday).format("MM/DD/YYYY")
   });
 
   let subCategory1 = parseInt(selectedTicket?.subCategory1);
@@ -66,11 +83,9 @@ const EnrollmentModal = ({
       .replace("[Contact Information]", authUser?.email)
       .replace(
         "[contact us]",
-        "<a href='" +
-          process.env.REACT_APP_URL +
-          "/ticket-reopen/" +
-          selectedTicket?._id +
-          "'>Contact Us</a>"
+        actionBtnType == "reject"
+          ? `<a href='${process.env.REACT_APP_URL}/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
+          : `<a href='${process.env.REACT_APP_URL}/home'>Contact Us</a>`
       )
       .replace("[requested teaching hospital]", details?.changePartner)
       .replace("[requested group]", details?.switchStudyGroup)
@@ -82,7 +97,7 @@ const EnrollmentModal = ({
         moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
-  });
+  }, [actionBtnType]);
 
   const replaceEmailTemplate = (
     mailTemplateData,
@@ -201,29 +216,55 @@ const EnrollmentModal = ({
             className="custom-input"
           />
         </Form.Group>
-        <Form.Group className="mt-2">
+        <Form.Group>
           <Form.Label className="input-label">
-            Current Year of Study <span className="ms-1 required-label">*</span>
+            Current year of study
+            <span className="ms-1 required-label">*</span>
           </Form.Label>
           <Form.Control
-            type="text"
+            as="select"
             name="currentYearOfStudy"
-            onChange={handleChange}
             value={formData.currentYearOfStudy}
-            placeholder="Current Year Of Study"
-            className="custom-input"
-          />
-        </Form.Group>
-        <Form.Group className="mt-2">
-          <Form.Label className="input-label">
-            Date of Birthday <span className="ms-1 required-label">*</span>
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="birthday"
             onChange={handleChange}
-            value={formData.birthday}
-            placeholder="Birthday"
+            style={{
+              appearance: "none", // Hides the default arrow
+              MozAppearance: "none", // For Firefox
+              WebkitAppearance: "none", // For Safari/Chrome
+              backgroundColor: "white",
+              color: "gray !important"
+              // padding: "8px 12px",
+              // border: "1px solid #007bff",
+            }}
+            className="custom-input"
+          >
+            <option value="default">– Select –</option>
+            <option value="1st year">1st year</option>
+            <option value="2nd year">2nd year</option>
+            <option value="3rd year">3rd year</option>
+            <option value="4th year">4th year</option>
+            <option value="5th year">5th year</option>
+            <option value="6th year">6th year</option>
+          </Form.Control>
+        </Form.Group>
+        <Form.Group controlId="" className="mt-2">
+          <Form.Label className="input-label">
+            Date of Birth
+            <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <StyledDatePicker
+            selected={formData.birthday}
+            onChange={(date) =>
+              setFormData({
+                ...formData,
+                birthday: date
+              })
+            }
+            name="birthday"
+            dateFormat="yyyy/MM/dd"
+            isClearable
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
             className="custom-input"
           />
         </Form.Group>

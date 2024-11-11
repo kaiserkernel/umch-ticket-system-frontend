@@ -212,6 +212,21 @@ const Complaints = () => {
   return (
     <div className="pt-5">
       <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Complaints</h1>
+
+      <div>
+        <p>Dear Students,</p>
+        <p>
+          We are sorry to hear that you would like to file a complaint. Please
+          select the appropriate complaint form for your situation. Rest assured
+          that your complaint will be taken seriously. If you wish to report
+          specific individuals or teachers, your name will remain anonymous, and
+          you will not face any personal consequences.
+        </p>
+        <p>
+          Thank you for your trust. We will address your concerns to the best of
+          our ability.
+        </p>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group>

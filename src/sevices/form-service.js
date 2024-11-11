@@ -53,9 +53,10 @@ class FormSevice {
     const doneTranscriptRecordEndpoint = `/api/admin/inquiries/doneTranscriptRecord/${id}`;
     return await HttpService.get(doneTranscriptRecordEndpoint);
   };
-  doneTranscriptRecord = async (id) => {
-    const notifyTranscriptRecordEndpoint = `/api/admin/inquiries/notifyTranscriptRecord/${id}`;
-    return await HttpService.get(notifyTranscriptRecordEndpoint);
+  notifyTranscriptRecord = async (payload) => {
+    const notifyTranscriptRecordEndpoint =
+      "/api/admin/inquiries/notifyTranscriptRecord";
+    return await HttpService.post(notifyTranscriptRecordEndpoint, payload);
   };
 }
 
