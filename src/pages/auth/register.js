@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
+import BeatLoader from "react-spinners/BeatLoader";
 
 const PagesRegister = () => {
   const context = useContext(AppSettings);
@@ -23,6 +24,8 @@ const PagesRegister = () => {
     firstYearOfStudy: "2024",
     avatar: null
   });
+
+  const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState("");
 
@@ -99,8 +102,10 @@ const PagesRegister = () => {
       for (const key in formData) {
         formDataToSend.append(key, formData[key]);
       }
+      setLoading(true);
       const response = await AuthService.register(formDataToSend);
       successNotify(response.message);
+      setLoading(false);
       setError("");
       handleLoginNavigation();
     } catch (err) {
@@ -350,7 +355,18 @@ const PagesRegister = () => {
                 type="submit"
                 className="btn btn-primary btn-lg d-block w-100"
               >
-                Sign Up
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <BeatLoader color="white" size={10} />
+                  </div>
+                ) : (
+                  <span>Sign Up</span>
+                )}
               </button>
             </div>
 
