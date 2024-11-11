@@ -205,6 +205,18 @@ const Absence = ({ applicationRequest }) => {
   return (
     <>
       <div className="">
+        <div className="mt-5">
+          <p> Dear Student,</p>
+          <p>
+            We regret your absence. In case of illness, please always upload
+            your medical certificate and fill in the required fields.
+          </p>
+          <p>
+            For personal commitments, feel free to send us any relevant
+            documentation related to your absence so we can review it.
+          </p>
+          <p>Thank you very much.</p>
+        </div>
         <Row className="mt-5">
           <div className="fw-bold input-label">Please note:</div>
           <div className="input-label mt-2 ">

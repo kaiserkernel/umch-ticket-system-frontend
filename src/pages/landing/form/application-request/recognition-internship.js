@@ -80,6 +80,26 @@ const RecognitionInternship = ({ applicationRequest }) => {
     }, 2000);
   };
 
+  const handleDownload = (url, filename) => {
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error fetching the file:", error);
+      });
+  };
+
   const removeFile = (fileName) => {
     setFiles((prevFiles) =>
       prevFiles.filter((file) => file.file.name !== fileName)
@@ -182,6 +202,26 @@ const RecognitionInternship = ({ applicationRequest }) => {
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div className="my-5">
+        <p> Dear Student,</p>
+        <p>
+          With this application, you can request an evaluation to see if a
+          previously completed internship can be credited toward your studies.
+          Use the "Download" button for the module syllabus titled “Speciality
+          Practice” to verify whether the required content was covered in your
+          internship.
+        </p>
+        <p>
+          For this, we will need the following documents from your previous
+          university:
+        </p>
+        <p>
+          In the second step, you can have the "Certificate for Submission to
+          the University" verified by your internship supervisor. Please upload
+          this certificate in the designated upload area. We will review your
+          request internally and get back to you.
+        </p>
+      </div>
       <Row className=" g-4 g-md-4">
         <Col lg={12}>
           <Form.Group controlId="">
@@ -204,6 +244,39 @@ const RecognitionInternship = ({ applicationRequest }) => {
               {errors.recognitionMedicalInternship}
             </p>
           )}
+        </Col>
+      </Row>
+
+      <Row className="d-flex  my-4">
+        <Col lg={6}>
+          <a
+            className="btn btn-primary"
+            onClick={() =>
+              handleDownload(
+                process.env.REACT_APP_API_URL +
+                  "/download/Bescheinigung_Praktikum(2).pdf",
+                "Bescheinigung_Praktikum(2).pdf"
+              )
+            }
+          >
+            Syllabus for the module “Speciality Practice“ (1st year of study){" "}
+            <i className="bi bi-file-earmark-arrow-down"></i>
+          </a>
+        </Col>
+        <Col lg={6}>
+          <a
+            className="btn btn-info"
+            onClick={() =>
+              handleDownload(
+                process.env.REACT_APP_API_URL +
+                  "/download/Syllabus_Speciality Practice_1st year_MEH2022.pdf",
+                "Syllabus_Speciality Practice_1st year_MEH2022.pdf"
+              )
+            }
+          >
+            Certificate for Submission to the University{" "}
+            <i className="bi bi-file-earmark-arrow-down"></i>
+          </a>
         </Col>
       </Row>
 

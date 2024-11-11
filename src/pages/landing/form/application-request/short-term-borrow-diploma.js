@@ -192,6 +192,16 @@ const ShortTermBorrowDiploma = ({ applicationRequest }) => {
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div className="my-5">
+        <p>Dear Student,</p>
+        <p>
+          You can borrow your original certificate from the Student Secretariat.
+          Please complete this request form. The Student Secretariat will
+          contact you when your certificate is ready for pickup.
+        </p>
+        <p>Thank you!</p>
+      </div>
+
       <Row className="">
         <div className="fw-bold input-label">Please note:</div>
         <div className="input-label mt-2 ">

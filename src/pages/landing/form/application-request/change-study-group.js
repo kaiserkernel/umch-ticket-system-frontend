@@ -188,6 +188,17 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
 
   return (
     <div className="">
+      <div className="mt-5">
+        <p> Dear Student,</p>
+        <p>
+          We regret that you are not satisfied with your current study group and
+          would like to request a transfer. Please note that a transfer is only
+          possible at the beginning of a new semester (winter and summer
+          semesters). We will gladly review your request and will get back to
+          you soon.
+        </p>
+        <p>Thank you very much.</p>
+      </div>
       <Row className="mt-2 g-4 g-md-4">
         <Col lg={12}>
           <Form.Group controlId="">

@@ -188,6 +188,16 @@ const ChangeTeachingHospital = ({ applicationRequest }) => {
 
   return (
     <div className="">
+      <div className="mt-5">
+        <p> Dear Student,</p>
+        <p>
+          We regret that you are not satisfied with your choice of teaching
+          hospital and would like to request a transfer. Please note that your
+          request can only be considered for the upcoming academic year, as
+          short-term transfers are not possible.{" "}
+        </p>
+        <p>Thank you very much.</p>
+      </div>
       <Row className="mt-2 g-4 g-md-4">
         <Col lg={6}>
           <Form.Group controlId="">

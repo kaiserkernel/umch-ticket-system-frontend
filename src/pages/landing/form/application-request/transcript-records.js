@@ -192,6 +192,21 @@ const TranscriptRecords = ({ applicationRequest }) => {
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div className="my-5">
+        <p>Dear Students,</p>
+        <p>
+          With this request, you can order your Transcript of Records. You are
+          allowed to request a Transcript of Records after each semester.
+        </p>
+        <p>
+          It will be produced at UMFST and shipped to Germany. Please note that
+          processing your request will take approximately 30 days.
+        </p>
+        <p>
+          The UMCH Student Secretariat will contact you as soon as the document
+          is ready for pickup in Hamburg.
+        </p>
+      </div>
       <Row className=" g-4 g-md-4">
         <Col lg={12}>
           <Form.Group controlId="">
