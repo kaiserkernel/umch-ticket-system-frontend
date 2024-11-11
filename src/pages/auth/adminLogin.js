@@ -89,6 +89,7 @@ function AdminLogin() {
       }
       setError("");
     } catch (err) {
+      setLoading(false);
       const errors = err?.errors ? err?.errors : err?.message;
 
       if (typeof errors != "object") {
@@ -100,6 +101,7 @@ function AdminLogin() {
         });
       }
     }
+    setLoading(false);
   };
 
   const handleProfileNavigation = () => {

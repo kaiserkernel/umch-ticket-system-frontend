@@ -88,6 +88,7 @@ function PagesLogin() {
       }
       setError("");
     } catch (err) {
+      setLoading(false);
       const errors = err?.errors ? err?.errors : err?.message;
 
       if (typeof errors != "object") {
@@ -99,6 +100,7 @@ function PagesLogin() {
         });
       }
     }
+    setLoading(false);
   };
 
   const handleProfileNavigation = () => {
