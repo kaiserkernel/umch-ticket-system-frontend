@@ -20,13 +20,15 @@ const EmailTemplateModal = ({
   errorNotify,
   setSelectedTicket,
   contentTemplate,
-  studentNo,
   setUnClickedApprovedTicketsCount,
   unClickedApprovedTicketsCount,
   setUnClickedRejectTicketsCount,
   unClickedRejectTicketsCount
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
+  const [formData, setFormData] = useState({
+    studentNo: selectedTicket?.enrollmentNumber
+  });
   let subCategory1 = parseInt(selectedTicket?.subCategory1);
   let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
   let details = selectedTicket?.details;
@@ -46,12 +48,6 @@ const EmailTemplateModal = ({
       ]["reject"];
   }
 
-  if (actionBtnType == "notify" && subCategory1) {
-    data =
-      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
-      ]["notify"];
-  }
   useEffect(() => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
@@ -87,6 +83,9 @@ const EmailTemplateModal = ({
     setMailTemplateData(replacedEmailTemplate);
   }, [actionBtnType]);
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
   const replaceEmailTemplate = (
     mailTemplateData,
     selectedTicket,
@@ -135,38 +134,16 @@ const EmailTemplateModal = ({
     }
 
     let payload = {};
-    if (contentTemplate == "TranscriptRecords") {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        id: selectedTicket?._id
-      };
-    }
-    if (contentTemplate == "Enrollment") {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        id: selectedTicket?._id,
-        studentNo: studentNo ? studentNo : "",
-        selectedTicket: selectedTicket
-      };
-    }
+
     if (contentTemplate == "TransferTarguMures") {
       payload = {
         replaceSubject: replaceSubject,
         replacedEmailTemplate: replacedEmailTemplate,
+        formData: formData,
         id: selectedTicket?._id,
         selectedTicket: selectedTicket
       };
-    } else {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        id: selectedTicket?._id
-      };
     }
-    console.log(actionBtnType, "==========action btn type");
-    console.log(payload, "======replaced email template");
 
     return payload;
   };
@@ -223,8 +200,21 @@ const EmailTemplateModal = ({
       <Modal.Header closeButton>
         <Modal.Title>Email Template</Modal.Title>
       </Modal.Header>
-      <Modal.Body style={{ height: "450px" }}>
-        <Form.Group controlId="commentTextarea">
+      <Modal.Body style={{ height: "90%", overflow: "auto" }}>
+        <Form.Group>
+          <Form.Label className="input-label">
+            Student No <span className="ms-1 required-label">*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            name="studentNo"
+            onChange={handleChange}
+            value={formData.studentNo}
+            placeholder="Student No"
+            className="custom-input"
+          />
+        </Form.Group>
+        <Form.Group controlId="commentTextarea" className="mt-3">
           <ReactQuill
             placeholder=""
             value={mailTemplateData}
@@ -234,7 +224,7 @@ const EmailTemplateModal = ({
           />
         </Form.Group>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="mt-5">
         <Button variant="primary" onClick={handleSubmit}>
           Send
         </Button>
