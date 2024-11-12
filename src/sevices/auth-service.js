@@ -29,6 +29,16 @@ class AuthService {
     const resetPassword = "password-reset";
     return await HttpService.post(resetPassword, credentials);
   };
+
+  deleteUser = async (payload) => {
+    const deleteUser = `/api/admin/delete-user/${payload}`;
+    return await HttpService.delete(deleteUser);
+  }
+
+  resetPasswordToDefault = async (payload) => {
+    const resetPassword = `/api/admin/reset-password/${payload}`;
+    return await HttpService.get(resetPassword);
+  }
 }
 
 export default new AuthService();

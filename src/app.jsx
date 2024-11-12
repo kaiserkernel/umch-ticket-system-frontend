@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/authProvider.js";
 
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.min.js";
 import { ToastContainer } from "react-toastify";
 
 function App() {
