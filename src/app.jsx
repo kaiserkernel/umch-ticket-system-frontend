@@ -26,7 +26,7 @@ function App() {
     appContentFullHeight: false,
     appBoxedLayout: false,
     appFooter: false,
-    appTopNav: false,
+    appTopNav: false
   };
   const [appHeaderNone, setAppHeaderNone] = useState(
     defaultOptions.appHeaderNone
@@ -60,7 +60,7 @@ function App() {
     setAppContentFullHeight,
     setAppBoxedLayout,
     setAppFooter,
-    setAppTopNav,
+    setAppTopNav
   };
 
   var handleSetAppTheme = (value) => {
