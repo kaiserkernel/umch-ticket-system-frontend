@@ -1,3 +1,7 @@
 .fade {
   transition: opacity 0.3s linear !important;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
