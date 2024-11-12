@@ -4,6 +4,21 @@ import { Row, Col, Form } from "react-bootstrap";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
+
+const StyledDatePicker = styled(DatePicker)`
+  border: 1px solid !important;
+  padding: 8px !important;
+  border-radius: 0px !important;
+  outline: none !important;
+  width: 100% !important;
+
+  &:focus {
+    border-color: #2596be !important;
+  }
+`;
 
 const TransferTarguMures = ({ applicationRequest }) => {
   const {
@@ -18,6 +33,8 @@ const TransferTarguMures = ({ applicationRequest }) => {
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
+    currentYearOfStudy: "",
+    birthday: "",
     comment: ""
   });
 
@@ -136,6 +153,8 @@ const TransferTarguMures = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
+                currentYearOfStudy: "",
+                birthday: "",
                 comment: ""
               });
               setFiles([]);
@@ -171,6 +190,70 @@ const TransferTarguMures = ({ applicationRequest }) => {
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <Row className="mt-4 ">
+        <Col lg={6}>
+          <Form.Group controlId="">
+            <Form.Label className="input-label">
+              Date of Birth
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <StyledDatePicker
+              selected={formDetailData.birthday}
+              onChange={(date) =>
+                setformDetailData({
+                  ...formDetailData,
+                  birthday: date
+                })
+              }
+              name="diplomaCollectionDate"
+              dateFormat="yyyy/MM/dd"
+              isClearable
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              className="custom-input"
+            />
+          </Form.Group>
+          {errors.birthday && (
+            <p className="error-content">{errors.birthday}</p>
+          )}
+        </Col>
+        <Col lg={6}>
+          <Form.Group>
+            <Form.Label className="input-label">
+              Current year of study
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <Form.Control
+              as="select"
+              name="currentYearOfStudy"
+              value={formDetailData.currentYearOfStudy}
+              onChange={handleChange}
+              style={{
+                appearance: "none", // Hides the default arrow
+                MozAppearance: "none", // For Firefox
+                WebkitAppearance: "none", // For Safari/Chrome
+                backgroundColor: "white",
+                color: "gray !important"
+                // padding: "8px 12px",
+                // border: "1px solid #007bff",
+              }}
+              className="custom-input"
+            >
+              <option value="default">– Select –</option>
+              <option value="1st year">1st year</option>
+              <option value="2nd year">2nd year</option>
+              <option value="3rd year">3rd year</option>
+              <option value="4th year">4th year</option>
+              <option value="5th year">5th year</option>
+              <option value="6th year">6th year</option>
+            </Form.Control>
+          </Form.Group>
+          {errors.currentYearOfStudy && (
+            <p className="error-content">{errors.currentYearOfStudy}</p>
+          )}
+        </Col>
+      </Row>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">

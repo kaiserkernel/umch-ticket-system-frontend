@@ -47,6 +47,7 @@ import EnrollmentModal from "./enrollmentModal.js";
 import ExamInspectionModal from "./examInspectionModal.js";
 import TranscriptRecordsModal from "./transcriptRecordsModal.js";
 import PassToAnotherDepartmentModal from "./passToAnotherDepartmentModal.js";
+import TarguModal from "./transferToTarguMures.js";
 
 import { components } from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -81,6 +82,8 @@ function EmailInbox() {
 
   const [enrollmentModalShow, setEnrollmentModalShow] = useState(false);
   const [examInspectionModalShow, setExamInspectionModalShow] = useState(false);
+  const [targuModalshow, setTarguModalShow] = useState(false);
+
   const [
     passToAnotherDepartmentModalShow,
     setPassToAnotherDepartmentModalShow
@@ -100,6 +103,10 @@ function EmailInbox() {
   };
   const handlePassToAnotherDepartmentModalClose = () => {
     setPassToAnotherDepartmentModalShow(false);
+  };
+
+  const handleTarguModalClose = () => {
+    setTarguModalShow(false);
   };
 
   const ticketStatus = [
@@ -679,7 +686,11 @@ function EmailInbox() {
 
   const handleInquiryAccept = async (id) => {
     try {
-      handleModalShow(true);
+      if (contentTemplate == "TransferTarguMures") {
+        setTarguModalShow(true);
+      } else {
+        handleModalShow(true);
+      }
       setActionBtnType("accept");
     } catch (err) {
       if (err?.message) {
@@ -1549,6 +1560,24 @@ function EmailInbox() {
           setSelectedTicket={setSelectedTicket}
           contentTemplate={contentTemplate}
           studentNo={studentNo}
+          unClickedApprovedTicketsCount={unClickedApprovedTicketsCount}
+          setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
+          unClickedRejectTicketsCount={unClickedRejectTicketsCount}
+          setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
+        />
+      )}
+      {actionBtnType && (
+        <TarguModal
+          show={targuModalshow}
+          handleModalClose={handleTarguModalClose}
+          actionBtnType={actionBtnType}
+          selectedTicket={selectedTicket}
+          setLoading={setLoading}
+          setTicketStatusChange={setTicketStatusChange}
+          successNotify={successNotify}
+          errorNotify={errorNotify}
+          setSelectedTicket={setSelectedTicket}
+          contentTemplate={contentTemplate}
           unClickedApprovedTicketsCount={unClickedApprovedTicketsCount}
           setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
           unClickedRejectTicketsCount={unClickedRejectTicketsCount}
