@@ -39,6 +39,11 @@ class AuthService {
     const resetPassword = `/api/admin/reset-password/${payload}`;
     return await HttpService.get(resetPassword);
   }
+
+  updateProfile = async (payload) => {
+    const updateProfileEndpoint = "/api/user/update-profile";
+    return await HttpService.post(updateProfileEndpoint, payload);
+  };
 }
 
 export default new AuthService();
