@@ -198,6 +198,10 @@ const Absence = ({ applicationRequest }) => {
       newErrors.timeToAbsence = "Period of time (to) is required";
     }
 
+    if (files.length == 0) {
+      newErrors.file = "File Uploading is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -315,6 +319,8 @@ const Absence = ({ applicationRequest }) => {
               htmlFor="file"
               className="btn btn-primary upload-btn"
             ></label>
+
+            {errors.file && <p className="error-content">{errors.file}</p>}
             <div className="d-flex flex-column mt-3">
               {files.map((fileObj, index) => (
                 <div

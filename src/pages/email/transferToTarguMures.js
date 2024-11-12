@@ -9,7 +9,7 @@ import {
   POSITIONNAMES
 } from "../../globalVariables";
 
-const EmailTemplateModal = ({
+const TarguModal = ({
   show,
   handleModalClose,
   actionBtnType,
@@ -236,4 +236,4 @@ const EmailTemplateModal = ({
   );
 };
 
-export default EmailTemplateModal;
+export default TarguModal;
