@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Modal, Button, Row, Col, Form, Badge } from "react-bootstrap";
+import { Modal, Button, Row, Col, Form, Badge, Popover, OverlayTrigger, ButtonToolbar } from "react-bootstrap";
 import { Card, CardBody } from "./../../components/card/card.jsx";
 import DataTable from "react-data-table-component";
 import UserService from "../../sevices/user-service.js";
@@ -8,6 +8,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Select, { components } from "react-select";
+
+import AuthService from "../../sevices/auth-service.js"
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
@@ -274,11 +276,53 @@ function AccountManagement() {
       autoClose: 5000, // Duration in milliseconds
     });
   };
+
   const errorNotify = (msg) => {
     toast.warning(msg, {
       autoClose: 5000, // Duration in milliseconds
     });
   };
+
+  const resetAdminData = (item) => {
+    const newData = admins.filter(log => log.email !== item);
+    setAdmins(newData);
+  }
+
+  const popupResetPassword = (email) => (
+    <Popover id={`${email}resetPwd`} className="wrap-popover">
+      <Popover.Header>Reset Password?</Popover.Header>
+      <Popover.Body>
+        <button className="btn btn-sm btn-primary rounded-2"
+          onClick={async (evt) => {
+            const response = await AuthService.resetPasswordToDefault(email);
+            successNotify('Password reseted successfully');
+          }}>
+          Yes
+        </button>
+        <button className="btn btn-sm btn-danger ms-3 rounded-2">No</button>
+      </Popover.Body>
+    </Popover>
+  )
+
+  const popupDelete = (email) => (
+    <Popover id={`${email}delUser`} className="wrap-popover">
+      <Popover.Header>Delete User?</Popover.Header>
+      <Popover.Body>
+        <button className="btn btn-sm btn-primary rounded-2"
+          onClick={async (evt) => {
+            const response = await AuthService.deleteUser(email);
+            if (response.message == 'SuperAdmin') {
+              return errorNotify('Error: Super Admin');
+            }
+            successNotify('User deleted successfully');
+            resetAdminData(email);
+          }}>
+          Yes
+        </button>
+        <button className="btn btn-sm btn-danger ms-3 rounded-2">No</button>
+      </Popover.Body>
+    </Popover>
+  )
 
   const columns = [
     {
@@ -320,16 +364,16 @@ function AccountManagement() {
       name: "Actions",
       width: "250px",
       cell: (row) => (
-        <div className="d-flex py-4">
-          <a className="btn btn-info me-1">
-            {" "}
-            <i className="bi bi-arrow-counterclockwise me-1"></i>Reset
-          </a>
-          <a className="btn btn-secondary">
-            {" "}
-            <i className="bi bi-trash me-1"></i>Delete
-          </a>
-        </div>
+        <ButtonToolbar>
+          <OverlayTrigger trigger="focus" placement="top" overlay={popupResetPassword(row.email)}
+          >
+            <Button><i className="bi bi-arrow-counterclockwise me-1"></i>Reset</Button>
+          </OverlayTrigger>
+          <OverlayTrigger trigger="focus" placement="top" overlay={popupDelete(row.email)}
+          >
+            <Button className="btn btn-secondary ms-3"><i className="bi bi-trash me-1"></i>Delete</Button>
+          </OverlayTrigger>
+        </ButtonToolbar>
       ),
     },
   ];
