@@ -3,15 +3,35 @@ import { Card, CardHeader, CardBody } from "./../../components/card/card.jsx";
 import "lity";
 import "lity/dist/lity.min.css";
 import { Link } from "react-router-dom";
-import { Modal, Form, Row, Col, Tooltip, ButtonToolbar, OverlayTrigger } from 'react-bootstrap';
+import {
+  Modal,
+  Form,
+  Row,
+  Col,
+  Tooltip,
+  ButtonToolbar,
+  OverlayTrigger
+} from "react-bootstrap";
 import authService from "../../sevices/auth-service.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../context/authProvider.js";
 
 function Profile() {
-  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem("userData")))
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    isAvatarUpdated,
+    setAvatarUpdated
+  } = useAuth();
+
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("userData"))
+  );
+
   const roleName = ["Admin", "Teacher", "Student"];
   const [profileModalVisible, setProfileModalVisible] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const [profileData, setProfileData] = useState({
     firstName: userData.firstName,
     lastName: userData.lastName,
@@ -24,22 +44,19 @@ function Profile() {
 
   const successNotify = (msg) => {
     toast.info(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
   const errorNotify = (msg) => {
     toast.warning(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
   const tooltipComponent = (
-    <Tooltip id="tooltip">
-      Click and Update your image
-    </Tooltip>
-  )
-
+    <Tooltip id="tooltip">Click and Update your image</Tooltip>
+  );
 
   // Handle image selection
   const onImageChange = (event) => {
@@ -47,9 +64,10 @@ function Profile() {
     if (file) {
       // Create a preview URL for the selected image
       const previewUrl = URL.createObjectURL(file);
-      setProfileData(prev => ({
+      setImagePreview(previewUrl);
+      setProfileData((prev) => ({
         ...prev,
-        avatar: previewUrl
+        avatar: file
       }));
 
       // Call a parent-provided function to update the image in the profileData
@@ -59,11 +77,11 @@ function Profile() {
 
   const handleChange = (evt) => {
     const { name, value } = evt.target;
-    setProfileData(prev => ({
+    setProfileData((prev) => ({
       ...prev,
       [name]: value
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -73,23 +91,32 @@ function Profile() {
       setValidated(false);
       return;
     }
-    if (form.checkValidity() === false || (profileData.password !== profileData.confirmPassword)) {
+    if (
+      form.checkValidity() === false ||
+      profileData.password !== profileData.confirmPassword
+    ) {
       setValidated(true);
       return;
     }
     setProfileModalVisible(false);
-    const sendData = { ...profileData, email: userData.email }
-    const { user, message } = await authService.updateProfile(sendData);
-    if (message == 'User profile updated successfully.') {
+    const sendData = { ...profileData, email: userData.email };
+    const formDataToSend = new FormData();
+    for (const key in sendData) {
+      formDataToSend.append(key, sendData[key]);
+    }
+
+    const { user, message } = await authService.updateProfile(formDataToSend);
+    if (message == "User profile updated successfully.") {
       successNotify(message);
       const newUser = { ...userData, ...user };
       const newUserDataStr = JSON.stringify(newUser);
       localStorage.setItem("userData", newUserDataStr);
       setUserData(newUser);
+      setAvatarUpdated(new Date());
     } else {
-      errorNotify(message)
+      errorNotify(message);
     }
-  }
+  };
 
   useEffect(() => {
     if (profileModalVisible) {
@@ -99,11 +126,11 @@ function Profile() {
         password: "",
         confirmPassword: "",
         avatar: userData.avatar
-      })
+      });
       setValidated(false);
       setConfirmPasswordValidate(true);
     }
-  }, [profileModalVisible])
+  }, [profileModalVisible]);
 
   return (
     <>
@@ -170,8 +197,11 @@ function Profile() {
                 >
                   Check all tickets
                 </Link>
-                <button className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white mb-5"
-                  onClick={(evt) => setProfileModalVisible(!profileModalVisible)}
+                <button
+                  className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white mb-5"
+                  onClick={(evt) =>
+                    setProfileModalVisible(!profileModalVisible)
+                  }
                 >
                   Edit your user profile
                 </button>
@@ -189,30 +219,42 @@ function Profile() {
           <h4>Edit Your Profile</h4>
         </Modal.Header>
         <Modal.Body>
-          <Form className="px-md-5 px-4 py-md-4 py-3" noValidate validated={validated} onSubmit={handleSubmit}>
+          <Form
+            className="px-md-5 px-4 py-md-4 py-3"
+            noValidate
+            validated={validated}
+            onSubmit={handleSubmit}
+          >
             <ButtonToolbar className="mb-md-4 mb-3">
               <OverlayTrigger placement="top" overlay={tooltipComponent}>
-                <div className="cursor-pointer mx-auto"
-                  onClick={() => document.getElementById('imageUpload').click()}
+                <div
+                  className="cursor-pointer mx-auto"
+                  onClick={() => document.getElementById("imageUpload").click()}
                 >
-                  {profileData?.avatar ? (
+                  {imagePreview ? (
                     <img
-                      src={`${profileData.avatar}`}
-                      width={150} height={150}
+                      src={imagePreview}
+                      width={150}
+                      height={150}
                       alt={profileData.avatar}
                       className="object-fit-contain"
                     />
-                  ) : (userData?.avatar ? (
+                  ) : userData?.avatar ? (
                     <img
                       src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
-                      width={150} height={150}
-                      alt={userData.avatar}
+                      width={150}
+                      height={150}
+                      alt={process.env.REACT_APP_API_URL}
                       className="object-fit-contain"
                     />
                   ) : (
-                    <img src="/assets/img/user_placeholder.webp" alt="placeholder" width={150} height={150} />
-                  ))
-                  }
+                    <img
+                      src="/assets/img/user_placeholder.webp"
+                      alt="placeholder"
+                      width={150}
+                      height={150}
+                    />
+                  )}
                 </div>
               </OverlayTrigger>
             </ButtonToolbar>
@@ -230,7 +272,8 @@ function Profile() {
                   <Form.Label>First Name *</Form.Label>
                   <Form.Control
                     required
-                    type="text" name="firstName"
+                    type="text"
+                    name="firstName"
                     value={profileData.firstName}
                     onChange={handleChange}
                   />
@@ -241,7 +284,8 @@ function Profile() {
                   <Form.Label>Last Name *</Form.Label>
                   <Form.Control
                     required
-                    type="text" name="lastName"
+                    type="text"
+                    name="lastName"
                     value={profileData.lastName}
                     onChange={handleChange}
                   />
@@ -252,7 +296,8 @@ function Profile() {
               <Form.Label>Password *</Form.Label>
               <Form.Control
                 required
-                type="password" name="password"
+                type="password"
+                name="password"
                 placeholder="New Password"
                 value={profileData.password}
                 onChange={handleChange}
@@ -261,14 +306,18 @@ function Profile() {
             <Form.Group className="mb-3">
               <Form.Label>Confirm Password *</Form.Label>
               <Form.Control
-                type="password" name="confirmPassword"
+                type="password"
+                name="confirmPassword"
                 placeholder="Confirm Password"
                 value={profileData.confirmPassword}
                 onChange={handleChange}
                 isInvalid={!confirmPasswordValidate}
               />
             </Form.Group>
-            <button type="submit" className="btn btn-primary rounded-2 px-md-4 px-3 py-md-2 py-1 mt-md-3 mt-2">
+            <button
+              type="submit"
+              className="btn btn-primary rounded-2 px-md-4 px-3 py-md-2 py-1 mt-md-3 mt-2"
+            >
               Submit
             </button>
           </Form>

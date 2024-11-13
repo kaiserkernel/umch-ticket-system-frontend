@@ -10,6 +10,8 @@ import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
 import BeatLoader from "react-spinners/BeatLoader";
 import { setDefaultLocale } from "react-datepicker";
+import BlockUI from "react-block-ui";
+import "react-block-ui/style.css";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -138,23 +140,24 @@ function AdminLogin() {
 
   return (
     <>
-      <Header />
-      <BannerSection />
-      <div className="login mt-3 mt-md-5">
-        <div className="login-content">
-          <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
-            <h1 className="text-center">Sign In</h1>
-            <div className="text-inverse text-opacity-50 text-center mb-4">
-              For your protection, please verify your identity.
-            </div>
-            {/* {error && (
+      <BlockUI blocking={loading}>
+        <Header />
+        <BannerSection />
+        <div className="login mt-3 mt-md-5">
+          <div className="login-content">
+            <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
+              <h1 className="text-center">Sign In</h1>
+              <div className="text-inverse text-opacity-50 text-center mb-4">
+                For your protection, please verify your identity.
+              </div>
+              {/* {error && (
             <p style={{ color: "red" }}>
               <i className="bi bi-exclamation-triangle me-2"></i>
               {error}
             </p>
           )} */}
-            <div className="mb-3">
-              {/* <label className="form-label">
+              <div className="mb-3">
+                {/* <label className="form-label">
               Email <span className="text-danger">*</span>
             </label>
             <input
@@ -166,22 +169,22 @@ function AdminLogin() {
               placeholder=""
             /> */}
 
-              <Form.Group controlId="Email">
-                <Form.Label className="input-label">
-                  Email <span className="ms-1 required-label">*</span>
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="email"
-                  onChange={handleChange}
-                  value={formData.email}
-                  placeholder="Email"
-                  className="custom-input"
-                />
-              </Form.Group>
-            </div>
-            <div className="mb-3">
-              {/* <div className="d-flex">
+                <Form.Group controlId="Email">
+                  <Form.Label className="input-label">
+                    Email <span className="ms-1 required-label">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="email"
+                    onChange={handleChange}
+                    value={formData.email}
+                    placeholder="Email"
+                    className="custom-input"
+                  />
+                </Form.Group>
+              </div>
+              <div className="mb-3">
+                {/* <div className="d-flex">
               <label className="form-label">
                 Password <span className="text-danger">*</span>
               </label>
@@ -194,21 +197,21 @@ function AdminLogin() {
               className="form-control form-control-lg bg-white bg-opacity-5"
               placeholder=""
             /> */}
-              <Form.Group controlId="password">
-                <Form.Label className="input-label">
-                  Password <span className="ms-1 required-label">*</span>
-                </Form.Label>
-                <Form.Control
-                  type="password"
-                  name="password"
-                  onChange={handleChange}
-                  value={formData.password}
-                  placeholder="Password"
-                  className="custom-input"
-                />
-              </Form.Group>
-            </div>
-            {/* <div className="mb-3">
+                <Form.Group controlId="password">
+                  <Form.Label className="input-label">
+                    Password <span className="ms-1 required-label">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                    value={formData.password}
+                    placeholder="Password"
+                    className="custom-input"
+                  />
+                </Form.Group>
+              </div>
+              {/* <div className="mb-3">
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -222,33 +225,34 @@ function AdminLogin() {
                 </label>
               </div>
             </div> */}
-            <button
-              type="submit"
-              className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
-            >
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
-                  <BeatLoader color="white" size={10} />
-                </div>
-              ) : (
-                <span>Sign In</span>
-              )}
-            </button>
-            <div className="text-center text-inverse text-opacity-50">
-              Don't have an account yet?{" "}
-              <Link to="/register" className="default-color">
-                Sign up
-              </Link>
-              .
-            </div>
-          </form>
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
+              >
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <BeatLoader color="white" size={10} />
+                  </div>
+                ) : (
+                  <span>Sign In</span>
+                )}
+              </button>
+              <div className="text-center text-inverse text-opacity-50">
+                Don't have an account yet?{" "}
+                <Link to="/register" className="default-color">
+                  Sign up
+                </Link>
+                .
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      </BlockUI>
     </>
   );
 }

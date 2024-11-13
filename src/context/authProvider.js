@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [isAvatarUpdated, setAvatarUpdated] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return (
       localStorage.getItem("isAuthenticated") === "true" ||
@@ -15,7 +16,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("isAuthenticated", isAuthenticated);
   }, [isAuthenticated]);
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        setIsAuthenticated,
+        isAvatarUpdated,
+        setAvatarUpdated
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

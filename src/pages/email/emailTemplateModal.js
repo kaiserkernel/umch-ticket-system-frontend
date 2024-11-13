@@ -260,7 +260,7 @@ const EmailTemplateModal = ({
             className="custom-input"
           >
             <option key="0" value={defaultTemplate}>
-              --Select Email Template--
+              Default Template
             </option>
             {emailTemplates.map((emailTemplate, index) => (
               <option

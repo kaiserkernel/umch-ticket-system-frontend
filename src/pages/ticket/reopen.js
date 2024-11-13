@@ -11,6 +11,8 @@ import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
 import formService from "../../sevices/form-service.js";
 import BeatLoader from "react-spinners/BeatLoader";
+import BlockUI from "react-block-ui";
+import "react-block-ui/style.css";
 
 function PagesLogin() {
   const navigate = useNavigate();
@@ -75,78 +77,82 @@ function PagesLogin() {
 
   return (
     <>
-      <Header />
-      <BannerSection />
+      <BlockUI blocking={loading}>
+        <Header />
+        <BannerSection />
 
-      <div className="login mt-3 mt-md-5">
-        <div className="login-content">
-          <div className="bg-gray p-3 p-md-5">
-            <h1 className="text-center">Your Ticket is going to be reopened</h1>
-            <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">
-              <p className="text-inverse text-opacity-50 text-center sm-font">
-                Dear Students,
-              </p>
-              <p className="text-inverse text-opacity-50 text-center sm-font">
-                the UMCH Ticket System is here to ensure you can easily reach
-                our team for assistance with requests and complaints. Please
-                sign in and provide the details of your inquiry so we can
-                address it promptly and effectively.
-              </p>
-              <p className="text-inverse text-opacity-50 text-center sm-font">
-                ure you can easily reach our team for assistance with requests
-                and complaints. Please sign in and provide the details of your
-                inquiry so we can address it promptly and effectively.
-              </p>
+        <div className="login mt-3 mt-md-5">
+          <div className="login-content">
+            <div className="bg-gray p-3 p-md-5">
+              <h1 className="text-center">
+                Your Ticket is going to be reopened
+              </h1>
+              <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">
+                <p className="text-inverse text-opacity-50 text-center sm-font">
+                  Dear Students,
+                </p>
+                <p className="text-inverse text-opacity-50 text-center sm-font">
+                  the UMCH Ticket System is here to ensure you can easily reach
+                  our team for assistance with requests and complaints. Please
+                  sign in and provide the details of your inquiry so we can
+                  address it promptly and effectively.
+                </p>
+                <p className="text-inverse text-opacity-50 text-center sm-font">
+                  ure you can easily reach our team for assistance with requests
+                  and complaints. Please sign in and provide the details of your
+                  inquiry so we can address it promptly and effectively.
+                </p>
+              </div>
+
+              <Row className="">
+                <Col lg={12}>
+                  <Form.Group controlId="reason">
+                    <Form.Label className="input-label">
+                      Reopen Reason:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={6}
+                      name="reason"
+                      value={reason}
+                      onChange={handleChange}
+                      placeholder=""
+                      className="custom-textarea-input"
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={12}>
+                  <div className="d-flex justify-content-end mt-3 gap-3">
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleSubmit}
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center"
+                          }}
+                        >
+                          <BeatLoader color="white" size={10} />
+                        </div>
+                      ) : (
+                        <span>Submit</span>
+                      )}
+                    </button>
+                    <a className="btn btn-info" onClick={handleGoToDashboard}>
+                      Go to Dashboard
+                    </a>
+                  </div>
+                </Col>
+              </Row>
             </div>
-
-            <Row className="">
-              <Col lg={12}>
-                <Form.Group controlId="reason">
-                  <Form.Label className="input-label">
-                    Reopen Reason:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={6}
-                    name="reason"
-                    value={reason}
-                    onChange={handleChange}
-                    placeholder=""
-                    className="custom-textarea-input"
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={12}>
-                <div className="d-flex justify-content-end mt-3 gap-3">
-                  <button
-                    className="btn btn-primary"
-                    onClick={handleSubmit}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center"
-                        }}
-                      >
-                        <BeatLoader color="white" size={10} />
-                      </div>
-                    ) : (
-                      <span>Submit</span>
-                    )}
-                  </button>
-                  <a className="btn btn-info" onClick={handleGoToDashboard}>
-                    Go to Dashboard
-                  </a>
-                </div>
-              </Col>
-            </Row>
           </div>
         </div>
-      </div>
+      </BlockUI>
     </>
   );
 }

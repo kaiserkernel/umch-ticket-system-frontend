@@ -9,6 +9,8 @@ import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
 import BeatLoader from "react-spinners/BeatLoader";
+import BlockUI from "react-block-ui";
+import "react-block-ui/style.css";
 
 function PagesLogin() {
   const navigate = useNavigate();
@@ -137,54 +139,57 @@ function PagesLogin() {
 
   return (
     <>
-      <Header />
-      <BannerSection />
+      <BlockUI blocking={loading}>
+        <Header />
+        <BannerSection />
+        <div className="login mt-3 mt-md-5">
+          <div className="login-content">
+            <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
+              <h1 className="text-center">
+                Sign in for the UMCH Ticket System
+              </h1>
+              <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">
+                <p className="text-inverse text-opacity-50 text-center sm-font">
+                  Dear Students,
+                </p>
+                <p className="text-inverse text-opacity-50 text-center sm-font">
+                  the UMCH Ticket System is here to ensure you can easily reach
+                  our team for assistance with requests and complaints. Please
+                  sign in and provide the details of your inquiry so we can
+                  address it promptly and effectively.
+                </p>
+              </div>
 
-      <div className="login mt-3 mt-md-5">
-        <div className="login-content">
-          <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
-            <h1 className="text-center">Sign in for the UMCH Ticket System</h1>
-            <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">
-              <p className="text-inverse text-opacity-50 text-center sm-font">
-                Dear Students,
-              </p>
-              <p className="text-inverse text-opacity-50 text-center sm-font">
-                the UMCH Ticket System is here to ensure you can easily reach
-                our team for assistance with requests and complaints. Please
-                sign in and provide the details of your inquiry so we can
-                address it promptly and effectively.
-              </p>
-            </div>
-
-            <Form.Group controlId="enrollmentNumber">
-              <Form.Label className="input-label">
-                Enrollment Number <span className="ms-1 required-label">*</span>
-              </Form.Label>
-              <Form.Control
-                type="text"
-                name="enrollmentNumber"
-                onChange={handleChange}
-                value={formData.enrollmentNumber}
-                placeholder="Enrollment Number"
-                className="custom-input"
-              />
-            </Form.Group>
-            <div className="mb-3 mt-4">
-              <Form.Group controlId="password">
+              <Form.Group controlId="enrollmentNumber">
                 <Form.Label className="input-label">
-                  Password <span className="ms-1 required-label">*</span>
+                  Enrollment Number{" "}
+                  <span className="ms-1 required-label">*</span>
                 </Form.Label>
                 <Form.Control
-                  type="password"
-                  name="password"
+                  type="text"
+                  name="enrollmentNumber"
                   onChange={handleChange}
-                  value={formData.password}
-                  placeholder="Password"
+                  value={formData.enrollmentNumber}
+                  placeholder="Enrollment Number"
                   className="custom-input"
                 />
               </Form.Group>
-            </div>
-            {/* <div className="mb-3">
+              <div className="mb-3 mt-4">
+                <Form.Group controlId="password">
+                  <Form.Label className="input-label">
+                    Password <span className="ms-1 required-label">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                    value={formData.password}
+                    placeholder="Password"
+                    className="custom-input"
+                  />
+                </Form.Group>
+              </div>
+              {/* <div className="mb-3">
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -198,57 +203,58 @@ function PagesLogin() {
                 </label>
               </div>
             </div> */}
-            <button
-              type="submit"
-              className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
-            >
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
+              >
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <BeatLoader color="white" size={10} />
+                  </div>
+                ) : (
+                  <span>Sign In</span>
+                )}
+              </button>
+
+              <p className="sm-font mt-3 text-center">
+                For any questions regarding the ticket system, we offer you the
+                following assistance:
+              </p>
+              <p className="sm-font text-center">
+                Content-related questions:{" "}
+                <a
+                  href="mailto:secretary@edu.umch.de"
+                  className="default-color text-decoration-none"
                 >
-                  <BeatLoader color="white" size={10} />
-                </div>
-              ) : (
-                <span>Sign In</span>
-              )}
-            </button>
+                  secretary@edu.umch.de
+                </a>
+              </p>
 
-            <p className="sm-font mt-3 text-center">
-              For any questions regarding the ticket system, we offer you the
-              following assistance:
-            </p>
-            <p className="sm-font text-center">
-              Content-related questions:{" "}
-              <a
-                href="mailto:secretary@edu.umch.de"
-                className="default-color text-decoration-none"
-              >
-                secretary@edu.umch.de
-              </a>
-            </p>
-
-            <p className="sm-font text-center">
-              Technical questions:
-              <a
-                href="mailto:secretary@edu.umch.de"
-                className="default-color text-decoration-none"
-              >
-                marketing@edu.umch.de
-              </a>
-            </p>
-            <div className="text-center text-inverse text-opacity-50">
-              Don't have an account yet?{" "}
-              <Link to="/register" className="default-color">
-                Sign up
-              </Link>
-              .
-            </div>
-          </form>
+              <p className="sm-font text-center">
+                Technical questions:
+                <a
+                  href="mailto:secretary@edu.umch.de"
+                  className="default-color text-decoration-none"
+                >
+                  marketing@edu.umch.de
+                </a>
+              </p>
+              <div className="text-center text-inverse text-opacity-50">
+                Don't have an account yet?{" "}
+                <Link to="/register" className="default-color">
+                  Sign up
+                </Link>
+                .
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      </BlockUI>
     </>
   );
 }
