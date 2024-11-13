@@ -18,6 +18,8 @@ import { ToastContainer, toast } from "react-toastify";
 import ReactQuill from "react-quill";
 import EmailTemplateService from "../../sevices/email-template-service.js";
 import BeatLoader from "react-spinners/BeatLoader";
+import BlockUI from "react-block-ui";
+import "react-block-ui/style.css";
 
 function EmailTemplateManagement() {
   const [emailTemplates, setEmailTemplates] = useState([]);
@@ -220,132 +222,134 @@ function EmailTemplateManagement() {
   );
 
   return (
-    <div className="">
-      <div className="row ">
-        <div className="col-xl-12">
-          <div className="row bs-gutter-x-0">
-            <div className="col-xl-12">
-              <div id="datatable" className="mb-5">
-                <Card>
-                  <CardBody>
-                    <div className="d-flex justify-content-between mb-5">
-                      <Button
-                        className="btn btn-primary me-1"
-                        onClick={handleNewEmailTemplate}
-                      >
-                        {" "}
-                        + Add New Email Template
-                      </Button>
-                      <input
-                        type="text"
-                        placeholder="Search by Template Name..."
-                        onChange={(e) => setSearchText(e.target.value)}
-                        style={{ padding: "5px" }}
-                      />
-                    </div>
-                    {loading ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center"
-                        }}
-                      >
-                        <BeatLoader size={10} />
-                      </div>
-                    ) : (
-                      emailTemplates && (
-                        <DataTable
-                          columns={columns}
-                          data={filteredData}
-                          pagination
-                          paginationRowsPerPageOptions={[5, 10, 15]}
-                          defaultSortField="name"
+    <BlockUI blocking={loading}>
+      <div className="">
+        <div className="row ">
+          <div className="col-xl-12">
+            <div className="row bs-gutter-x-0">
+              <div className="col-xl-12">
+                <div id="datatable" className="mb-5">
+                  <Card>
+                    <CardBody>
+                      <div className="d-flex justify-content-between mb-5">
+                        <Button
+                          className="btn btn-primary me-1"
+                          onClick={handleNewEmailTemplate}
+                        >
+                          {" "}
+                          + Add New Email Template
+                        </Button>
+                        <input
+                          type="text"
+                          placeholder="Search by Template Name..."
+                          onChange={(e) => setSearchText(e.target.value)}
+                          style={{ padding: "5px" }}
                         />
-                      )
-                    )}
-                  </CardBody>
-                </Card>
+                      </div>
+                      {loading ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center"
+                          }}
+                        >
+                          <BeatLoader size={10} />
+                        </div>
+                      ) : (
+                        emailTemplates && (
+                          <DataTable
+                            columns={columns}
+                            data={filteredData}
+                            pagination
+                            paginationRowsPerPageOptions={[5, 10, 15]}
+                            defaultSortField="name"
+                          />
+                        )
+                      )}
+                    </CardBody>
+                  </Card>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add New Email Template</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row className="mt-4">
-            <Col lg={12}>
-              <Form.Group controlId="emailTemplateTitle" className="mt-3">
-                <Form.Control
-                  type="text"
-                  placeholder="Template Title"
-                  name="emailTemplateTitle"
-                  className="custom-input"
-                  value={formData.emailTemplateTitle}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-              {errors.emailTemplateTitle && (
-                <p className="error-content">{errors.emailTemplateTitle}</p>
-              )}
-              <Form.Group controlId="emailTemplateContent" className="mt-3">
-                <ReactQuill
-                  placeholder="Template Content"
-                  name="emailTemplateContent"
-                  value={formData.emailTemplateContent}
-                  onChange={(data) =>
-                    setFormData({ ...formData, emailTemplateContent: data })
-                  }
-                />
-              </Form.Group>
-              {errors.emailTemplateContent && (
-                <p className="error-content">{errors.emailTemplateContent}</p>
-              )}
-            </Col>
-          </Row>
-        </Modal.Body>
-        <Modal.Footer>
-          {btnType == "add" && (
-            <Button variant="primary" onClick={handleAddEmailTemplate}>
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
-                  <BeatLoader color="white" size={10} />
-                </div>
-              ) : (
-                <span>Add</span>
-              )}
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add New Email Template</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Row className="mt-4">
+              <Col lg={12}>
+                <Form.Group controlId="emailTemplateTitle" className="mt-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="Template Title"
+                    name="emailTemplateTitle"
+                    className="custom-input"
+                    value={formData.emailTemplateTitle}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+                {errors.emailTemplateTitle && (
+                  <p className="error-content">{errors.emailTemplateTitle}</p>
+                )}
+                <Form.Group controlId="emailTemplateContent" className="mt-3">
+                  <ReactQuill
+                    placeholder="Template Content"
+                    name="emailTemplateContent"
+                    value={formData.emailTemplateContent}
+                    onChange={(data) =>
+                      setFormData({ ...formData, emailTemplateContent: data })
+                    }
+                  />
+                </Form.Group>
+                {errors.emailTemplateContent && (
+                  <p className="error-content">{errors.emailTemplateContent}</p>
+                )}
+              </Col>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            {btnType == "add" && (
+              <Button variant="primary" onClick={handleAddEmailTemplate}>
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <BeatLoader color="white" size={10} />
+                  </div>
+                ) : (
+                  <span>Add</span>
+                )}
+              </Button>
+            )}
+            {btnType == "edit" && (
+              <Button variant="primary" onClick={handleSaveEmailTemplate}>
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <BeatLoader color="white" size={10} />
+                  </div>
+                ) : (
+                  <span>Save</span>
+                )}
+              </Button>
+            )}
+            <Button variant="secondary" onClick={handleClose}>
+              Close
             </Button>
-          )}
-          {btnType == "edit" && (
-            <Button variant="primary" onClick={handleSaveEmailTemplate}>
-              {loading ? (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
-                  <BeatLoader color="white" size={10} />
-                </div>
-              ) : (
-                <span>Save</span>
-              )}
-            </Button>
-          )}
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    </BlockUI>
   );
 }
 

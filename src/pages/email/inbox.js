@@ -1299,50 +1299,21 @@ function EmailInbox() {
                                 width: "inherit"
                               }}
                             >
-                              {contentTemplate == "Enrollment" && (
-                                <div
-                                  className="btn-group w-100"
-                                  role="group"
-                                  aria-label="Basic example"
-                                  style={{
-                                    maxWidth: "115px"
-                                  }}
-                                >
-                                  <button
-                                    type="button"
-                                    className="btn btn-info rounded-pill pl-5"
-                                    onClick={() =>
-                                      handleCheckEnrollment(selectedTicket?._id)
-                                    }
-                                  >
-                                    Check
-                                  </button>
-                                </div>
-                              )}
-                              {contentTemplate == "ExamInspection" && (
-                                <div
-                                  className="btn-group w-100"
-                                  role="group"
-                                  aria-label="Basic example"
-                                  style={{
-                                    maxWidth: "115px"
-                                  }}
-                                >
-                                  <button
-                                    type="button"
-                                    className="btn btn-info rounded-pill pl-5"
-                                    onClick={() =>
-                                      handleCheckExamInspection(
-                                        selectedTicket?._id
-                                      )
-                                    }
-                                  >
-                                    Check
-                                  </button>
-                                </div>
-                              )}
-                              {contentTemplate == "TranscriptRecords" && (
-                                <>
+                              {contentTemplate == "Enrollment" &&
+                                ((getPermissionOfTicket(
+                                  selectedTicket,
+                                  userPermissionCategory
+                                ) != "None" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Passive" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Active") ||
+                                  (userData?.role == 0 &&
+                                    userData?.position == 1)) && (
                                   <div
                                     className="btn-group w-100"
                                     role="group"
@@ -1353,20 +1324,32 @@ function EmailInbox() {
                                   >
                                     <button
                                       type="button"
-                                      className={
-                                        selectedTicket?.status == 4 ||
-                                        selectedTicket?.status == 5 ||
-                                        selectedTicket?.status == 6
-                                          ? "d-none"
-                                          : "btn btn-secondary rounded-pill pl-5"
+                                      className="btn btn-info rounded-pill pl-5"
+                                      onClick={() =>
+                                        handleCheckEnrollment(
+                                          selectedTicket?._id
+                                        )
                                       }
-                                      onClick={() => {
-                                        handleProcessTranscriptRecord(ticketId);
-                                      }}
                                     >
-                                      Process
+                                      Check
                                     </button>
                                   </div>
+                                )}
+                              {contentTemplate == "ExamInspection" &&
+                                ((getPermissionOfTicket(
+                                  selectedTicket,
+                                  userPermissionCategory
+                                ) != "None" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Passive" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Active") ||
+                                  (userData?.role == 0 &&
+                                    userData?.position == 1)) && (
                                   <div
                                     className="btn-group w-100"
                                     role="group"
@@ -1377,43 +1360,105 @@ function EmailInbox() {
                                   >
                                     <button
                                       type="button"
-                                      onClick={() => {
-                                        handleDoneTranscriptRecord(ticketId);
-                                      }}
-                                      className={
-                                        selectedTicket?.status == 5 ||
-                                        selectedTicket?.status == 6
-                                          ? "d-none"
-                                          : "btn btn-primary rounded-pill pl-5"
+                                      className="btn btn-info rounded-pill pl-5"
+                                      onClick={() =>
+                                        handleCheckExamInspection(
+                                          selectedTicket?._id
+                                        )
                                       }
                                     >
-                                      Done
+                                      Check
                                     </button>
                                   </div>
-                                  <div
-                                    className="btn-group w-100"
-                                    role="group"
-                                    aria-label="Basic example"
-                                    style={{
-                                      maxWidth: "115px"
-                                    }}
-                                  >
-                                    <button
-                                      type="button"
-                                      className={
-                                        selectedTicket?.status == 6
-                                          ? "d-none"
-                                          : "btn btn-info rounded-pill pl-5"
-                                      }
-                                      onClick={() => {
-                                        handleNotifyTranscriptRecord(ticketId);
+                                )}
+                              {contentTemplate == "TranscriptRecords" &&
+                                ((getPermissionOfTicket(
+                                  selectedTicket,
+                                  userPermissionCategory
+                                ) != "None" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Passive" &&
+                                  getPermissionOfTicket(
+                                    selectedTicket,
+                                    userPermissionCategory
+                                  ) != "Active") ||
+                                  (userData?.role == 0 &&
+                                    userData?.position == 1)) && (
+                                  <>
+                                    <div
+                                      className="btn-group w-100"
+                                      role="group"
+                                      aria-label="Basic example"
+                                      style={{
+                                        maxWidth: "115px"
                                       }}
                                     >
-                                      Notify
-                                    </button>
-                                  </div>
-                                </>
-                              )}
+                                      <button
+                                        type="button"
+                                        className={
+                                          selectedTicket?.status == 1
+                                            ? "btn btn-secondary rounded-pill pl-5"
+                                            : "d-none"
+                                        }
+                                        onClick={() => {
+                                          handleProcessTranscriptRecord(
+                                            ticketId
+                                          );
+                                        }}
+                                      >
+                                        Process
+                                      </button>
+                                    </div>
+                                    <div
+                                      className="btn-group w-100"
+                                      role="group"
+                                      aria-label="Basic example"
+                                      style={{
+                                        maxWidth: "115px"
+                                      }}
+                                    >
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          handleDoneTranscriptRecord(ticketId);
+                                        }}
+                                        className={
+                                          selectedTicket?.status == 4
+                                            ? "btn btn-primary rounded-pill pl-5"
+                                            : "d-none"
+                                        }
+                                      >
+                                        Done
+                                      </button>
+                                    </div>
+                                    <div
+                                      className="btn-group w-100"
+                                      role="group"
+                                      aria-label="Basic example"
+                                      style={{
+                                        maxWidth: "115px"
+                                      }}
+                                    >
+                                      <button
+                                        type="button"
+                                        className={
+                                          selectedTicket?.status == 5
+                                            ? "btn btn-info rounded-pill pl-5"
+                                            : "d-none"
+                                        }
+                                        onClick={() => {
+                                          handleNotifyTranscriptRecord(
+                                            ticketId
+                                          );
+                                        }}
+                                      >
+                                        Notify
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
 
                               {contentTemplate != "Enrollment" &&
                                 contentTemplate != "ExamInspection" &&

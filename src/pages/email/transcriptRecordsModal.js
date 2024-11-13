@@ -8,6 +8,7 @@ import styled from "styled-components";
 import moment from "moment";
 
 import FormService from "../../sevices/form-service";
+import emailTemplateService from "../../sevices/email-template-service";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -43,6 +44,8 @@ const ExamInspectionModal = ({
   unClickedRejectTicketsCount
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
+  const [emailTemplates, setEmailTemplates] = useState([]);
+  const [defaultTemplate, setDefaultTemplateData] = useState();
   const [formData, setFormData] = useState({
     examTime: "",
     examDate: selectedTicket?.details?.examDate,
@@ -64,6 +67,15 @@ const ExamInspectionModal = ({
   };
 
   useEffect(() => {
+    const getAllEmailTemplate = async () => {
+      try {
+        const res = await emailTemplateService.getEmailTemplates();
+        setEmailTemplates(res?.emailTemplate);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getAllEmailTemplate();
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
     let replacedEmailTemplate = data
@@ -101,6 +113,10 @@ const ExamInspectionModal = ({
       );
     setMailTemplateData(replacedEmailTemplate);
   });
+
+  const handleChangeTemplate = (e) => {
+    setMailTemplateData(e.target.value);
+  };
 
   const replaceEmailTemplate = (
     mailTemplateData,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { slideToggle } from "./../../composables/slideToggle.js";
@@ -7,12 +7,23 @@ import { useAuth } from "../../context/authProvider.js";
 function Header() {
   const notificationData = [];
   const navigate = useNavigate();
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
-  let userData = localStorage.getItem("userData");
-  if (!userData) {
-    return;
-  }
-  userData = JSON.parse(userData);
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    isAvatarUpdated,
+    setAvatarUpdated
+  } = useAuth();
+  const [userData, setUserData] = useState(() => {
+    const storedData = localStorage.getItem("userData");
+    return storedData ? JSON.parse(storedData) : null;
+  });
+
+  useEffect(() => {
+    if (userData && isAvatarUpdated) {
+      const updatedData = JSON.parse(localStorage.getItem("userData"));
+      setUserData(updatedData);
+    }
+  }, [isAvatarUpdated, userData]);
 
   const handleClickOpenTicket = (e) => {
     e.preventDefault();
@@ -109,34 +120,38 @@ function Header() {
       </div>
 
       <div className="menu">
-        {(userData.role == 2 || userData.role == 1) && <div className="menu-item dropdown dropdown-mobile-full">
-          <a
-            href="#/"
-            data-bs-toggle="dropdown"
-            data-bs-display="static"
-            className="menu-link"
-          >
-            <div className="menu-icon text-white">
-              <i className="bi bi-pencil-square nav-icon"></i>
-            </div>
-          </a>
-          <div className="dropdown-menu fade dropdown-menu-end w-100px text-center p-0 mt-1">
-            <div className="row gx-0">
-              <div className="">
-                <Link
-                  to="#"
-                  className="dropdown-item text-decoration-none p-3 bg-none"
-                  onClick={handleClickOpenTicket}
-                >
-                  <div className="position-relative">
-                    <i className="bi bi-pencil-square h2 opacity-5 d-block my-1"></i>
-                  </div>
-                  <div className="fw-500 fs-10px text-inverse">OPEN TICKET</div>
-                </Link>
+        {(userData?.role == 2 || userData?.role == 1) && (
+          <div className="menu-item dropdown dropdown-mobile-full">
+            <a
+              href="#/"
+              data-bs-toggle="dropdown"
+              data-bs-display="static"
+              className="menu-link"
+            >
+              <div className="menu-icon text-white">
+                <i className="bi bi-pencil-square nav-icon"></i>
+              </div>
+            </a>
+            <div className="dropdown-menu fade dropdown-menu-end w-100px text-center p-0 mt-1">
+              <div className="row gx-0">
+                <div className="">
+                  <Link
+                    to="#"
+                    className="dropdown-item text-decoration-none p-3 bg-none"
+                    onClick={handleClickOpenTicket}
+                  >
+                    <div className="position-relative">
+                      <i className="bi bi-pencil-square h2 opacity-5 d-block my-1"></i>
+                    </div>
+                    <div className="fw-500 fs-10px text-inverse">
+                      OPEN TICKET
+                    </div>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>}
+        )}
         <div className="menu-item dropdown">
           <a href="#/" onClick={toggleAppHeaderSearch} className="menu-link">
             <div className="menu-icon text-white">
@@ -292,7 +307,7 @@ function Header() {
               <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle">
                 {userData?.avatar ? (
                   <img
-                    src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
+                    src={`${process.env.REACT_APP_API_URL}${userData?.avatar}`}
                     className="rounded-circle w-100 h-100 object-fit-cover object"
                     style={{ objectPosition: "top" }}
                     alt=""

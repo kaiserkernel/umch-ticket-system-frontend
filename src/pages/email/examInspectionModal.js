@@ -8,6 +8,7 @@ import styled from "styled-components";
 import moment from "moment";
 
 import FormService from "../../sevices/form-service";
+import emailTemplateService from "../../sevices/email-template-service";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -44,6 +45,8 @@ const ExamInspectionModal = ({
   unClickedRejectTicketsCount
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
+  const [emailTemplates, setEmailTemplates] = useState([]);
+  const [defaultTemplate, setDefaultTemplateData] = useState();
   const [formData, setFormData] = useState({
     examTime: "",
     examDate: selectedTicket?.details?.examDate,
@@ -64,7 +67,20 @@ const ExamInspectionModal = ({
     });
   };
 
+  const handleChangeTemplate = (e) => {
+    setMailTemplateData(e.target.value);
+  };
+
   useEffect(() => {
+    const getAllEmailTemplate = async () => {
+      try {
+        const res = await emailTemplateService.getEmailTemplates();
+        setEmailTemplates(res?.emailTemplate);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getAllEmailTemplate();
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
     let replacedEmailTemplate = data
@@ -99,6 +115,7 @@ const ExamInspectionModal = ({
         moment(details?.diplomaCollectionDate).format("MM/DD/YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
+    setDefaultTemplateData(replacedEmailTemplate);
   }, [formData]);
 
   const replaceEmailTemplate = (
@@ -242,7 +259,36 @@ const ExamInspectionModal = ({
           />
         </Form.Group>
 
-        <Form.Group controlId="commentTextarea" className="mt-2">
+        <Form.Group>
+          <Form.Control
+            as="select"
+            name="template"
+            onChange={handleChangeTemplate}
+            style={{
+              appearance: "auto", // Hides the default arrow
+              MozAppearance: "auto", // For Firefox
+              WebkitAppearance: "auto", // For Safari/Chrome
+              backgroundColor: "white",
+              color: "black",
+              padding: "8px 12px",
+              border: "1px solid #007bff"
+            }}
+            className="custom-input mt-4"
+          >
+            <option key="0" value={defaultTemplate}>
+              Default Template
+            </option>
+            {emailTemplates.map((emailTemplate, index) => (
+              <option
+                key={index + 1}
+                value={emailTemplate?.emailTemplateContent}
+              >
+                {emailTemplate?.emailTemplateTitle}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+        <Form.Group controlId="commentTextarea" className="mt-4">
           <Form.Label className="input-label">Email Template</Form.Label>
           <ReactQuill
             placeholder=""
