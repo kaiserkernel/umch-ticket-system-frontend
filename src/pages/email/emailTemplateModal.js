@@ -8,6 +8,7 @@ import {
   INQUIRYCATEGORIESEmailTemplates,
   POSITIONNAMES
 } from "../../globalVariables";
+import emailTemplateService from "../../sevices/email-template-service";
 
 const EmailTemplateModal = ({
   show,
@@ -27,6 +28,9 @@ const EmailTemplateModal = ({
   unClickedRejectTicketsCount
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
+  const [emailTemplates, setEmailTemplates] = useState([]);
+  const [defaultTemplate, setDefaultTemplateData] = useState();
+
   let subCategory1 = parseInt(selectedTicket?.subCategory1);
   let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
   let details = selectedTicket?.details;
@@ -53,6 +57,16 @@ const EmailTemplateModal = ({
       ]["notify"];
   }
   useEffect(() => {
+    const getAllEmailTemplate = async () => {
+      try {
+        const res = await emailTemplateService.getEmailTemplates();
+        setEmailTemplates(res?.emailTemplate);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getAllEmailTemplate();
+
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
     let replacedEmailTemplate = data
@@ -85,6 +99,7 @@ const EmailTemplateModal = ({
         moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
+    setDefaultTemplateData(replacedEmailTemplate);
   }, [actionBtnType]);
 
   const replaceEmailTemplate = (
@@ -218,13 +233,46 @@ const EmailTemplateModal = ({
       setLoading(false);
     } catch (error) {}
   };
+
+  const handleChangeTemplate = (e) => {
+    setMailTemplateData(e.target.value);
+  };
   return (
     <Modal show={show} onHide={handleModalClose}>
       <Modal.Header closeButton>
         <Modal.Title>Email Template</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ height: "450px" }}>
-        <Form.Group controlId="commentTextarea">
+        <Form.Group>
+          <Form.Control
+            as="select"
+            name="template"
+            onChange={handleChangeTemplate}
+            style={{
+              appearance: "auto", // Hides the default arrow
+              MozAppearance: "auto", // For Firefox
+              WebkitAppearance: "auto", // For Safari/Chrome
+              backgroundColor: "white",
+              color: "black",
+              padding: "8px 12px",
+              border: "1px solid #007bff"
+            }}
+            className="custom-input"
+          >
+            <option key="0" value={defaultTemplate}>
+              --Select Email Template--
+            </option>
+            {emailTemplates.map((emailTemplate, index) => (
+              <option
+                key={index + 1}
+                value={emailTemplate?.emailTemplateContent}
+              >
+                {emailTemplate?.emailTemplateTitle}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+        <Form.Group controlId="commentTextarea" className="mt-4">
           <ReactQuill
             placeholder=""
             value={mailTemplateData}

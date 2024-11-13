@@ -14,6 +14,7 @@ import EmailDetail from "./../pages/email/detail.js";
 import AdminLogin from "../pages/auth/adminLogin.js";
 import AccountManagement from "../pages/table/plugins.js";
 import TicketReopen from "../pages/ticket/reopen.js";
+import EmailTemplateManagement from "../pages/email-template/index.js";
 
 const AppRoute = [
   {
@@ -27,17 +28,17 @@ const AppRoute = [
           <ProtectedRoute>
             <Landing />
           </ProtectedRoute>
-        ),
+        )
       },
       { path: "register", element: <Register /> },
       { path: "admin", element: <AdminLogin /> },
       { path: "login", element: <Login /> },
       {
         path: "ticket-reopen/:id",
-        element:  (  
-        <ProtectedRoute>
-          <TicketReopen />
-        </ProtectedRoute>
+        element: (
+          <ProtectedRoute>
+            <TicketReopen />
+          </ProtectedRoute>
         )
       },
       {
@@ -46,7 +47,7 @@ const AppRoute = [
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>
-        ),
+        )
       },
       {
         path: "account-management",
@@ -54,7 +55,15 @@ const AppRoute = [
           <ProtectedRoute>
             <AccountManagement />
           </ProtectedRoute>
-        ),
+        )
+      },
+      {
+        path: "email-template",
+        element: (
+          <ProtectedRoute>
+            <EmailTemplateManagement />
+          </ProtectedRoute>
+        )
       },
 
       {
@@ -66,7 +75,7 @@ const AppRoute = [
               <ProtectedRoute>
                 <EmailInbox />
               </ProtectedRoute>
-            ),
+            )
           },
           {
             path: "compose",
@@ -74,7 +83,7 @@ const AppRoute = [
               <ProtectedRoute>
                 <EmailCompose />
               </ProtectedRoute>
-            ),
+            )
           },
           {
             path: "detail",
@@ -82,13 +91,13 @@ const AppRoute = [
               <ProtectedRoute>
                 <EmailDetail />
               </ProtectedRoute>
-            ),
-          },
-        ],
+            )
+          }
+        ]
       },
-      { path: "*", element: <PagesError /> },
-    ],
-  },
+      { path: "*", element: <PagesError /> }
+    ]
+  }
 ];
 
 export default AppRoute;
