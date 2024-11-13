@@ -23,7 +23,7 @@ function Header() {
       const updatedData = JSON.parse(localStorage.getItem("userData"));
       setUserData(updatedData);
     }
-  }, [isAvatarUpdated, userData]);
+  }, [isAvatarUpdated]);
 
   const handleClickOpenTicket = (e) => {
     e.preventDefault();
