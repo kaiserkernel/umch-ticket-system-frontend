@@ -1,5 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Modal, Button, Row, Col, Form, Badge, Popover, OverlayTrigger, ButtonToolbar } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Row,
+  Col,
+  Form,
+  Badge,
+  Popover,
+  OverlayTrigger,
+  ButtonToolbar
+} from "react-bootstrap";
 import { Card, CardBody } from "./../../components/card/card.jsx";
 import DataTable from "react-data-table-component";
 import UserService from "../../sevices/user-service.js";
@@ -9,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Select, { components } from "react-select";
 
-import AuthService from "../../sevices/auth-service.js"
+import AuthService from "../../sevices/auth-service.js";
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
@@ -30,7 +40,7 @@ function AccountManagement() {
     { bg: "danger", text: "UMCH German Department" },
     { bg: "light", text: "UMCH Teaching Hospital Coordination" },
     { bg: "dark", text: "UMCH IT-SUPPORT" },
-    { bg: "dark", text: "UMFST - Rector (UMFST Targu Mures)" },
+    { bg: "dark", text: "UMFST - Rector (UMFST Targu Mures)" }
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
@@ -43,79 +53,79 @@ function AccountManagement() {
         {
           label: "Absence",
           value: "1-1",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Change of teaching hospital",
           value: "1-2",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Change of study group",
           value: "1-3",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Demonstrator student",
           value: "1-4",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Enrollment",
           value: "1-5",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Exam inspection",
           value: "1-6",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Online Catalogue (Carnet)",
           value: "1-7",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Recognition of Courses",
           value: "1-8",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Recognition of Internship",
           value: "1-9",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Short term borrow of Diploma",
           value: "1-10",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Syllabus of the academic year",
           value: "1-11",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Transcript of Records",
           value: "1-12",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Transfer to Targu Mures",
           value: "1-13",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Other",
           value: "1-14",
-          permissions: ["None", "Passive", "Active", "Responsible"],
-        },
-      ],
+          permissions: ["None", "Passive", "Active", "Responsible"]
+        }
+      ]
     },
     {
       label: "Book rental UMCH library",
       value: "2",
-      permissions: ["None", "Passive", "Active", "Responsible"],
+      permissions: ["None", "Passive", "Active", "Responsible"]
     },
     {
       label: "Campus IT",
@@ -124,14 +134,14 @@ function AccountManagement() {
         {
           label: "Canvas",
           value: "3-0",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Streaming / Panopto",
           value: "3-1",
-          permissions: ["None", "Passive", "Active", "Responsible"],
-        },
-      ],
+          permissions: ["None", "Passive", "Active", "Responsible"]
+        }
+      ]
     },
     {
       label: "Complaints",
@@ -140,65 +150,65 @@ function AccountManagement() {
         {
           label: "Campus",
           value: "4-0",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Dean’s Office",
           value: "4-1",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "German Teaching Department",
           value: "4-2",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Teaching Hospital",
           value: "4-3",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Teacher",
           value: "4-4",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Online Catalouge (Carnet)",
           value: "4-5",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Exam",
           value: "4-6",
-          permissions: ["None", "Passive", "Active", "Responsible"],
+          permissions: ["None", "Passive", "Active", "Responsible"]
         },
         {
           label: "Other",
           value: "4-7",
-          permissions: ["None", "Passive", "Active", "Responsible"],
-        },
-      ],
+          permissions: ["None", "Passive", "Active", "Responsible"]
+        }
+      ]
     },
     {
       label: "Internship",
       value: "5",
-      permissions: ["None", "Passive", "Active", "Responsible"],
+      permissions: ["None", "Passive", "Active", "Responsible"]
     },
     {
       label: "Medical Abilities",
       value: "6",
-      permissions: ["None", "Passive", "Active", "Responsible"],
+      permissions: ["None", "Passive", "Active", "Responsible"]
     },
     {
       label: "Thesis",
       value: "7",
-      permissions: ["None", "Passive", "Active", "Responsible"],
+      permissions: ["None", "Passive", "Active", "Responsible"]
     },
     {
       label: "Other",
       value: "8",
-      permissions: ["None", "Passive", "Active", "Responsible"],
-    },
+      permissions: ["None", "Passive", "Active", "Responsible"]
+    }
   ];
 
   const [formData, setFormData] = useState({
@@ -208,7 +218,7 @@ function AccountManagement() {
     role: 0,
     position: "-1",
     email: "",
-    password: "",
+    password: ""
   });
 
   useEffect(() => {
@@ -227,7 +237,7 @@ function AccountManagement() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -242,13 +252,13 @@ function AccountManagement() {
       const category = {
         inquiryCategory: categoryIdArr[0],
         subCategory1: categoryIdArr[1] ? categoryIdArr[1] : "null",
-        permission: defaultPermissions[permission],
+        permission: defaultPermissions[permission]
       };
       categories.push(category);
     });
 
     const combinedFormData = Object.assign({}, formData, {
-      category: categories,
+      category: categories
     });
     try {
       const res = await UserService.createAdmin(combinedFormData);
@@ -273,62 +283,66 @@ function AccountManagement() {
 
   const successNotify = (msg) => {
     toast.info(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
   const errorNotify = (msg) => {
     toast.warning(msg, {
-      autoClose: 5000, // Duration in milliseconds
+      autoClose: 5000 // Duration in milliseconds
     });
   };
 
   const resetAdminData = (item) => {
-    const newData = admins.filter(log => log.email !== item);
+    const newData = admins.filter((log) => log.email !== item);
     setAdmins(newData);
-  }
+  };
 
   const popupResetPassword = (email) => (
     <Popover id={`${email}resetPwd`} className="wrap-popover">
       <Popover.Header>Reset Password?</Popover.Header>
       <Popover.Body>
-        <button className="btn btn-sm btn-primary rounded-2"
+        <button
+          className="btn btn-sm btn-primary rounded-2"
           onClick={async (evt) => {
             const response = await AuthService.resetPasswordToDefault(email);
-            successNotify('Password reseted successfully');
-          }}>
+            successNotify("Password reseted successfully");
+          }}
+        >
           Yes
         </button>
         <button className="btn btn-sm btn-danger ms-3 rounded-2">No</button>
       </Popover.Body>
     </Popover>
-  )
+  );
 
   const popupDelete = (email) => (
     <Popover id={`${email}delUser`} className="wrap-popover">
       <Popover.Header>Delete User?</Popover.Header>
       <Popover.Body>
-        <button className="btn btn-sm btn-primary rounded-2"
+        <button
+          className="btn btn-sm btn-primary rounded-2"
           onClick={async (evt) => {
             const response = await AuthService.deleteUser(email);
-            if (response.message == 'SuperAdmin') {
-              return errorNotify('Error: Super Admin');
+            if (response.message == "SuperAdmin") {
+              return errorNotify("Error: Super Admin");
             }
-            successNotify('User deleted successfully');
+            successNotify("User deleted successfully");
             resetAdminData(email);
-          }}>
+          }}
+        >
           Yes
         </button>
         <button className="btn btn-sm btn-danger ms-3 rounded-2">No</button>
       </Popover.Body>
     </Popover>
-  )
+  );
 
   const columns = [
     {
       name: "Full Name",
       selector: (row) => row.firstName + " " + row.lastName,
-      sortable: true,
+      sortable: true
     },
     {
       name: "Position",
@@ -345,37 +359,47 @@ function AccountManagement() {
             </Badge>
           )}
         </>
-      ),
+      )
     },
     {
       name: "Email Address",
       width: "300px",
       selector: (row) => row.email,
-      sortable: true,
+      sortable: true
     },
 
     {
       name: "Registered At",
       width: "300px",
       cell: (row) => moment(row.createdAt).format("MMMM DD, YYYY"),
-      sortable: true,
+      sortable: true
     },
     {
       name: "Actions",
       width: "250px",
       cell: (row) => (
         <ButtonToolbar>
-          <OverlayTrigger trigger="focus" placement="top" overlay={popupResetPassword(row.email)}
+          <OverlayTrigger
+            trigger="focus"
+            placement="top"
+            overlay={popupResetPassword(row.email)}
           >
-            <Button><i className="bi bi-arrow-counterclockwise me-1"></i>Reset</Button>
+            <Button>
+              <i className="bi bi-arrow-counterclockwise me-1"></i>Reset
+            </Button>
           </OverlayTrigger>
-          <OverlayTrigger trigger="focus" placement="top" overlay={popupDelete(row.email)}
+          <OverlayTrigger
+            trigger="focus"
+            placement="top"
+            overlay={popupDelete(row.email)}
           >
-            <Button className="btn btn-secondary ms-3"><i className="bi bi-trash me-1"></i>Delete</Button>
+            <Button className="btn btn-secondary ms-3">
+              <i className="bi bi-trash me-1"></i>Delete
+            </Button>
           </OverlayTrigger>
         </ButtonToolbar>
-      ),
-    },
+      )
+    }
   ];
 
   // Filter data based on search text
@@ -471,7 +495,7 @@ function AccountManagement() {
                     MozAppearance: "none", // For Firefox
                     WebkitAppearance: "none", // For Safari/Chrome
                     backgroundColor: "white",
-                    color: "gray !important",
+                    color: "gray !important"
                   }}
                   className="custom-input"
                   placeholder="Position"
@@ -541,13 +565,13 @@ const MultiLevelSelectWithPermissions = ({
   setSelectedItems,
   setPermissions,
   selectedItems,
-  permissions,
+  permissions
 }) => {
   const selectedCategoryBadge = [
     { bg: "secondary" },
     { bg: "warning" },
     { bg: "primary" },
-    { bg: "success" },
+    { bg: "success" }
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
@@ -558,7 +582,7 @@ const MultiLevelSelectWithPermissions = ({
     selectedOptions.map((option) => {
       setPermissions({
         ...permissions,
-        [option.value]: 0,
+        [option.value]: 0
       });
     });
   };
@@ -567,7 +591,7 @@ const MultiLevelSelectWithPermissions = ({
   const handlePermissionChange = (subcategoryValue, permission) => {
     setPermissions({
       ...permissions,
-      [subcategoryValue]: permission,
+      [subcategoryValue]: permission
     });
   };
 
@@ -578,13 +602,13 @@ const MultiLevelSelectWithPermissions = ({
         acc.push({
           label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
           value: category.value,
-          isDisabled: true, // Prevent main category selection
+          isDisabled: true // Prevent main category selection
         });
       } else {
         acc.push({
           label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
           value: category.value,
-          isDisabled: false, // Prevent main category selection
+          isDisabled: false // Prevent main category selection
         });
       }
       if (category?.subcategories) {
@@ -598,7 +622,7 @@ const MultiLevelSelectWithPermissions = ({
                 {sub.label}
               </div>
             ),
-            value: sub.value,
+            value: sub.value
           })
         );
       }
@@ -615,8 +639,8 @@ const MultiLevelSelectWithPermissions = ({
       padding: "5px",
       fontSize: "16px",
       "&:hover": {
-        borderColor: state.isFocused ? "#2596be" : "#002d47",
-      },
+        borderColor: state.isFocused ? "#2596be" : "#002d47"
+      }
     }),
     option: (provided, state) => ({
       ...provided,
@@ -624,28 +648,28 @@ const MultiLevelSelectWithPermissions = ({
       color: state.isSelected ? "#fff" : "#333",
       "&:hover": {
         backgroundColor: "#e6f7ff",
-        color: "#333",
-      },
+        color: "#333"
+      }
     }),
     menu: (provided) => ({
       ...provided,
       borderRadius: "5px",
       marginTop: "5px",
-      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.15)",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.15)"
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: "#999",
+      color: "#999"
     }),
     multiValue: (provided) => ({
       ...provided,
       backgroundColor: "#4a90e2",
       color: "#fff",
-      borderRadius: "3px",
+      borderRadius: "3px"
     }),
     multiValueLabel: (provided) => ({
       ...provided,
-      color: "#fff",
+      color: "#fff"
     }),
     multiValueRemove: (provided) => ({
       ...provided,
@@ -653,9 +677,9 @@ const MultiLevelSelectWithPermissions = ({
       cursor: "pointer",
       "&:hover": {
         backgroundColor: "#ff5e5e",
-        color: "white",
-      },
-    }),
+        color: "white"
+      }
+    })
   };
 
   return (
