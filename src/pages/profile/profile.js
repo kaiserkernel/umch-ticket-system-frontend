@@ -15,6 +15,8 @@ import {
 import authService from "../../sevices/auth-service.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import BeatLoader from "react-spinners/BeatLoader";
+import BlockUI from "react-block-ui";
 import { useAuth } from "../../context/authProvider.js";
 
 function Profile() {
@@ -32,6 +34,8 @@ function Profile() {
   const roleName = ["Admin", "Teacher", "Student"];
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const [profileData, setProfileData] = useState({
     firstName: userData.firstName,
     lastName: userData.lastName,
@@ -98,24 +102,34 @@ function Profile() {
       setValidated(true);
       return;
     }
-    setProfileModalVisible(false);
+
     const sendData = { ...profileData, email: userData.email };
     const formDataToSend = new FormData();
     for (const key in sendData) {
       formDataToSend.append(key, sendData[key]);
     }
 
-    const { user, message } = await authService.updateProfile(formDataToSend);
-    if (message == "User profile updated successfully.") {
-      successNotify(message);
-      const newUser = { ...userData, ...user };
-      const newUserDataStr = JSON.stringify(newUser);
-      localStorage.setItem("userData", newUserDataStr);
-      setUserData(newUser);
-      setAvatarUpdated(new Date());
-    } else {
-      errorNotify(message);
+    setLoading(true);
+    try {
+      const { user, message } = await authService.updateProfile(formDataToSend);
+
+      if (message == "User profile updated successfully.") {
+        successNotify(message);
+        const newUser = { ...userData, ...user };
+        const newUserDataStr = JSON.stringify(newUser);
+        localStorage.setItem("userData", newUserDataStr);
+        setUserData(newUser);
+        setAvatarUpdated(new Date());
+        setLoading(false);
+      } else {
+        errorNotify(message);
+      }
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
     }
+    setLoading(false);
+    setProfileModalVisible(false);
   };
 
   useEffect(() => {
@@ -134,29 +148,30 @@ function Profile() {
 
   return (
     <>
-      <Card className="">
-        <CardBody className="p-0">
-          <div className="profile">
-            <div className="profile-container">
-              <div className="profile-sidebar">
-                <div className="desktop-sticky-top">
-                  <div className="profile-img">
-                    {userData?.avatar ? (
-                      <img
-                        src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
-                        alt=""
-                      />
-                    ) : (
-                      <img src="/assets/img/user_placeholder.webp" alt="" />
-                    )}
-                  </div>
+      <BlockUI blocking={loading}>
+        <Card className="">
+          <CardBody className="p-0">
+            <div className="profile">
+              <div className="profile-container">
+                <div className="profile-sidebar">
+                  <div className="desktop-sticky-top">
+                    <div className="profile-img">
+                      {userData?.avatar ? (
+                        <img
+                          src={`${process.env.REACT_APP_API_URL}${userData.avatar}`}
+                          alt=""
+                        />
+                      ) : (
+                        <img src="/assets/img/user_placeholder.webp" alt="" />
+                      )}
+                    </div>
 
-                  <h4>{userData?.firstName + " " + userData?.lastName}</h4>
-                  <div className="mb-3 text-inverse text-opacity-50 fw-bold mt-n2">
-                    {roleName[userData.role]}
-                  </div>
+                    <h4>{userData?.firstName + " " + userData?.lastName}</h4>
+                    <div className="mb-3 text-inverse text-opacity-50 fw-bold mt-n2">
+                      {roleName[userData.role]}
+                    </div>
 
-                  {/* <div className="mb-1">
+                    {/* <div className="mb-1">
                   <i className="fa fa-map-marker-alt fa-fw text-inverse text-opacity-50"></i>{" "}
                   New York, NY
                 </div>
@@ -165,51 +180,52 @@ function Profile() {
                   seantheme.com/hud
                 </div> */}
 
-                  <hr className="mt-4 mb-4" />
-                </div>
-              </div>
-
-              <div className="profile-content">
-                <div className="profile-content-headerCaption">
-                  Welcome to your UMCH Ticket System
+                    <hr className="mt-4 mb-4" />
+                  </div>
                 </div>
 
-                <div className="profile-content-textCaption">
-                  What do you want to do next?
-                </div>
-                {userData.role == 2 && (
+                <div className="profile-content">
+                  <div className="profile-content-headerCaption">
+                    Welcome to your UMCH Ticket System
+                  </div>
+
+                  <div className="profile-content-textCaption">
+                    What do you want to do next?
+                  </div>
+                  {userData.role == 2 && (
+                    <Link
+                      to="/home"
+                      className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mx-5 py-3 fs-20px text-white"
+                    >
+                      Create a new ticket
+                    </Link>
+                  )}
                   <Link
-                    to="/home"
-                    className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mx-5 py-3 fs-20px text-white"
+                    to="/email/inbox"
+                    className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white"
                   >
-                    Create a new ticket
+                    Open your latest ticket
                   </Link>
-                )}
-                <Link
-                  to="/email/inbox"
-                  className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white"
-                >
-                  Open your latest ticket
-                </Link>
-                <Link
-                  to="/email/inbox"
-                  className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mr-5 py-3 fs-20px text-white"
-                >
-                  Check all tickets
-                </Link>
-                <button
-                  className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white mb-5"
-                  onClick={(evt) =>
-                    setProfileModalVisible(!profileModalVisible)
-                  }
-                >
-                  Edit your user profile
-                </button>
+                  <Link
+                    to="/email/inbox"
+                    className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 mr-5 py-3 fs-20px text-white"
+                  >
+                    Check all tickets
+                  </Link>
+                  <button
+                    className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3 py-3 fs-20px text-white mb-5"
+                    onClick={(evt) =>
+                      setProfileModalVisible(!profileModalVisible)
+                    }
+                  >
+                    Edit your user profile
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </CardBody>
-      </Card>
+          </CardBody>
+        </Card>
+      </BlockUI>
       <Modal
         show={profileModalVisible}
         onHide={() => setProfileModalVisible(!profileModalVisible)}
@@ -293,9 +309,8 @@ function Profile() {
               </Col>
             </Row>
             <Form.Group className="mb-3">
-              <Form.Label>Password *</Form.Label>
+              <Form.Label>Password </Form.Label>
               <Form.Control
-                required
                 type="password"
                 name="password"
                 placeholder="New Password"
@@ -304,7 +319,7 @@ function Profile() {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Confirm Password *</Form.Label>
+              <Form.Label>Confirm Password </Form.Label>
               <Form.Control
                 type="password"
                 name="confirmPassword"
@@ -314,12 +329,25 @@ function Profile() {
                 isInvalid={!confirmPasswordValidate}
               />
             </Form.Group>
-            <button
-              type="submit"
-              className="btn btn-primary rounded-2 px-md-4 px-3 py-md-2 py-1 mt-md-3 mt-2"
-            >
-              Submit
-            </button>
+            <div className="d-flex justify-content-end">
+              <button
+                type="submit"
+                className="btn btn-primary rounded-2 px-md-4 px-3 py-md-2 py-1 mt-md-3 mt-2"
+              >
+                {loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <BeatLoader color="white" size={10} />
+                  </div>
+                ) : (
+                  <span>Submit</span>
+                )}
+              </button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>
