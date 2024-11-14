@@ -96,7 +96,7 @@ const ExamInspectionModal = ({
         "[contact us]",
         "<a href='" +
           process.env.REACT_APP_URL +
-          "/ticket-reopen/" +
+          "/#/ticket-reopen/" +
           selectedTicket?._id +
           "'>Contact Us</a>"
       )
@@ -151,7 +151,7 @@ const ExamInspectionModal = ({
           "[contact us]",
           "<a href='" +
             process.env.REACT_APP_URL +
-            "/ticket-reopen/" +
+            "/#/ticket-reopen/" +
             selectedTicket?._id +
             "'>Contact Us</a>"
         )

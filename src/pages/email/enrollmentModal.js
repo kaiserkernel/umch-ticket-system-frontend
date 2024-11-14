@@ -96,8 +96,8 @@ const EnrollmentModal = ({
       .replace(
         "[contact us]",
         actionBtnType == "reject"
-          ? `<a href='${process.env.REACT_APP_URL}/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
-          : `<a href='${process.env.REACT_APP_URL}/home'>Contact Us</a>`
+          ? `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
+          : `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
       )
       .replace("[requested teaching hospital]", details?.changePartner)
       .replace("[requested group]", details?.switchStudyGroup)
@@ -145,7 +145,7 @@ const EnrollmentModal = ({
           "[contact us]",
           "<a href='" +
             process.env.REACT_APP_URL +
-            "/ticket-reopen/" +
+            "/#/ticket-reopen/" +
             selectedTicket?._id +
             "'>Contact Us</a>"
         )
