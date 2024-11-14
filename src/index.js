@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, useRoutes, useLocation } from "react-router-dom";
+import { HashRouter , useRoutes, useLocation } from "react-router-dom";
 import AppRoute from "./config/app-route.jsx";
 import { slideToggle } from "./composables/slideToggle.js";
 
@@ -36,7 +36,7 @@ function App() {
 }
 
 root.render(
-  <BrowserRouter>
+  <HashRouter >
     <App />
-  </BrowserRouter>
+  </HashRouter >
 );
