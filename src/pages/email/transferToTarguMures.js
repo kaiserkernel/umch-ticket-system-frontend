@@ -52,15 +52,21 @@ const TarguModal = ({
   }
 
   useEffect(() => {
-    const getAllEmailTemplate = async () => {
+    const getEmailTemplatesByCategory = async () => {
       try {
-        const res = await emailTemplateService.getEmailTemplates();
-        setEmailTemplates(res?.emailTemplate);
+        const payload = {
+          inquiryCategory: inquiryCategory,
+          subCategory: subCategory1
+        };
+        const res = await emailTemplateService.getEmailTemplatesByCategory(
+          payload
+        );
+        setEmailTemplates(res?.emailTemplates);
       } catch (err) {
         console.log(err);
       }
     };
-    getAllEmailTemplate();
+    getEmailTemplatesByCategory();
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
     let replacedEmailTemplate = data
@@ -251,7 +257,7 @@ const TarguModal = ({
             <option key="0" value={defaultTemplate}>
               Default Template
             </option>
-            {emailTemplates.map((emailTemplate, index) => (
+            {(emailTemplates || []).map((emailTemplate, index) => (
               <option
                 key={index + 1}
                 value={emailTemplate?.emailTemplateContent}

@@ -13,6 +13,11 @@ class EmailTemplateService {
     const getEmailTemplateEndpoint = "/api/emailTemplate/get";
     return await HttpService.get(getEmailTemplateEndpoint);
   };
+  getEmailTemplatesByCategory = async (payload) => {
+    const getEmailTemplatesByCategoryEndpoint =
+      "/api/emailTemplate/get-templates-by-category";
+    return await HttpService.post(getEmailTemplatesByCategoryEndpoint, payload);
+  };
   editEmailTemplate = async (payload) => {
     const editEmailTemplateEndpoint = "/api/emailTemplate/edit";
     return await HttpService.patch(editEmailTemplateEndpoint, payload);

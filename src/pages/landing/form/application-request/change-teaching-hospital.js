@@ -178,9 +178,6 @@ const ChangeTeachingHospital = ({ applicationRequest }) => {
     if (!formDetailData.changeToHospitalName) {
       newErrors.changeToHospitalName = "This field is required";
     }
-    if (!formDetailData.changePartner) {
-      newErrors.changePartner = "This field is required";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -195,6 +192,10 @@ const ChangeTeachingHospital = ({ applicationRequest }) => {
           hospital and would like to request a transfer. Please note that your
           request can only be considered for the upcoming academic year, as
           short-term transfers are not possible.{" "}
+        </p>
+        <p>
+          You can simplify the process by naming a changing partner. Your
+          changing partner must also submit the request in parallel.
         </p>
         <p>Thank you very much.</p>
       </div>
@@ -243,10 +244,7 @@ const ChangeTeachingHospital = ({ applicationRequest }) => {
       <Row className="mt-2 g-4 g-md-4">
         <Col lg={12}>
           <Form.Group controlId="">
-            <Form.Label className="input-label">
-              Changing partner:
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
+            <Form.Label className="input-label">Changing partner:</Form.Label>
             <Form.Control
               type="text"
               placeholder=""

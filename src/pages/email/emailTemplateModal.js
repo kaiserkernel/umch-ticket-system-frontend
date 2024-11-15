@@ -56,16 +56,23 @@ const EmailTemplateModal = ({
         subCategory1 - 1
       ]["notify"];
   }
+
   useEffect(() => {
-    const getAllEmailTemplate = async () => {
+    const getEmailTemplatesByCategory = async () => {
       try {
-        const res = await emailTemplateService.getEmailTemplates();
-        setEmailTemplates(res?.emailTemplate);
+        const payload = {
+          inquiryCategory: inquiryCategory,
+          subCategory: subCategory1
+        };
+        const res = await emailTemplateService.getEmailTemplatesByCategory(
+          payload
+        );
+        setEmailTemplates(res?.emailTemplates);
       } catch (err) {
         console.log(err);
       }
     };
-    getAllEmailTemplate();
+    getEmailTemplatesByCategory();
 
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
@@ -87,7 +94,7 @@ const EmailTemplateModal = ({
         "[contact us]",
         actionBtnType == "reject"
           ? `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
-          :`<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
+          : `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
       )
       .replace("[requested teaching hospital]", details?.changePartner)
       .replace("[requested group]", details?.switchStudyGroup)
@@ -262,7 +269,7 @@ const EmailTemplateModal = ({
             <option key="0" value={defaultTemplate}>
               Default Template
             </option>
-            {emailTemplates.map((emailTemplate, index) => (
+            {(emailTemplates || []).map((emailTemplate, index) => (
               <option
                 key={index + 1}
                 value={emailTemplate?.emailTemplateContent}

@@ -39,6 +39,8 @@ function Profile() {
   const [profileData, setProfileData] = useState({
     firstName: userData.firstName,
     lastName: userData.lastName,
+    enrollmentNumber: userData.enrollmentNumber,
+    firstYearOfStudy: userData.firstYearOfStudy,
     password: "",
     avatar: userData.avatar,
     confirmPassword: ""
@@ -137,6 +139,8 @@ function Profile() {
       setProfileData({
         firstName: userData.firstName,
         lastName: userData.lastName,
+        enrollmentNumber: userData.enrollmentNumber,
+        firstYearOfStudy: userData.firstYearOfStudy,
         password: "",
         confirmPassword: "",
         avatar: userData.avatar
@@ -305,6 +309,40 @@ function Profile() {
                     value={profileData.lastName}
                     onChange={handleChange}
                   />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Enrollment Number *</Form.Label>
+                  <Form.Control
+                    required
+                    type="text"
+                    name="enrollmentNumber"
+                    value={profileData.enrollmentNumber}
+                    onChange={handleChange}
+                    disabled
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>First year of Study *</Form.Label>
+                  <Form.Select
+                    required
+                    name="firstYearOfStudy"
+                    value={profileData.firstYearOfStudy}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select year</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                  </Form.Select>
                 </Form.Group>
               </Col>
             </Row>

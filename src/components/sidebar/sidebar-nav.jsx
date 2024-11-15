@@ -4,7 +4,7 @@ import {
   useMatch,
   NavLink,
   useLocation,
-  matchPath,
+  matchPath
 } from "react-router-dom";
 import menus from "./../../config/app-menu.jsx";
 
@@ -90,7 +90,19 @@ function SidebarNav() {
 
   const filteredMenu = menus.filter((menu) => {
     // Only include "Account Management" if the role permits
-    if (menu.title === "Account Management" && userRole !== 0) {
+
+    if (
+      menu.title === "Account Management" &&
+      userData?.role != 0 &&
+      userData?.position != 1
+    ) {
+      return false;
+    }
+    if (
+      (menu.title === "Account Management" ||
+        menu.title === "Email Template") &&
+      userRole !== 0
+    ) {
       return false; // Exclude for non-admins
     }
 
@@ -106,7 +118,7 @@ function SidebarNav() {
             return false;
           }
           return true;
-        }),
+        })
       };
     }
     return item;

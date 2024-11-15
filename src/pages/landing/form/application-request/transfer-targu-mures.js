@@ -190,6 +190,20 @@ const TransferTarguMures = ({ applicationRequest }) => {
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div>
+        <p>Dear 2nd-year Student,</p>
+        <p>
+          Are you considering selecting Option B of your study contract and
+          continuing your studies from the 3rd year onward at the UMFST main
+          campus in Târgu Mureș?
+        </p>
+        <p>
+          If so, please complete this request form by the specified deadline
+          (January 31st of each calendar year). Please note that eligibility for
+          the actual transfer requires the completion of 120 ECTS by the end of
+          the 2nd year at UMCH.
+        </p>
+      </div>
       <Row className="mt-4 ">
         <Col lg={6}>
           <Form.Group controlId="">
