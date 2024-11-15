@@ -175,7 +175,7 @@ const SyllabusAcademicYear = ({ applicationRequest }) => {
         <p>
           With this request, you can order your syllabus for the academic year.
           It will be produced at UMFST and shipped to Germany.Please note that
-          processing your request will take approximately 60 days.
+          processing your request will take approximately 30 days.
         </p>
         <p>
           The UMCH Student Secretariat will contact you as soon as the document

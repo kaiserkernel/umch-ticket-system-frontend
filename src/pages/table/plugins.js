@@ -15,13 +15,14 @@ import DataTable from "react-data-table-component";
 import UserService from "../../sevices/user-service.js";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 import Select, { components } from "react-select";
+import "react-toastify/dist/ReactToastify.css";
 
 import AuthService from "../../sevices/auth-service.js";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
+
+import { CATEGORYDATA } from "../../globalVariables.js";
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
@@ -46,172 +47,6 @@ function AccountManagement() {
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
-
-  const categoryData = [
-    {
-      label: "Applications and Requests",
-      value: "1",
-      subcategories: [
-        {
-          label: "Absence",
-          value: "1-1",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Change of teaching hospital",
-          value: "1-2",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Change of study group",
-          value: "1-3",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Demonstrator student",
-          value: "1-4",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Enrollment",
-          value: "1-5",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Exam inspection",
-          value: "1-6",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Online Catalogue (Carnet)",
-          value: "1-7",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Recognition of Courses",
-          value: "1-8",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Recognition of Internship",
-          value: "1-9",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Short term borrow of Diploma",
-          value: "1-10",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Syllabus of the academic year",
-          value: "1-11",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Transcript of Records",
-          value: "1-12",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Transfer to Targu Mures",
-          value: "1-13",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Other",
-          value: "1-14",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        }
-      ]
-    },
-    {
-      label: "Book rental UMCH library",
-      value: "2",
-      permissions: ["None", "Passive", "Active", "Responsible"]
-    },
-    {
-      label: "Campus IT",
-      value: "3",
-      subcategories: [
-        {
-          label: "Canvas",
-          value: "3-0",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Streaming / Panopto",
-          value: "3-1",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        }
-      ]
-    },
-    {
-      label: "Complaints",
-      value: "4",
-      subcategories: [
-        {
-          label: "Campus",
-          value: "4-0",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Dean’s Office",
-          value: "4-1",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "German Teaching Department",
-          value: "4-2",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Teaching Hospital",
-          value: "4-3",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Teacher",
-          value: "4-4",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Online Catalouge (Carnet)",
-          value: "4-5",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Exam",
-          value: "4-6",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        },
-        {
-          label: "Other",
-          value: "4-7",
-          permissions: ["None", "Passive", "Active", "Responsible"]
-        }
-      ]
-    },
-    {
-      label: "Internship",
-      value: "5",
-      permissions: ["None", "Passive", "Active", "Responsible"]
-    },
-    {
-      label: "Medical Abilities",
-      value: "6",
-      permissions: ["None", "Passive", "Active", "Responsible"]
-    },
-    {
-      label: "Thesis",
-      value: "7",
-      permissions: ["None", "Passive", "Active", "Responsible"]
-    },
-    {
-      label: "Other",
-      value: "8",
-      permissions: ["None", "Passive", "Active", "Responsible"]
-    }
-  ];
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -519,7 +354,7 @@ function AccountManagement() {
                 </Form.Control>
               </Form.Group>
               <MultiLevelSelectWithPermissions
-                options={categoryData}
+                options={CATEGORYDATA}
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
                 setPermissions={setPermissions}

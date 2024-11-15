@@ -249,6 +249,12 @@ function AdminLogin() {
                 </Link>
                 .
               </div>
+              <div className="text-inverse text-opacity-50 text-center">
+                Forget your password?{" "}
+                <Link to="/#" className="default-color">
+                  Reset Password
+                </Link>
+              </div>
             </form>
           </div>
         </div>

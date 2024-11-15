@@ -251,6 +251,12 @@ function PagesLogin() {
                 </Link>
                 .
               </div>
+              <div className="text-inverse text-opacity-50 text-center mt-3">
+                Forget your password?{" "}
+                <Link to="/#" className="default-color">
+                  Reset Password
+                </Link>
+              </div>
             </form>
           </div>
         </div>

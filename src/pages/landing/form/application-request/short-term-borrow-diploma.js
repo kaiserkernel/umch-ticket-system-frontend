@@ -205,7 +205,9 @@ const ShortTermBorrowDiploma = ({ applicationRequest }) => {
       <Row className="">
         <div className="fw-bold input-label">Please note:</div>
         <div className="input-label mt-2 ">
-          You can borrow your original diploma only for 1 week.
+          You can borrow your original diploma only for 1 week. The original
+          certificate must be returned to the Study Secretariat at the end of
+          the loan period. Failure to return may lead to deregistration.
         </div>
       </Row>
       <Row className="mt-4 g-4 g-md-4">

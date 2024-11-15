@@ -16,10 +16,12 @@ import UserService from "../../sevices/user-service.js";
 
 import { ToastContainer, toast } from "react-toastify";
 import ReactQuill from "react-quill";
-import EmailTemplateService from "../../sevices/email-template-service.js";
+import Select, { components } from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
+import EmailTemplateService from "../../sevices/email-template-service.js";
+import { CATEGORYDATA } from "../../globalVariables.js";
 
 function EmailTemplateManagement() {
   const [emailTemplates, setEmailTemplates] = useState([]);
@@ -29,9 +31,12 @@ function EmailTemplateManagement() {
   const [loading, setLoading] = useState(false);
   const [btnType, setBtnType] = useState("");
   const [deleteTemplate, setDeleteTemplate] = useState("");
+  const [selectedItems, setSelectedItems] = useState([]);
 
   const [formData, setFormData] = useState({
     id: "",
+    inquiryCategory: "",
+    subCategory: "",
     emailTemplateTitle: "",
     emailTemplateContent: ""
   });
@@ -42,6 +47,9 @@ function EmailTemplateManagement() {
   const validate = () => {
     const newErrors = {};
 
+    if (selectedItems.length == 0) {
+      newErrors.subCategories = "This field is required";
+    }
     if (formData.emailTemplateTitle == "") {
       newErrors.emailTemplateTitle = "This field is required";
     }
@@ -74,14 +82,11 @@ function EmailTemplateManagement() {
 
   const handleAddEmailTemplate = async () => {
     setBtnType("add");
-    setFormData({
-      id: "",
-      emailTemplateTitle: "",
-      emailTemplateContent: ""
-    });
+
     try {
       if (validate()) {
         setLoading(true);
+        console.log(formData);
         const res = await EmailTemplateService.addEmailTemplate(formData);
         successNotify(res?.message);
         setLoading(false);
@@ -98,6 +103,19 @@ function EmailTemplateManagement() {
       setLoading(false);
     }
     setLoading(false);
+  };
+
+  // Handle selection of subcategory in main select component
+  const handleSelectChange = (selectedOption) => {
+    setSelectedItems(selectedOption || []);
+    console.log(selectedOption.value);
+
+    const categoryArray = selectedOption.value.split("-");
+    setFormData({
+      ...formData,
+      inquiryCategory: categoryArray[0] ? categoryArray[0] : "",
+      subCategory: categoryArray[1] ? categoryArray[1] : ""
+    });
   };
 
   const handleDeleteTemplate = async (id) => {
@@ -221,66 +239,163 @@ function EmailTemplateManagement() {
     item.emailTemplateTitle.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  // Prepare main options for Select component
+  const formatOptions = (data) =>
+    data.reduce((acc, category) => {
+      if (category?.subcategories) {
+        acc.push({
+          label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
+          value: category.value,
+          isDisabled: true
+        });
+      }
+      if (category?.subcategories) {
+        category?.subcategories.forEach((sub) =>
+          acc.push({
+            label: sub.label,
+            value: sub.value,
+            isSubcategory: true // Mark subcategories for custom styles
+          })
+        );
+      }
+      return acc;
+    }, []);
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? "#f0f8ff" : "#fff",
+      borderColor: state.isFocused ? "#2596be" : "#002d47",
+      borderWidth: state.isFocused ? "5px" : "1px",
+      borderRadius: "0px",
+      padding: "5px",
+      fontSize: "16px",
+      "&:hover": {
+        borderColor: state.isFocused ? "#2596be" : "#002d47"
+      }
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#4a90e2" : "#fff",
+      color: state.isSelected ? "#fff" : "#333",
+      paddingLeft: state.data.isSubcategory ? "1.5rem" : "0.5rem", // Apply ms-3 only to subcategories
+      "&:hover": {
+        backgroundColor: "#e6f7ff",
+        color: "#333"
+      }
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      paddingLeft: "0rem" // Ensure no ms-3 for selected value
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "5px",
+      marginTop: "5px",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.15)"
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#999"
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      backgroundColor: "#4a90e2",
+      color: "#fff",
+      borderRadius: "3px"
+    }),
+    multiValueLabel: (provided) => ({
+      ...provided,
+      color: "#fff"
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      color: "#fff",
+      cursor: "pointer",
+      "&:hover": {
+        backgroundColor: "#ff5e5e",
+        color: "white"
+      }
+    })
+  };
+
   return (
-    <BlockUI blocking={loading}>
-      <div className="">
-        <div className="row ">
-          <div className="col-xl-12">
-            <div className="row bs-gutter-x-0">
-              <div className="col-xl-12">
-                <div id="datatable" className="mb-5">
-                  <Card>
-                    <CardBody>
-                      <div className="d-flex justify-content-between mb-5">
-                        <Button
-                          className="btn btn-primary me-1"
-                          onClick={handleNewEmailTemplate}
-                        >
-                          {" "}
-                          + Add New Email Template
-                        </Button>
-                        <input
-                          type="text"
-                          placeholder="Search by Template Name..."
-                          onChange={(e) => setSearchText(e.target.value)}
-                          style={{ padding: "5px" }}
-                        />
+    <div className="">
+      <div className="row ">
+        <div className="col-xl-12">
+          <div className="row bs-gutter-x-0">
+            <div className="col-xl-12">
+              <div id="datatable" className="mb-5">
+                <Card>
+                  <CardBody>
+                    <div className="d-flex justify-content-between mb-5">
+                      <Button
+                        className="btn btn-primary me-1"
+                        onClick={handleNewEmailTemplate}
+                      >
+                        {" "}
+                        + Add New Email Template
+                      </Button>
+                      <input
+                        type="text"
+                        placeholder="Search by Template Name..."
+                        onChange={(e) => setSearchText(e.target.value)}
+                        style={{ padding: "5px" }}
+                      />
+                    </div>
+                    {loading ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center"
+                        }}
+                      >
+                        <BeatLoader size={10} />
                       </div>
-                      {loading ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center"
-                          }}
-                        >
-                          <BeatLoader size={10} />
-                        </div>
-                      ) : (
-                        emailTemplates && (
-                          <DataTable
-                            columns={columns}
-                            data={filteredData}
-                            pagination
-                            paginationRowsPerPageOptions={[5, 10, 15]}
-                            defaultSortField="name"
-                          />
-                        )
-                      )}
-                    </CardBody>
-                  </Card>
-                </div>
+                    ) : (
+                      emailTemplates && (
+                        <DataTable
+                          columns={columns}
+                          data={filteredData}
+                          pagination
+                          paginationRowsPerPageOptions={[5, 10, 15]}
+                          defaultSortField="name"
+                        />
+                      )
+                    )}
+                  </CardBody>
+                </Card>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
+        <BlockUI blocking={loading}>
           <Modal.Header closeButton>
             <Modal.Title>Add New Email Template</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Row className="mt-4">
               <Col lg={12}>
+                <Form.Group controlId="emailTemplateTitle" className="mt-3">
+                  <Select
+                    options={formatOptions(CATEGORYDATA)}
+                    value={selectedItems}
+                    onChange={handleSelectChange}
+                    isMulti={false}
+                    placeholder="Select subcategories"
+                    closeMenuOnSelect={true}
+                    hideSelectedOptions={false}
+                    menuPosition="fixed"
+                    styles={customStyles}
+                  />
+                </Form.Group>
+                {errors.subCategories && (
+                  <p className="error-content">{errors.subCategories}</p>
+                )}
+
                 <Form.Group controlId="emailTemplateTitle" className="mt-3">
                   <Form.Control
                     type="text"
@@ -347,9 +462,9 @@ function EmailTemplateManagement() {
               Close
             </Button>
           </Modal.Footer>
-        </Modal>
-      </div>
-    </BlockUI>
+        </BlockUI>
+      </Modal>
+    </div>
   );
 }
 

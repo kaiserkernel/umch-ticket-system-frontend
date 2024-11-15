@@ -211,21 +211,23 @@ const Absence = ({ applicationRequest }) => {
       <div className="">
         <div className="mt-5">
           <p> Dear Student,</p>
+          <p> We regret your absence.</p>
           <p>
-            We regret your absence. In case of illness, please always upload
-            your medical certificate and fill in the required fields.
-          </p>
-          <p>
-            For personal commitments, feel free to send us any relevant
+            In case of illness, please always upload your medical certificate
+            and fill in the required fields. In the case of an official
+            appointments, please upload the appointment confirmation. For
+            personal commitments, feel free to send us any relevant
             documentation related to your absence so we can review it.
           </p>
+
           <p>Thank you very much.</p>
         </div>
         <Row className="mt-5">
           <div className="fw-bold input-label">Please note:</div>
           <div className="input-label mt-2 ">
             All requests must be submitted within 10 workingdays after recovery.
-            Otherwise the absence will not be approved.
+            Otherwise the absence will not be approved. An absence request will
+            be denied without supporting documentation.
           </div>
         </Row>
         <Row className="mt-2 g-4 g-md-4">
@@ -301,8 +303,7 @@ const Absence = ({ applicationRequest }) => {
           <Col lg={12}>
             <Form.Group controlId="">
               <Form.Label className="input-label mb-0">
-                File Upload (all official documents must be translated into
-                english language)
+                File Upload
                 <span className="ms-1 required-label">*</span>
               </Form.Label>
             </Form.Group>

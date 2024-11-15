@@ -187,10 +187,18 @@ const MedicalAbilities = () => {
       <div>
         <p>Dear Students,</p>
         <p>
-          Please use this form to submit your medical abilities in summer and
-          provide us with the name of your teaching hospital. We wish you lots
-          of success and enjoyment!
+          Night shifts are an essential part of your clinical training. You can
+          submit your certificate digitally by uploading the file with us.
         </p>
+        <p>
+          Please remember to have the document signed by the responsible
+          physicians at your teaching hospital.
+        </p>
+        <p>
+          Please take into account the announced deadline via our e-learning
+          platform.
+        </p>
+        <p>Thank you very much.</p>
       </div>
       <Row className="mt-4">
         <Col lg={12}>

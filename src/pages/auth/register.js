@@ -111,10 +111,12 @@ const PagesRegister = () => {
       setError("");
       handleLoginNavigation();
     } catch (err) {
+      setLoading(false);
       const errors = err?.errors;
 
       if (typeof errors != "object") {
         errorNotify(errors);
+        setLoading(false);
       } else {
         console.log(typeof errors);
         errors.map((error) => {
@@ -122,6 +124,7 @@ const PagesRegister = () => {
         });
       }
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -160,7 +163,13 @@ const PagesRegister = () => {
                 Dear Students,
               </p>
               <p className="text-inverse text-opacity-50 text-center sm-font">
-                we are here to support your academic matters.
+                the UMCH Ticket System is here to ensure you can easily reach
+                our team for assistance with requests and complaints.
+              </p>
+              <p className="text-inverse text-opacity-50 text-center sm-font">
+                After signing up, you can easily use the ticket system and gain
+                access to your personal dashboard, where all your tickets will
+                be collected and managed.
               </p>
 
               <Row className="mt-2 mt-md-3 g-3">
@@ -402,6 +411,12 @@ const PagesRegister = () => {
                 Already have an Admin ID?{" "}
                 <Link to="/login" className="default-color">
                   Sign In
+                </Link>
+              </div>
+              <div className="text-inverse text-opacity-50 text-center mt-3">
+                Forget your password?{" "}
+                <Link to="/#" className="default-color">
+                  Reset Password
                 </Link>
               </div>
             </form>

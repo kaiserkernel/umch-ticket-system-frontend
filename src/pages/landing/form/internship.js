@@ -307,8 +307,7 @@ const Internship = () => {
       <Row className="mt-5">
         <div className="fw-bold input-label">Please note:</div>
         <div className="input-label mt-3">
-          All documents must also be submitted as original papers to the student
-          secretariat by 10.09.2025.
+          Please submit this information by May 15th of each calendar year.
         </div>
       </Row>
       <Row className="mt-5">

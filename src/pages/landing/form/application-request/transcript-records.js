@@ -196,7 +196,7 @@ const TranscriptRecords = ({ applicationRequest }) => {
         <p>Dear Students,</p>
         <p>
           With this request, you can order your Transcript of Records. You are
-          allowed to request a Transcript of Records after each semester.
+          allowed to request one Transcript of Records per semester.
         </p>
         <p>
           It will be produced at UMFST and shipped to Germany. Please note that
