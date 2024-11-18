@@ -15,6 +15,8 @@ import AdminLogin from "../pages/auth/adminLogin.js";
 import AccountManagement from "../pages/table/plugins.js";
 import TicketReopen from "../pages/ticket/reopen.js";
 import EmailTemplateManagement from "../pages/email-template/index.js";
+import ResetPassword from "../pages/auth/resetPassword.js";
+import AdminResetPassword from "../pages/auth/adminResetPassword.js";
 
 const AppRoute = [
   {
@@ -33,6 +35,8 @@ const AppRoute = [
       { path: "register", element: <Register /> },
       { path: "admin", element: <AdminLogin /> },
       { path: "login", element: <Login /> },
+      { path: "reset-password", element: <ResetPassword /> },
+      { path: "admin-reset-password", element: <AdminResetPassword /> },
       {
         path: "ticket-reopen/:id",
         element: (

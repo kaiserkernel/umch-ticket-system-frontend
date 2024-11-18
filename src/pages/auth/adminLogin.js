@@ -77,7 +77,7 @@ function AdminLogin() {
         if (rememberMe) {
           localStorage.setItem("token", token);
         } else {
-          sessionStorage.setItem("token", token);
+          localStorage.setItem("token", token);
         }
 
         localStorage.setItem("isAuthenticated", true);
@@ -150,25 +150,8 @@ function AdminLogin() {
               <div className="text-inverse text-opacity-50 text-center mb-4">
                 For your protection, please verify your identity.
               </div>
-              {/* {error && (
-            <p style={{ color: "red" }}>
-              <i className="bi bi-exclamation-triangle me-2"></i>
-              {error}
-            </p>
-          )} */}
-              <div className="mb-3">
-                {/* <label className="form-label">
-              Email <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              name="email"
-              onChange={handleChange}
-              value={formData.email}
-              className="form-control form-control-lg bg-white bg-opacity-5"
-              placeholder=""
-            /> */}
 
+              <div className="mb-3">
                 <Form.Group controlId="Email">
                   <Form.Label className="input-label">
                     Email <span className="ms-1 required-label">*</span>
@@ -184,19 +167,6 @@ function AdminLogin() {
                 </Form.Group>
               </div>
               <div className="mb-3">
-                {/* <div className="d-flex">
-              <label className="form-label">
-                Password <span className="text-danger">*</span>
-              </label>
-            </div>
-            <input
-              type="password"
-              name="password"
-              onChange={handleChange}
-              value={formData.password}
-              className="form-control form-control-lg bg-white bg-opacity-5"
-              placeholder=""
-            /> */}
                 <Form.Group controlId="password">
                   <Form.Label className="input-label">
                     Password <span className="ms-1 required-label">*</span>
@@ -211,20 +181,7 @@ function AdminLogin() {
                   />
                 </Form.Group>
               </div>
-              {/* <div className="mb-3">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="customCheck1"
-                  value={rememberMe}
-                  onClick={(e) => setRememberMe(e.target.checked)}
-                />
-                <label className="form-check-label" htmlFor="customCheck1">
-                  Remember me
-                </label>
-              </div>
-            </div> */}
+
               <button
                 type="submit"
                 className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
@@ -249,9 +206,9 @@ function AdminLogin() {
                 </Link>
                 .
               </div>
-              <div className="text-inverse text-opacity-50 text-center">
+              <div className="text-inverse text-opacity-50 text-center mt-3">
                 Forget your password?{" "}
-                <Link to="/#" className="default-color">
+                <Link to="/admin-reset-password" className="default-color">
                   Reset Password
                 </Link>
               </div>

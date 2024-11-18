@@ -12,9 +12,7 @@ export class HttpService {
     this._axios.interceptors.request.use(
       (config) => {
         let token = localStorage.getItem("token");
-        if (!token) {
-          token = sessionStorage.getItem("token");
-        }
+
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -22,7 +20,28 @@ export class HttpService {
       },
       (error) => Promise.reject(error)
     );
+
+    this._axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (
+          error.response?.data?.message == "Token is not valid" ||
+          error.response?.data?.message == "No token, authorization denied"
+        ) {
+          console.log(error.response?.data?.message);
+          this.logout(); // Token expired or invalid
+        }
+        return Promise.reject(error);
+      }
+    );
   }
+
+  logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userData");
+    window.location.href = "/login"; // Redirect to login
+  };
 
   addRequestInterceptor = (onFulfilled, onRejected) => {
     this._axios.interceptors.request.use(onFulfilled, onRejected);
