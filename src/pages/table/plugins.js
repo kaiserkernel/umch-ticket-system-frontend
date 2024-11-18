@@ -20,6 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import AuthService from "../../sevices/auth-service.js";
 import BlockUI from "react-block-ui";
+import BeatLoader from "react-spinners/BeatLoader";
 import "react-block-ui/style.css";
 
 import { CATEGORYDATA } from "../../globalVariables.js";
@@ -30,9 +31,28 @@ function AccountManagement() {
   const [show, setShow] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [permissions, setPermissions] = useState({});
+  const [editModalShow, setEditModal] = useState(false);
+  const [btnType, setBtnType] = useState("add");
+  const [selectedAdmin, setSelectedAdmin] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setFormData({
+      ...formData,
+      firstName: "",
+      lastName: "",
+      title: "",
+      role: 0,
+      position: "-1",
+      email: "",
+      password: ""
+    });
+    setShow(true);
+    setBtnType("add");
+  };
+
+  const handleEditModalClose = () => setEditModal(false);
 
   const badgeData = [
     { bg: "primary", text: "UMCH Study Secretariat" },
@@ -43,7 +63,8 @@ function AccountManagement() {
     { bg: "danger", text: "UMCH German Department" },
     { bg: "light", text: "UMCH Teaching Hospital Coordination" },
     { bg: "dark", text: "UMCH IT-SUPPORT" },
-    { bg: "dark", text: "UMFST - Rector (UMFST Targu Mures)" }
+    { bg: "primary", text: "UMFST - Rector (UMFST Targu Mures)" },
+    { bg: "info", text: "Admin" }
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
@@ -71,6 +92,74 @@ function AccountManagement() {
     fetchData();
   }, [show]);
 
+  useEffect(() => {
+    if (btnType == "add") {
+      // Flatten CATEGORYDATA to include both categories and subcategories
+      const allOptions = CATEGORYDATA.flatMap((category) => {
+        // Include main category
+        const mainCategory = { value: category.value, label: category.label };
+
+        // Include subcategories, if any
+        const subcategoryOptions =
+          category.subcategories?.map((sub) => ({
+            value: sub.value,
+            label: sub.label
+          })) || [];
+
+        // Return both main category and its subcategories if present, otherwise only the main category
+        return subcategoryOptions.length > 0
+          ? [...subcategoryOptions]
+          : [mainCategory];
+      });
+
+      setSelectedItems(allOptions);
+
+      // Initialize permissions for all subcategories and main categories
+      const initialPermissions = {};
+
+      CATEGORYDATA.forEach((category) => {
+        if (category.subcategories) {
+          category.subcategories.forEach((sub) => {
+            initialPermissions[sub.value] = 3; // Default permission for subcategories
+          });
+        } else {
+          initialPermissions[category.value] = 3; // Default permission for main category
+        }
+      });
+
+      setPermissions(initialPermissions);
+    }
+    if (btnType == "edit") {
+      // Flatten CATEGORYDATA to include both categories and subcategories
+      const allOptions = selectedAdmin?.category.flatMap((category) => {
+        // Include main category
+        const mainCategory = { value: category.value, label: category.label };
+
+        // Include subcategories, if any
+        const subcategoryOptions =
+          category.subcategories?.map((sub) => ({
+            value: sub.value,
+            label: sub.label
+          })) || [];
+
+        // Return both main category and its subcategories if present, otherwise only the main category
+        return subcategoryOptions.length > 0
+          ? [...subcategoryOptions]
+          : [mainCategory];
+      });
+
+      setSelectedItems(allOptions);
+
+      // Initialize permissions for all subcategories and main categories
+      const initialPermissions = {};
+      selectedAdmin?.category.forEach((category) => {
+        initialPermissions[category.value] = category.permissionValue;
+      });
+
+      setPermissions(initialPermissions);
+    }
+  }, [show]);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -79,6 +168,7 @@ function AccountManagement() {
   };
 
   const handleAddNewUser = async () => {
+    console.log(selectedItems, "====");
     const categories = [];
     selectedItems.map((item) => {
       const categoryId = item.value;
@@ -89,7 +179,10 @@ function AccountManagement() {
       const category = {
         inquiryCategory: categoryIdArr[0],
         subCategory1: categoryIdArr[1] ? categoryIdArr[1] : "null",
-        permission: defaultPermissions[permission]
+        value: categoryId,
+        label: item.label,
+        permission: defaultPermissions[permission],
+        permissionValue: permission
       };
       categories.push(category);
     });
@@ -118,6 +211,56 @@ function AccountManagement() {
     }
   };
 
+  const handleEditUser = async () => {
+    console.log(selectedItems, "====");
+    const categories = [];
+    selectedItems.map((item) => {
+      const categoryId = item.value;
+      let categoryIdArr = categoryId.split("-");
+
+      const permission = permissions[item.value];
+
+      const category = {
+        inquiryCategory: categoryIdArr[0],
+        subCategory1: categoryIdArr[1] ? categoryIdArr[1] : "null",
+        value: categoryId,
+        label:
+          typeof item.label == "string"
+            ? item.label
+            : item.label.props.children,
+        permission: defaultPermissions[permission],
+        permissionValue: permission
+      };
+      categories.push(category);
+    });
+
+    const combinedFormData = Object.assign({}, formData, {
+      category: categories
+    });
+    try {
+      setLoading(true);
+      const res = await UserService.editRole(combinedFormData);
+      setLoading(false);
+      successNotify(res.message);
+    } catch (err) {
+      setLoading(false);
+      if (err?.message) {
+        errorNotify(err?.message);
+      }
+
+      const errors = err?.errors;
+
+      if (typeof errors != "object") {
+        errorNotify(errors);
+      } else {
+        console.log(typeof errors);
+        errors.map((error) => {
+          errorNotify(error.msg);
+        });
+      }
+    }
+    setLoading(false);
+  };
   const successNotify = (msg) => {
     toast.info(msg, {
       autoClose: 5000 // Duration in milliseconds
@@ -175,6 +318,26 @@ function AccountManagement() {
     </Popover>
   );
 
+  const handleEditModal = (id) => {
+    console.log(id);
+    setBtnType("edit");
+    const user = admins.filter((admin) => admin?._id == id);
+    console.log(admins);
+    console.log(user[0]);
+    setSelectedAdmin(user[0]);
+    setFormData({
+      ...formData,
+      id: id,
+      firstName: user[0]?.firstName,
+      lastName: user[0]?.lastName,
+      title: user[0]?.title,
+      role: user[0]?.role,
+      position: user[0]?.position,
+      email: user[0]?.email
+    });
+    setShow(true);
+  };
+
   const columns = [
     {
       name: "Full Name",
@@ -213,9 +376,15 @@ function AccountManagement() {
     },
     {
       name: "Actions",
-      width: "250px",
+      width: "350px",
       cell: (row) => (
         <ButtonToolbar>
+          <Button
+            className="btn btn-info me-3"
+            onClick={() => handleEditModal(row._id)}
+          >
+            <i className="bi bi-pen me-1"></i>Edit
+          </Button>
           <OverlayTrigger
             trigger="focus"
             placement="top"
@@ -285,109 +454,147 @@ function AccountManagement() {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add New User</Modal.Title>
+          <Modal.Title>
+            {btnType == "edit" ? "Edit User" : "Add New User"}
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Row className="mt-4">
-            <Col lg={12}>
-              <Form.Group controlId="firstName" className="mt-3">
-                <Form.Control
-                  type="text"
-                  placeholder="First Name"
-                  name="firstName"
-                  className="custom-input"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="lastName" className="mt-3">
-                <Form.Control
-                  type="text"
-                  placeholder="Last Name"
-                  name="lastName"
-                  className="custom-input"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-              <Form.Group controlId="title" className="mt-3">
-                <Form.Control
-                  type="text"
-                  placeholder="Title"
-                  name="title"
-                  className="custom-input"
-                  value={formData.title}
-                  onChange={handleChange}
-                />
-              </Form.Group>
+        <Modal.Body style={{ height: "80vh", overflowY: "auto" }}>
+          <BlockUI blocking={loading}>
+            <Row className="mt-4">
+              <Col lg={12}>
+                <Form.Group controlId="firstName" className="mt-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="First Name"
+                    name="firstName"
+                    className="custom-input"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+                <Form.Group controlId="lastName" className="mt-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="Last Name"
+                    name="lastName"
+                    className="custom-input"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+                <Form.Group controlId="title" className="mt-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="Title"
+                    name="title"
+                    className="custom-input"
+                    value={formData.title}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-              <Form.Group controlId="position" className="mt-3">
-                <Form.Control
-                  as="select"
-                  name="position"
-                  onChange={handleChange}
-                  value={formData.position}
-                  style={{
-                    appearance: "none", // Hides the default arrow
-                    MozAppearance: "none", // For Firefox
-                    WebkitAppearance: "none", // For Safari/Chrome
-                    backgroundColor: "white",
-                    color: "gray !important"
-                  }}
-                  className="custom-input"
-                  placeholder="Position"
-                >
-                  <option value="-1">Select Position</option>
-                  <option value="0">UMCH Study Secretariat</option>
-                  <option value="1">
-                    UMFST Administration Board Management (Vice-Rector)
-                  </option>
-                  <option value="2">
-                    UMFST Administration Office (UMFST Targu Mures)
-                  </option>
-                  <option value="3">CPE Board Management</option>
-                  <option value="4">UMCH Finance Department</option>
-                  <option value="5">UMCH Facility Department</option>
-                  <option value="6">UMCH Teaching Hospital Coordination</option>
-                  <option value="7">UMCH IT-SUPPORT</option>
-                  <option value="8">UMFST - Rector (UMFST Targu Mures)</option>
-                </Form.Control>
-              </Form.Group>
-              <MultiLevelSelectWithPermissions
-                options={CATEGORYDATA}
-                setSelectedItems={setSelectedItems}
-                selectedItems={selectedItems}
-                setPermissions={setPermissions}
-                permissions={permissions}
-              />
-              <Form.Group controlId="email" className="mt-3">
-                <Form.Control
-                  type="email"
-                  placeholder="Email Address"
-                  name="email"
-                  className="custom-input"
-                  value={formData.email}
-                  onChange={handleChange}
+                <Form.Group controlId="position" className="mt-3">
+                  <Form.Control
+                    as="select"
+                    name="position"
+                    onChange={handleChange}
+                    value={formData.position}
+                    style={{
+                      appearance: "none", // Hides the default arrow
+                      MozAppearance: "none", // For Firefox
+                      WebkitAppearance: "none", // For Safari/Chrome
+                      backgroundColor: "white",
+                      color: "gray !important"
+                    }}
+                    className="custom-input"
+                    placeholder="Position"
+                  >
+                    <option value="-1">Select Position</option>
+                    <option value="0">UMCH Study Secretariat</option>
+                    <option value="1">
+                      UMFST Administration Board Management (Vice-Rector)
+                    </option>
+                    <option value="2">
+                      UMFST Administration Office (UMFST Targu Mures)
+                    </option>
+                    <option value="3">CPE Board Management</option>
+                    <option value="4">UMCH Finance Department</option>
+                    <option value="5">UMCH Facility Department</option>
+                    <option value="6">
+                      UMCH Teaching Hospital Coordination
+                    </option>
+                    <option value="7">UMCH IT-SUPPORT</option>
+                    <option value="8">
+                      UMFST - Rector (UMFST Targu Mures)
+                    </option>
+                    <option value="9">Admin</option>
+                  </Form.Control>
+                </Form.Group>
+                <MultiLevelSelectWithPermissions
+                  options={CATEGORYDATA}
+                  setSelectedItems={setSelectedItems}
+                  selectedItems={selectedItems}
+                  setPermissions={setPermissions}
+                  permissions={permissions}
                 />
-              </Form.Group>
+                <Form.Group controlId="email" className="mt-3">
+                  <Form.Control
+                    type="email"
+                    placeholder="Email Address"
+                    name="email"
+                    className="custom-input"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-              <Form.Group controlId="password" className="mt-3">
-                <Form.Control
-                  type="text"
-                  placeholder="Password"
-                  name="password"
-                  className="custom-input"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
+                <Form.Group controlId="password" className="mt-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="Password"
+                    name="password"
+                    className="custom-input"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </BlockUI>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleAddNewUser}>
-            Add
-          </Button>
+          {btnType == "add" ? (
+            <Button variant="primary" onClick={handleAddNewUser}>
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center"
+                  }}
+                >
+                  <BeatLoader color="white" size={10} />
+                </div>
+              ) : (
+                <span>Add</span>
+              )}
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={() => handleEditUser()}>
+              {loading ? (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center"
+                  }}
+                >
+                  <BeatLoader color="white" size={10} />
+                </div>
+              ) : (
+                <span>Edit</span>
+              )}
+            </Button>
+          )}
+
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
@@ -412,14 +619,16 @@ const MultiLevelSelectWithPermissions = ({
   ];
 
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
+
   // Handle selection of subcategory in main select component
   const handleSelectChange = (selectedOptions) => {
+    console.log(selectedOptions);
     setSelectedItems(selectedOptions || []);
 
     selectedOptions.map((option) => {
       setPermissions({
         ...permissions,
-        [option.value]: 0
+        [option.value]: 3
       });
     });
   };
@@ -528,7 +737,7 @@ const MultiLevelSelectWithPermissions = ({
               style={{ fontSize: "14px", fontWeight: "300" }}
               bg={selectedCategoryBadge[permissions[item.value]].bg}
             >
-              <span>{item.label.props.children}:</span>
+              <span>{item.label}</span>
             </Badge>
 
             <select

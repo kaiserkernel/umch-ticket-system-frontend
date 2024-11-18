@@ -915,7 +915,9 @@ function EmailInbox() {
                         <div className="mailbox-sender">
                           <span className="mailbox-sender-name">
                             [
-                            {INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                            {ticket?.inquiryCategory &&
+                            ticket?.subCategory1 &&
+                            INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
                               "subCategories"
                             ][ticket?.subCategory1 - 1]["subCategory1"]
                               ? INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
@@ -944,11 +946,10 @@ function EmailInbox() {
                               : "fw-bold"
                           }
                         >
-                          {
+                          {ticket?.inquiryCategory &&
                             INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
                               "inquiryCategory"
-                            ]
-                          }
+                            ]}
                         </div>
                         <div
                           className={
@@ -976,55 +977,66 @@ function EmailInbox() {
                                 )}
                               />
                               {ticket?.isClicked == 1 ? (
-                                <Badge
-                                  style={{
-                                    marginTop: "13px",
-                                    fontSize: "14px",
-                                    fontWeight: "300",
-                                    float: "right"
-                                  }}
-                                  bg="primary"
-                                >
-                                  Viewed
-                                </Badge>
+                                <div className="d-flex align-items-center justify-content-between">
+                                  <span>
+                                    Ticket Number: {ticket?.inquiryNumber}
+                                  </span>
+
+                                  <Badge
+                                    style={{
+                                      fontSize: "14px",
+                                      fontWeight: "300"
+                                    }}
+                                    bg="primary"
+                                  >
+                                    Viewed
+                                  </Badge>
+                                </div>
                               ) : (
-                                <Badge
-                                  style={{
-                                    marginTop: "13px",
-                                    fontSize: "14px",
-                                    fontWeight: "300",
-                                    float: "right"
-                                  }}
-                                  bg="danger"
-                                >
-                                  No Viewed
-                                </Badge>
+                                <div className="d-flex align-items-center justify-content-between">
+                                  Ticket Number: {ticket?.inquiryNumber}
+                                  <Badge
+                                    style={{
+                                      fontSize: "14px",
+                                      fontWeight: "300"
+                                    }}
+                                    bg="danger"
+                                  >
+                                    No Viewed
+                                  </Badge>
+                                </div>
                               )}
                             </>
                           ) : ticket?.isClicked ? (
-                            <Badge
-                              style={{
-                                marginTop: "13px",
-                                fontSize: "14px",
-                                fontWeight: "300",
-                                float: "right"
-                              }}
-                              bg="primary"
-                            >
-                              Viewed
-                            </Badge>
+                            <div className="d-flex align-items-center justify-content-between">
+                              <span>
+                                {" "}
+                                Ticket Number: {ticket?.inquiryNumber}
+                              </span>
+
+                              <Badge
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "300"
+                                }}
+                                bg="primary"
+                              >
+                                Viewed
+                              </Badge>
+                            </div>
                           ) : (
-                            <Badge
-                              style={{
-                                marginTop: "13px",
-                                fontSize: "14px",
-                                fontWeight: "300",
-                                float: "right"
-                              }}
-                              bg="danger"
-                            >
-                              No Viewed
-                            </Badge>
+                            <div className="d-flex align-items-center justify-content-between">
+                              Ticket Number: {ticket?.inquiryNumber}
+                              <Badge
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "300"
+                                }}
+                                bg="danger"
+                              >
+                                No Viewed
+                              </Badge>
+                            </div>
                           )
                         ) : ticket.isClicked == 1 ? (
                           <Badge
@@ -1150,13 +1162,13 @@ function EmailInbox() {
                     <div className="mailbox-detail-content ">
                       <div className="d-flex gap-3 mb-3">
                         <h4 className="mb-0">
-                          {
+                          {selectedTicket?.inquiryCategory &&
+                            selectedTicket?.subCategory1 &&
                             INQUIRYCATEGORIES[
                               selectedTicket?.inquiryCategory - 1
                             ]["subCategories"][
                               selectedTicket?.subCategory1 - 1
-                            ]["subCategory1"]
-                          }{" "}
+                            ]["subCategory1"]}{" "}
                           Request from{" "}
                           {selectedTicket?.firstName +
                             " " +

@@ -33,15 +33,25 @@ class AuthService {
   deleteUser = async (payload) => {
     const deleteUser = `/api/admin/delete-user/${payload}`;
     return await HttpService.delete(deleteUser);
-  }
+  };
 
   resetPasswordToDefault = async (payload) => {
     const resetPassword = `/api/admin/reset-password/${payload}`;
     return await HttpService.get(resetPassword);
-  }
+  };
 
   updateProfile = async (payload) => {
     const updateProfileEndpoint = "/api/user/update-profile";
+    return await HttpService.post(updateProfileEndpoint, payload);
+  };
+
+  resetPassword = async (payload) => {
+    const updateProfileEndpoint = "/api/user/reset-password";
+    return await HttpService.post(updateProfileEndpoint, payload);
+  };
+
+  adminResetPassword = async (payload) => {
+    const updateProfileEndpoint = "/api/user/admin-reset-password";
     return await HttpService.post(updateProfileEndpoint, payload);
   };
 }

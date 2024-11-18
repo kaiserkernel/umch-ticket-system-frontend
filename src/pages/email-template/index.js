@@ -37,6 +37,7 @@ function EmailTemplateManagement() {
     id: "",
     inquiryCategory: "",
     subCategory: "",
+    label: "",
     emailTemplateTitle: "",
     emailTemplateContent: ""
   });
@@ -86,7 +87,7 @@ function EmailTemplateManagement() {
     try {
       if (validate()) {
         setLoading(true);
-        console.log(formData);
+
         const res = await EmailTemplateService.addEmailTemplate(formData);
         successNotify(res?.message);
         setLoading(false);
@@ -108,11 +109,18 @@ function EmailTemplateManagement() {
   // Handle selection of subcategory in main select component
   const handleSelectChange = (selectedOption) => {
     setSelectedItems(selectedOption || []);
-    console.log(selectedOption.value);
 
+    let label;
+    if (typeof selectedOption?.label != "string") {
+      label = selectedOption?.label?.props?.children;
+    } else {
+      label = selectedOption?.label;
+    }
     const categoryArray = selectedOption.value.split("-");
+
     setFormData({
       ...formData,
+      label: label,
       inquiryCategory: categoryArray[0] ? categoryArray[0] : "",
       subCategory: categoryArray[1] ? categoryArray[1] : ""
     });
@@ -143,6 +151,27 @@ function EmailTemplateManagement() {
         id: res?.emailTemplate?._id,
         emailTemplateTitle: res?.emailTemplate?.emailTemplateTitle,
         emailTemplateContent: res?.emailTemplate?.emailTemplateContent
+      });
+
+      let categoryValue;
+      if (
+        res?.emailTemplate?.inquiryCategory != "" &&
+        res?.emailTemplate?.subCategory != ""
+      ) {
+        categoryValue =
+          res?.emailTemplate?.inquiryCategory +
+          "-" +
+          res?.emailTemplate?.subCategory;
+      }
+      if (
+        res?.emailTemplate?.inquiryCategory != "" &&
+        res?.emailTemplate?.subCategory == ""
+      ) {
+        categoryValue = res?.emailTemplate?.inquiryCategory;
+      }
+      setSelectedItems({
+        value: categoryValue,
+        label: res?.emailTemplate?.label ? res?.emailTemplate?.label : ""
       });
     } catch (err) {
       console.log(err?.message);
@@ -193,7 +222,7 @@ function EmailTemplateManagement() {
   const columns = [
     {
       name: "Template Name",
-      selector: (row) => row.emailTemplateTitle,
+      selector: (row) => row?.emailTemplateTitle,
       width: "200px",
       sortable: true
     },
@@ -204,10 +233,16 @@ function EmailTemplateManagement() {
       selector: (row) => (
         <div
           className="template-content"
-          dangerouslySetInnerHTML={{ __html: row.emailTemplateContent }}
+          dangerouslySetInnerHTML={{ __html: row?.emailTemplateContent }}
           style={{ whiteSpace: "nowrap" }} // Preserve inline styles or add more styles as needed
         />
       ),
+      sortable: true
+    },
+    {
+      name: "Inquiry Category",
+
+      selector: (row) => row?.label,
       sortable: true
     },
 
@@ -246,7 +281,13 @@ function EmailTemplateManagement() {
         acc.push({
           label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
           value: category.value,
-          isDisabled: true
+          isDisabled: true // Prevent main category selection
+        });
+      } else {
+        acc.push({
+          label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
+          value: category.value,
+          isDisabled: false // Prevent main category selection
         });
       }
       if (category?.subcategories) {
@@ -374,7 +415,11 @@ function EmailTemplateManagement() {
       <Modal show={show} onHide={handleClose}>
         <BlockUI blocking={loading}>
           <Modal.Header closeButton>
-            <Modal.Title>Add New Email Template</Modal.Title>
+            <Modal.Title>
+              {btnType != "edit"
+                ? "Add New Email Template"
+                : "Edit Email Template"}
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Row className="mt-4">

@@ -12,21 +12,14 @@ import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
 
-function PagesLogin() {
+function AdminResetPassword() {
   const navigate = useNavigate();
   const context = useContext(AppSettings);
-  const { setIsAuthenticated } = useAuth();
-  const [redirect, setRedirect] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    enrollmentNumber: "",
-    password: "",
-    role: "2",
-    rememberMe: false
+    email: ""
   });
-
-  const [rememberMe, setRememberMe] = useState(false);
 
   const [error, setError] = useState("");
 
@@ -40,9 +33,9 @@ function PagesLogin() {
 
   // Validate form data
   const validateForm = () => {
-    const { enrollmentNumber, password } = formData;
-    if (!enrollmentNumber || !password) {
-      return "All fields are required";
+    const { email } = formData;
+    if (!email) {
+      return "Email Address is required";
     }
 
     return "";
@@ -58,49 +51,16 @@ function PagesLogin() {
       return;
     }
 
-    setFormData({
-      ...formData,
-      rememberMe: rememberMe
-    });
-
     try {
       setLoading(true);
-      const response = await AuthService.login(formData);
+      const response = await AuthService.adminResetPassword(formData);
+
       setLoading(false);
-      if (response?.success) {
-        successNotify("Login is successfully.");
-
-        const bearToken = response?.token;
-        const token = bearToken.slice(7);
-
-        if (rememberMe) {
-          localStorage.setItem("token", token);
-        } else {
-          localStorage.setItem("token", token);
-        }
-
-        localStorage.setItem("isAuthenticated", true);
-
-        const userData = JSON.stringify(response?.userData);
-        localStorage.setItem("userData", userData);
-
-        handleProfileNavigation();
-
-        setIsAuthenticated(true);
-      }
+      successNotify(response?.message);
       setError("");
     } catch (err) {
       setLoading(false);
-      const errors = err?.errors ? err?.errors : err?.message;
-
-      if (typeof errors != "object") {
-        errorNotify(errors);
-      } else {
-        console.log(typeof errors);
-        errors.map((error) => {
-          errorNotify(error.msg);
-        });
-      }
+      errorNotify(err?.message);
     }
     setLoading(false);
   };
@@ -144,9 +104,9 @@ function PagesLogin() {
         <BannerSection />
         <div className="login mt-3 mt-md-5">
           <div className="login-content">
-            <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
+            <form className="bg-gray p-3 p-md-5">
               <h1 className="text-center">
-                Sign in for the UMCH Ticket System
+                Reset Password for the UMCH Ticket System
               </h1>
               <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">
                 <p className="text-inverse text-opacity-50 text-center sm-font">
@@ -160,52 +120,24 @@ function PagesLogin() {
                 </p>
               </div>
 
-              <Form.Group controlId="enrollmentNumber">
+              <Form.Group controlId="email">
                 <Form.Label className="input-label">
-                  Enrollment Number{" "}
-                  <span className="ms-1 required-label">*</span>
+                  Email <span className="ms-1 required-label">*</span>
                 </Form.Label>
                 <Form.Control
                   type="text"
-                  name="enrollmentNumber"
+                  name="email"
                   onChange={handleChange}
-                  value={formData.enrollmentNumber}
-                  placeholder="Enrollment Number"
+                  value={formData.email}
+                  placeholder="Email Address"
                   className="custom-input"
                 />
               </Form.Group>
-              <div className="mb-3 mt-4">
-                <Form.Group controlId="password">
-                  <Form.Label className="input-label">
-                    Password <span className="ms-1 required-label">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    onChange={handleChange}
-                    value={formData.password}
-                    placeholder="Password"
-                    className="custom-input"
-                  />
-                </Form.Group>
-              </div>
-              {/* <div className="mb-3">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="customCheck1"
-                  value={rememberMe}
-                  onClick={(e) => setRememberMe(e.target.checked)}
-                />
-                <label className="form-check-label" htmlFor="customCheck1">
-                  Remember me
-                </label>
-              </div>
-            </div> */}
+              {error && <p className="error-content">{error}</p>}
               <button
                 type="submit"
-                className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
+                onClick={handleSubmit}
+                className="btn btn-primary btn-lg d-block w-100 fw-500 my-3"
               >
                 {loading ? (
                   <div
@@ -217,7 +149,7 @@ function PagesLogin() {
                     <BeatLoader color="white" size={10} />
                   </div>
                 ) : (
-                  <span>Sign In</span>
+                  <span>Reset Password</span>
                 )}
               </button>
 
@@ -244,17 +176,11 @@ function PagesLogin() {
                   marketing@edu.umch.de
                 </a>
               </p>
-              <div className="text-center text-inverse text-opacity-50">
-                Don't have an account yet?{" "}
-                <Link to="/register" className="default-color">
-                  Sign up
-                </Link>
-                .
-              </div>
-              <div className="text-inverse text-opacity-50 text-center mt-3">
-                Forget your password?{" "}
-                <Link to="/reset-password" className="default-color">
-                  Reset Password
+
+              <div className="text-inverse text-opacity-50 text-center">
+                Please login here{" "}
+                <Link to="/admin" className="default-color">
+                  Sign In
                 </Link>
               </div>
             </form>
@@ -265,4 +191,4 @@ function PagesLogin() {
   );
 }
 
-export default PagesLogin;
+export default AdminResetPassword;
