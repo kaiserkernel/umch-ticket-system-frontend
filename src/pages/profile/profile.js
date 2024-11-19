@@ -41,6 +41,8 @@ function Profile() {
     lastName: userData.lastName,
     enrollmentNumber: userData.enrollmentNumber,
     firstYearOfStudy: userData.firstYearOfStudy,
+    position: userData.position,
+    title: userData.title,
     password: "",
     avatar: userData.avatar,
     confirmPassword: ""
@@ -312,41 +314,104 @@ function Profile() {
                 </Form.Group>
               </Col>
             </Row>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Enrollment Number *</Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    name="enrollmentNumber"
-                    value={profileData.enrollmentNumber}
-                    onChange={handleChange}
-                    disabled
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>First year of Study *</Form.Label>
-                  <Form.Select
-                    required
-                    name="firstYearOfStudy"
-                    value={profileData.firstYearOfStudy}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select year</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Form.Group className="mb-3">
+            {userData?.role == 2 && (
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Enrollment Number *</Form.Label>
+                    <Form.Control
+                      required
+                      type="text"
+                      name="enrollmentNumber"
+                      value={profileData.enrollmentNumber}
+                      onChange={handleChange}
+                      disabled
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>First year of Study *</Form.Label>
+                    <Form.Select
+                      required
+                      name="firstYearOfStudy"
+                      value={profileData.firstYearOfStudy}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select year</option>
+                      <option value="2024">2024</option>
+                      <option value="2023">2023</option>
+                      <option value="2022">2022</option>
+                      <option value="2021">2021</option>
+                      <option value="2020">2020</option>
+                      <option value="2019">2019</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+            )}
+
+            {userData?.role == 0 && (
+              <>
+                <Row>
+                  <Col md={12}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Title *</Form.Label>
+                      <Form.Control
+                        required
+                        type="text"
+                        name="title"
+                        value={userData.title}
+                        onChange={handleChange}
+                        disabled
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={12}>
+                    <Form.Group controlId="position" className="">
+                      <Form.Label>Position *</Form.Label>
+                      <Form.Control
+                        as="select"
+                        name="position"
+                        value={userData.position}
+                        style={{
+                          appearance: "none", // Hides the default arrow
+                          MozAppearance: "none", // For Firefox
+                          WebkitAppearance: "none", // For Safari/Chrome
+                          backgroundColor: "white",
+                          color: "gray !important"
+                        }}
+                        placeholder="Position"
+                      >
+                        <option value="-1">Select Position</option>
+                        <option value="0">UMCH Study Secretariat</option>
+                        <option value="1">
+                          UMFST Administration Board Management (Vice-Rector)
+                        </option>
+                        <option value="2">
+                          UMFST Administration Office (UMFST Targu Mures)
+                        </option>
+                        <option value="3">CPE Board Management</option>
+                        <option value="4">UMCH Finance Department</option>
+                        <option value="5">UMCH Facility Department</option>
+                        <option value="6">
+                          UMCH Teaching Hospital Coordination
+                        </option>
+                        <option value="7">UMCH IT-SUPPORT</option>
+                        <option value="8">
+                          UMFST - Rector (UMFST Targu Mures)
+                        </option>
+                        <option value="9">Admin</option>
+                      </Form.Control>
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </>
+            )}
+
+            <Form.Group className="my-3">
               <Form.Label>Password </Form.Label>
               <Form.Control
                 type="password"
