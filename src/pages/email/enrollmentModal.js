@@ -58,7 +58,6 @@ const EnrollmentModal = ({
   let details = selectedTicket?.details;
 
   const data = INQUIRYCATEGORIESEmailTemplates[0]["subCategories"][4]["accept"];
-  console.log(data);
 
   const handleChange = (e) => {
     setFormData({

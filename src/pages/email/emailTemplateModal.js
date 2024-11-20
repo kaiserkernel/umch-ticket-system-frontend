@@ -35,7 +35,6 @@ const EmailTemplateModal = ({
   let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
   let details = selectedTicket?.details;
 
-  console.log(subCategory1);
   let data = "";
   if (actionBtnType == "accept" && subCategory1) {
     data =
@@ -187,8 +186,6 @@ const EmailTemplateModal = ({
         id: selectedTicket?._id
       };
     }
-    console.log(actionBtnType, "==========action btn type");
-    console.log(payload, "======replaced email template");
 
     return payload;
   };
