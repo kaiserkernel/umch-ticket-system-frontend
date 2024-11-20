@@ -88,7 +88,7 @@ const INQUIRYCATEGORIESEmailTemplates = [
       },
       {
         accept:
-          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><br/><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p> CPE Europe GmbH </p><p>University Targu Mures Medical Campus Hamburg </p><br/><p>+49 40 20934850 81 </p><p>+49 40 2093485 09</p> <p>Albert-Einstein-Ring 11-15, 22761 Hamburg, Germany</p>",
+          "<p>Dear [Student's Name]<p><p>Thank you for your request and for placng your trust in us. We have carefully reviewed your request and would like to inform you of the following decision:</p><br/><p>Congratulations! Your request has been approved.</p><p>Your application to transfer to Targu Mures will be granted on the condition that 120 ECTS have been achieved at the end of the second year of study.</p><br /> <p>If you have any further questions or need additional clarification, feel free to [contact us].</p><br /> <p>Thank you for your understanding and cooperation.</p><br/><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]<p><p> CPE Europe GmbH </p><p>University Targu Mures Medical Campus Hamburg </p><br/><p>+49 40 20934850 81 </p><p>+49 40 2093485 09</p> <p>Albert-Einstein-Ring 11-15, 22761 Hamburg, Germany</p>",
 
         reject:
           "<p>Dear [Student's Name],</p><p>Thank you for your request and for placing your trust in us. We have carefully reviewed your application and would like to inform you of the following decision:</p><br /><p>We regret to inform you that your request has been declined. We understand this may be disappointing, and we encourage you to reach out if you have any questions about the decision or need further assistance.</p><br /><p>If you have any further questions or need additional clarification, feel free to [contact us]. </p><br /><p>Thank you for your understanding and cooperation.</p><br/><p>Best regards,</p><p>[Your Name]</p><p>[Your Title]</p><p> CPE Europe GmbH </p><p>University Targu Mures Medical Campus Hamburg </p><br/><p>+49 40 20934850 81 </p><p>+49 40 2093485 09</p> <p>Albert-Einstein-Ring 11-15, 22761 Hamburg, Germany</p>"
@@ -382,6 +382,11 @@ const INQUIRYCATEGORIES = [
 
 const CATEGORYDATA = [
   {
+    label: "Select All Category",
+    value: "0",
+    permissions: ["None", "Passive", "Active", "Responsible"]
+  },
+  {
     label: "Applications and Requests",
     value: "1",
     subcategories: [
@@ -459,7 +464,7 @@ const CATEGORYDATA = [
   },
   {
     label: "Book rental UMCH library",
-    value: "2",
+    value: "2-1",
     permissions: ["None", "Passive", "Active", "Responsible"]
   },
   {
@@ -468,12 +473,12 @@ const CATEGORYDATA = [
     subcategories: [
       {
         label: "Canvas",
-        value: "3-0",
+        value: "3-1",
         permissions: ["None", "Passive", "Active", "Responsible"]
       },
       {
         label: "Streaming / Panopto",
-        value: "3-1",
+        value: "3-2",
         permissions: ["None", "Passive", "Active", "Responsible"]
       }
     ]
@@ -484,64 +489,64 @@ const CATEGORYDATA = [
     subcategories: [
       {
         label: "Campus",
-        value: "4-0",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Dean’s Office",
         value: "4-1",
         permissions: ["None", "Passive", "Active", "Responsible"]
       },
       {
-        label: "German Teaching Department",
+        label: "Dean’s Office",
         value: "4-2",
         permissions: ["None", "Passive", "Active", "Responsible"]
       },
       {
-        label: "Teaching Hospital",
+        label: "German Teaching Department",
         value: "4-3",
         permissions: ["None", "Passive", "Active", "Responsible"]
       },
       {
-        label: "Teacher",
+        label: "Teaching Hospital",
         value: "4-4",
         permissions: ["None", "Passive", "Active", "Responsible"]
       },
       {
-        label: "Online Catalouge (Carnet)",
+        label: "Teacher",
         value: "4-5",
         permissions: ["None", "Passive", "Active", "Responsible"]
       },
       {
-        label: "Exam",
+        label: "Online Catalouge (Carnet)",
         value: "4-6",
         permissions: ["None", "Passive", "Active", "Responsible"]
       },
       {
-        label: "Other",
+        label: "Exam",
         value: "4-7",
+        permissions: ["None", "Passive", "Active", "Responsible"]
+      },
+      {
+        label: "Other",
+        value: "4-8",
         permissions: ["None", "Passive", "Active", "Responsible"]
       }
     ]
   },
   {
     label: "Internship",
-    value: "5",
+    value: "5-1",
     permissions: ["None", "Passive", "Active", "Responsible"]
   },
   {
     label: "Medical Abilities",
-    value: "6",
+    value: "6-1",
     permissions: ["None", "Passive", "Active", "Responsible"]
   },
   {
     label: "Thesis",
-    value: "7",
+    value: "7-1",
     permissions: ["None", "Passive", "Active", "Responsible"]
   },
   {
     label: "Other",
-    value: "8",
+    value: "8-1",
     permissions: ["None", "Passive", "Active", "Responsible"]
   }
 ];

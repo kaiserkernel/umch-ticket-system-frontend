@@ -4,12 +4,21 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { AppSettings } from "./../../config/app-settings.js";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import FormService from "../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
-import { Badge, Form, Dropdown, Modal, Button } from "react-bootstrap";
+import Select, { components } from "react-select";
+import {
+  Badge,
+  Form,
+  Dropdown,
+  Modal,
+  Button,
+  Row,
+  Col
+} from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import FormService from "../../sevices/form-service";
 import { DownTimer } from "../../components/downTimer/downTimer.jsx";
 
 import Absence from "./inquiryTemplate/absence.js";
@@ -49,9 +58,8 @@ import TranscriptRecordsModal from "./transcriptRecordsModal.js";
 import PassToAnotherDepartmentModal from "./passToAnotherDepartmentModal.js";
 import TarguModal from "./transferToTarguMures.js";
 
-import { components } from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
-import { INQUIRYCATEGORIES } from "../../globalVariables.js";
+import { INQUIRYCATEGORIES, CATEGORYDATA } from "../../globalVariables.js";
 
 function EmailInbox() {
   const host = process.env.REACT_APP_API_URL;
@@ -60,19 +68,26 @@ function EmailInbox() {
 
   const [mailData, setMailData] = useState();
   const [ticketData, setTicketData] = useState();
+  const [originalTicketData, setOriginalTicketData] = useState([]);
+  const [ticketsByYear, setTicketsByYear] = useState([]);
   const [ticketId, setTicketId] = useState();
   const [selectedTicket, setSelectedTicket] = useState();
   const [attachments, setSelectedTicketAttachments] = useState([]);
+  const [firstYearOfStudy, setFirstYearOfStudy] = useState("all");
 
   const [isMobile, setIsMobile] = useState(false);
   const [showTicketDetail, setShowTicketDetail] = useState(false);
   const [userPermissionCategory, setUserPermissonCategory] = useState();
   const [activeTab, setActiveTab] = useState("All");
+
   const [isTicketStatusChange, setTicketStatusChange] = useState(true);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [actionBtnType, setActionBtnType] = useState();
   const [studentNo, setStudentNo] = useState("");
+  const [selectedItems, setSelectedItems] = useState([
+    { label: "Select All Category", value: "0" }
+  ]);
 
   const [unClickedNewTicketsCount, setUnClickedNewTicketsCount] = useState(0);
   const [unClickedApprovedTicketsCount, setUnClickedApprovedTicketsCount] =
@@ -107,6 +122,133 @@ function EmailInbox() {
 
   const handleTarguModalClose = () => {
     setTarguModalShow(false);
+  };
+
+  // Prepare main options for Select component
+  const formatOptions = (data) =>
+    data.reduce((acc, category) => {
+      if (category?.subcategories) {
+        acc.push({
+          label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
+          value: category.value,
+          isDisabled: true // Prevent main category selection
+        });
+      } else {
+        acc.push({
+          label: <div style={{ fontWeight: "bold" }}>{category.label}</div>,
+          value: category.value,
+          isDisabled: false // Prevent main category selection
+        });
+      }
+      if (category?.subcategories) {
+        category?.subcategories.forEach((sub) =>
+          acc.push({
+            label: sub.label,
+            value: sub.value,
+            isSubcategory: true // Mark subcategories for custom styles
+          })
+        );
+      }
+      return acc;
+    }, []);
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? "#f0f8ff" : "#fff",
+      borderColor: state.isFocused ? "#2596be" : "#002d47",
+      borderWidth: state.isFocused ? "5px" : "1px",
+      borderRadius: "0px",
+      padding: "5px",
+      fontSize: "16px",
+      "&:hover": {
+        borderColor: state.isFocused ? "#2596be" : "#002d47"
+      }
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#4a90e2" : "#fff",
+      color: state.isSelected ? "#fff" : "#333",
+      paddingLeft: state.data.isSubcategory ? "1.5rem" : "0.5rem", // Apply ms-3 only to subcategories
+      "&:hover": {
+        backgroundColor: "#e6f7ff",
+        color: "#333"
+      }
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      paddingLeft: "0rem" // Ensure no ms-3 for selected value
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "5px",
+      marginTop: "5px",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.15)"
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#999"
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      backgroundColor: "#4a90e2",
+      color: "#fff",
+      borderRadius: "3px"
+    }),
+    multiValueLabel: (provided) => ({
+      ...provided,
+      color: "#fff"
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      color: "#fff",
+      cursor: "pointer",
+      "&:hover": {
+        backgroundColor: "#ff5e5e",
+        color: "white"
+      }
+    })
+  };
+
+  // Handle selection of subcategory in main select component
+  const handleSelectChange = (selectedOption) => {
+    setSelectedItems(selectedOption || []);
+
+    let label;
+    if (typeof selectedOption?.label != "string") {
+      label = selectedOption?.label?.props?.children;
+    } else {
+      label = selectedOption?.label;
+    }
+    const categoryArray = selectedOption.value.split("-");
+
+    const filteredTempTickets = originalTicketData.filter(
+      (ticket) =>
+        ticket?.inquiryCategory == categoryArray[0] &&
+        ticket?.subCategory1 == categoryArray[1]
+    );
+
+    if (categoryArray[0] == "0") {
+      setTicketData(originalTicketData);
+      setTicketsByYear(originalTicketData);
+    } else {
+      setTicketData(filteredTempTickets);
+      setTicketsByYear(filteredTempTickets);
+    }
+  };
+
+  const handleFirstStudyOfYear = (e) => {
+    setFirstYearOfStudy(e.target.value);
+
+    const filteredTempTickets = ticketsByYear.filter(
+      (ticket) => ticket?.firstYearOfStudy == e.target.value
+    );
+
+    if (e.target.value == "all") {
+      setTicketData(ticketsByYear);
+    } else {
+      setTicketData(filteredTempTickets);
+    }
   };
 
   const ticketStatus = [
@@ -294,6 +436,9 @@ function EmailInbox() {
     setSelectedTicket("");
     setShowTicketDetail(false);
 
+    setFirstYearOfStudy("all");
+    setSelectedItems([{ label: "Select All Category", value: "0" }]);
+
     if (userRole != 2) {
       getAllInquiries();
     } else {
@@ -354,6 +499,8 @@ function EmailInbox() {
         setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
         setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
         setTicketData(newTickets);
+        setOriginalTicketData(newTickets);
+        setTicketsByYear(newTickets);
         setLoading(false);
         // setSelectedTicket(newTickets[0]?._id);
         setUserPermissonCategory(res.userCategory);
@@ -392,6 +539,8 @@ function EmailInbox() {
       setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
       console.log(newTickets);
       setTicketData(newTickets);
+      setOriginalTicketData(newTickets);
+      setTicketsByYear(newTickets);
       setSelectedTicket(newTickets[0]);
       setLoading(false);
     } catch (err) {
@@ -412,6 +561,8 @@ function EmailInbox() {
         : ticket
     );
     setTicketData(updatedTickets);
+    setOriginalTicketData(updatedTickets);
+    setTicketsByYear(updatedTickets);
     setLoading(true);
     setActionBtnType("");
     setTicketId(ticket_id);
@@ -478,6 +629,11 @@ function EmailInbox() {
         );
         console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
+        setOriginalTicketData(filteredAllTickets);
+        setTicketsByYear(filteredAllTickets);
+
+        setFirstYearOfStudy("all");
+        setSelectedItems([{ label: "Select All Category", value: "0" }]);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -500,6 +656,11 @@ function EmailInbox() {
         );
         console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
+        setOriginalTicketData(filteredAllTickets);
+        setTicketsByYear(filteredAllTickets);
+
+        setFirstYearOfStudy("all");
+        setSelectedItems([{ label: "Select All Category", value: "0" }]);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -525,6 +686,11 @@ function EmailInbox() {
         );
         console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
+        setOriginalTicketData(filteredAllTickets);
+        setTicketsByYear(filteredAllTickets);
+
+        setFirstYearOfStudy("all");
+        setSelectedItems([{ label: "Select All Category", value: "0" }]);
         setLoading(false);
       } catch (err) {
         setLoading(false);
@@ -541,6 +707,11 @@ function EmailInbox() {
         );
 
         setTicketData(filteredAllTickets);
+        setOriginalTicketData(filteredAllTickets);
+        setTicketsByYear(filteredAllTickets);
+
+        setFirstYearOfStudy("all");
+        setSelectedItems([{ label: "Select All Category", value: "0" }]);
       } catch (err) {
         setLoading(false);
       }
@@ -878,6 +1049,51 @@ function EmailInbox() {
                   userData?.role == 2 ? "mailbox-list-student" : "mailbox-list"
                 }
               >
+                {userData?.role != 2 && (
+                  <>
+                    <Row>
+                      <Col lg={12}>
+                        <Form.Group
+                          controlId="emailTemplateTitle"
+                          className="mt-3"
+                        >
+                          <Select
+                            options={formatOptions(CATEGORYDATA)}
+                            value={selectedItems}
+                            onChange={handleSelectChange}
+                            isMulti={false}
+                            closeMenuOnSelect={true}
+                            hideSelectedOptions={false}
+                            menuPosition="fixed"
+                            styles={customStyles}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={12}>
+                        <Form.Group className="mt-3">
+                          <Form.Select
+                            required
+                            name="firstYearOfStudy"
+                            value={firstYearOfStudy}
+                            className="custom-input"
+                            placeholder="Select First Study Year"
+                            onChange={handleFirstStudyOfYear}
+                          >
+                            <option value="all">Select First Study Year</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </>
+                )}
                 {ticketData && ticketData.length > 0 ? (
                   ticketData.map((ticket, index) => (
                     <div
@@ -1039,29 +1255,32 @@ function EmailInbox() {
                             </div>
                           )
                         ) : ticket.isClicked == 1 ? (
-                          <Badge
-                            style={{
-                              marginTop: "13px",
-                              fontSize: "14px",
-                              fontWeight: "300",
-                              float: "right"
-                            }}
-                            bg="primary"
-                          >
-                            Viewed
-                          </Badge>
+                          <div className="d-flex align-items-center justify-content-between mt-2">
+                            <span>Ticket Number: {ticket?.inquiryNumber}</span>
+
+                            <Badge
+                              style={{
+                                fontSize: "14px",
+                                fontWeight: "300"
+                              }}
+                              bg="primary"
+                            >
+                              Viewed
+                            </Badge>
+                          </div>
                         ) : (
-                          <Badge
-                            style={{
-                              marginTop: "13px",
-                              fontSize: "14px",
-                              fontWeight: "300",
-                              float: "right"
-                            }}
-                            bg="danger"
-                          >
-                            No Viewed
-                          </Badge>
+                          <div className="d-flex align-items-center justify-content-between mt-2">
+                            Ticket Number: {ticket?.inquiryNumber}
+                            <Badge
+                              style={{
+                                fontSize: "14px",
+                                fontWeight: "300"
+                              }}
+                              bg="danger"
+                            >
+                              No Viewed
+                            </Badge>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1528,7 +1747,10 @@ function EmailInbox() {
                                         ></Dropdown.Toggle>
 
                                         <Dropdown.Menu>
-                                          <Dropdown.Item href="#/action-1">
+                                          <Dropdown.Item
+                                            href="#/action-1"
+                                            disabled
+                                          >
                                             Accept with Internal Note
                                           </Dropdown.Item>
                                           <Dropdown.Item href="#/action-2">
@@ -1573,7 +1795,10 @@ function EmailInbox() {
                                         ></Dropdown.Toggle>
 
                                         <Dropdown.Menu>
-                                          <Dropdown.Item href="#/action-1">
+                                          <Dropdown.Item
+                                            href="#/action-1"
+                                            disabled
+                                          >
                                             Reject with Internal Note
                                           </Dropdown.Item>
                                           <Dropdown.Item href="#/action-2">

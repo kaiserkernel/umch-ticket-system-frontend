@@ -214,8 +214,8 @@ const Absence = ({ applicationRequest }) => {
           <p> We regret your absence.</p>
           <p>
             In case of illness, please always upload your medical certificate
-            and fill in the required fields. In the case of an official
-            appointments, please upload the appointment confirmation. For
+            and fill in the required fields. In the case of official
+            appointment, please upload the appointment confirmation. For
             personal commitments, feel free to send us any relevant
             documentation related to your absence so we can review it.
           </p>
