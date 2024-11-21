@@ -327,7 +327,6 @@ const Thesis = () => {
             type="file"
             name="file"
             id="file"
-            accept=".pdf"
             style={{ visibility: "hidden" }}
             onChange={handleFileChange}
           />

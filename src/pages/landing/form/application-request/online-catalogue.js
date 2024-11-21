@@ -205,7 +205,6 @@ const OnlineCatalogue = ({ applicationRequest }) => {
             type="file"
             name="file"
             id="file"
-            accept=".pdf"
             style={{ visibility: "hidden" }}
             onChange={handleFileChange}
           />

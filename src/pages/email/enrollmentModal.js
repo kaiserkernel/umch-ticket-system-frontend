@@ -50,7 +50,7 @@ const EnrollmentModal = ({
     studentNo: selectedTicket?.enrollmentNumber,
     nationality: selectedTicket?.details?.nationality,
     currentYearOfStudy: selectedTicket?.details?.currentYearOfStudy,
-    birthday: moment(selectedTicket?.details?.birthday).format("MM/DD/YYYY")
+    birthday: selectedTicket?.details?.birthday
   });
 
   let subCategory1 = parseInt(selectedTicket?.subCategory1);
@@ -91,7 +91,7 @@ const EnrollmentModal = ({
         selectedTicket?.firstName + " " + selectedTicket?.lastName
       )
       .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-      .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
+
       .replace(
         "[Institution/Organization Name]",
         authUser.position
@@ -109,10 +109,10 @@ const EnrollmentModal = ({
       .replace("[requested group]", details?.switchStudyGroup)
       .replace("[requested subject]", details?.subject)
       .replace("[Subject Name]", details?.subject)
-      .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+      .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
       .replace(
         "[interval of time requested]",
-        moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+        moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
     setDefaultTemplateData(replacedEmailTemplate);
@@ -141,10 +141,12 @@ const EnrollmentModal = ({
           selectedTicket?.firstName + " " + selectedTicket?.lastName
         )
         .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-        .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
+
         .replace(
           "[Institution/Organization Name]",
-          authUser.position ? POSITIONNAMES[authUser.position] : "Vice Rector"
+          authUser.position
+            ? POSITIONNAMES[authUser.position]
+            : "UMCH University Team"
         )
         .replace("[Contact Information]", authUser?.email)
         .replace(
@@ -159,10 +161,10 @@ const EnrollmentModal = ({
         .replace("[requested group]", details?.switchStudyGroup)
         .replace("[requested subject]", details?.subject)
         .replace("[Subject Name]", details?.subject)
-        .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+        .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
         .replace(
           "[interval of time requested]",
-          moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+          moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
         );
     } catch (err) {
       console.log(err);
@@ -283,7 +285,7 @@ const EnrollmentModal = ({
               })
             }
             name="birthday"
-            dateFormat="yyyy/MM/dd"
+            dateFormat="dd/MM/yyyy"
             isClearable
             showMonthDropdown
             showYearDropdown

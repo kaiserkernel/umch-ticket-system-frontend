@@ -220,7 +220,7 @@ const TransferTarguMures = ({ applicationRequest }) => {
                 })
               }
               name="diplomaCollectionDate"
-              dateFormat="yyyy/MM/dd"
+              dateFormat="dd/MM/yyyy"
               isClearable
               showMonthDropdown
               showYearDropdown
@@ -294,7 +294,6 @@ const TransferTarguMures = ({ applicationRequest }) => {
             type="file"
             name="file"
             id="file"
-            accept=".pdf"
             style={{ visibility: "hidden" }}
             onChange={handleFileChange}
           />

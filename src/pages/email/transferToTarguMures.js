@@ -92,10 +92,10 @@ const TarguModal = ({
       .replace("[requested group]", details?.switchStudyGroup)
       .replace("[requested subject]", details?.subject)
       .replace("[Subject Name]", details?.subject)
-      .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+      .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
       .replace(
         "[interval of time requested]",
-        moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+        moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
     setDefaultTemplateData(replacedEmailTemplate);

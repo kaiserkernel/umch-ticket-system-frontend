@@ -10,7 +10,7 @@ const ExamInspection = ({ selectedTicket }) => {
         <div className=" flex-grow-1">
           <p className="text-black fw-bold">Exam Date:</p>
           <p className="text-black">
-            {moment(selectedTicket?.details?.examDate).format("MM/DD/YYYY")}
+            {moment(selectedTicket?.details?.examDate).format("DD-MM-YYYY")}
           </p>
         </div>
         <div className="flex-grow-1">

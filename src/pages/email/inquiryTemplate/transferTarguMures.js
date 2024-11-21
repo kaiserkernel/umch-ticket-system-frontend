@@ -9,7 +9,7 @@ const TransferTarguMures = ({ selectedTicket }) => {
         <Col lg={6}>
           <p className="text-black fw-bold">Date Of Birth:</p>
           <p className="text-black">
-            {moment(selectedTicket?.details?.birthday).format("MM/DD/YYYY")}
+            {moment(selectedTicket?.details?.birthday).format("DD-MM-YYYY")}
           </p>
         </Col>
         <Col lg={6}>

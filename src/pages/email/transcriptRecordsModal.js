@@ -89,7 +89,7 @@ const ExamInspectionModal = ({
         selectedTicket?.firstName + " " + selectedTicket?.lastName
       )
       .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-      .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
+
       .replace(
         "[Institution/Organization Name]",
         authUser.position
@@ -109,12 +109,12 @@ const ExamInspectionModal = ({
       .replace("[requested group]", details?.switchStudyGroup)
       .replace("[requested subject]", details?.subject)
       .replace("[Subject Name]", details?.subject)
-      .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+      .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
       .replace("[Time]", moment(formData.examTime).format("hh:mm A"))
       .replace("[Location]", formData.examLocation)
       .replace(
         "[interval of time requested]",
-        moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+        moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
   });
@@ -146,10 +146,12 @@ const ExamInspectionModal = ({
           selectedTicket?.firstName + " " + selectedTicket?.lastName
         )
         .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-        .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
+
         .replace(
           "[Institution/Organization Name]",
-          authUser.position ? POSITIONNAMES[authUser.position] : "Vice Rector"
+          authUser.position
+            ? POSITIONNAMES[authUser.position]
+            : "UMCH University Team"
         )
         .replace("[Contact Information]", authUser?.email)
         .replace(
@@ -164,12 +166,12 @@ const ExamInspectionModal = ({
         .replace("[requested group]", details?.switchStudyGroup)
         .replace("[requested subject]", details?.subject)
         .replace("[Subject Name]", details?.subject)
-        .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+        .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
         .replace("[Time]", moment(formData.examTime).format("hh:mm A"))
         .replace("[Location]", formData.examLocation)
         .replace(
           "[interval of time requested]",
-          moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+          moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
         );
     } catch (err) {
       console.log(err);
@@ -228,7 +230,7 @@ const ExamInspectionModal = ({
                 examDate: date
               })
             }
-            dateFormat="yyyy/MM/dd"
+            dateFormat="dd-MM-YYYY"
             isClearable
             className="custom-input"
           />

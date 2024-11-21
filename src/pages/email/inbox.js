@@ -1040,8 +1040,50 @@ function EmailInbox() {
           <div
             className={`mailbox-sidebar ${showTicketDetail ? "d-none" : ""}`}
           >
+            {userData?.role != 2 && (
+              <div>
+                <Row>
+                  <Col lg={12}>
+                    <Form.Group controlId="emailTemplateTitle" className="">
+                      <Select
+                        options={formatOptions(CATEGORYDATA)}
+                        value={selectedItems}
+                        onChange={handleSelectChange}
+                        isMulti={false}
+                        closeMenuOnSelect={true}
+                        hideSelectedOptions={false}
+                        menuPosition="fixed"
+                        styles={customStyles}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={12}>
+                    <Form.Group className="mt-3">
+                      <Form.Select
+                        required
+                        name="firstYearOfStudy"
+                        value={firstYearOfStudy}
+                        className="custom-input"
+                        placeholder="Select First Study Year"
+                        onChange={handleFirstStudyOfYear}
+                      >
+                        <option value="all">Select First Study Year</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </div>
+            )}
             <PerfectScrollbar
-              className="h-100"
+              className="h-100  pb-100"
               options={{ suppressScrollX: true }}
             >
               <div
@@ -1049,51 +1091,6 @@ function EmailInbox() {
                   userData?.role == 2 ? "mailbox-list-student" : "mailbox-list"
                 }
               >
-                {userData?.role != 2 && (
-                  <>
-                    <Row>
-                      <Col lg={12}>
-                        <Form.Group
-                          controlId="emailTemplateTitle"
-                          className="mt-3"
-                        >
-                          <Select
-                            options={formatOptions(CATEGORYDATA)}
-                            value={selectedItems}
-                            onChange={handleSelectChange}
-                            isMulti={false}
-                            closeMenuOnSelect={true}
-                            hideSelectedOptions={false}
-                            menuPosition="fixed"
-                            styles={customStyles}
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={12}>
-                        <Form.Group className="mt-3">
-                          <Form.Select
-                            required
-                            name="firstYearOfStudy"
-                            value={firstYearOfStudy}
-                            className="custom-input"
-                            placeholder="Select First Study Year"
-                            onChange={handleFirstStudyOfYear}
-                          >
-                            <option value="all">Select First Study Year</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </>
-                )}
                 {ticketData && ticketData.length > 0 ? (
                   ticketData.map((ticket, index) => (
                     <div
@@ -1319,12 +1316,6 @@ function EmailInbox() {
                   <div className="mailbox-detail">
                     {userRole != 2 && (
                       <div className="mailbox-detail-header external-btn-container">
-                        <a className="btn btn-light rounded-pill mt-2">
-                          Reply to the student
-                        </a>
-                        <a className="btn btn-light rounded-pill mt-2">
-                          Add internal note
-                        </a>
                         <a
                           className="btn btn-primary rounded-pill mt-2"
                           onClick={handlePassToAnotherDepartment}
@@ -1518,7 +1509,7 @@ function EmailInbox() {
                         <div
                           style={{
                             position: "sticky",
-                            bottom: "0px",
+                            bottom: "10px",
                             backgroundColor: "white",
                             paddingBottom: "10px"
                           }}
@@ -1709,104 +1700,131 @@ function EmailInbox() {
                                   (userData?.role == 0 &&
                                     userData?.position == 1)) && (
                                   <>
-                                    <div
-                                      className="btn-group w-100"
-                                      role="group"
-                                      aria-label="Basic example"
-                                      style={{
-                                        maxWidth: "115px"
-                                      }}
-                                    >
-                                      <button
-                                        type="button"
-                                        style={{
-                                          backgroundColor: "#009be3",
-                                          borderTopLeftRadius: "50px",
-                                          borderBottomLeftRadius: "50px",
-                                          borderRight: "1px solid orange"
-                                        }}
-                                        className="btn btn-info btn-left mailbox-detail-button pl-5"
-                                        onClick={() =>
-                                          handleInquiryAccept(
-                                            selectedTicket?._id
-                                          )
-                                        }
-                                      >
-                                        Accept
-                                      </button>
-                                      <Dropdown type="button">
-                                        {/* <button className="btn btn-info" style={{ backgroundColor: "#009be3" }}>Accept</button> */}
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id="dropdown-basic"
-                                          className="btn btn-info dropdown-toggle"
+                                    {contentTemplate != "OnlineCatalogue" ? (
+                                      <>
+                                        <div
+                                          className="btn-group w-100"
+                                          role="group"
+                                          aria-label="Basic example"
                                           style={{
-                                            borderTopRightRadius: "50px",
-                                            borderBottomRightRadius: "50px"
+                                            maxWidth: "115px"
                                           }}
-                                        ></Dropdown.Toggle>
-
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item
-                                            href="#/action-1"
-                                            disabled
+                                        >
+                                          <button
+                                            type="button"
+                                            style={{
+                                              backgroundColor: "#009be3",
+                                              borderTopLeftRadius: "50px",
+                                              borderBottomLeftRadius: "50px",
+                                              borderRight: "1px solid orange"
+                                            }}
+                                            className="btn btn-info btn-left mailbox-detail-button pl-5"
+                                            onClick={() =>
+                                              handleInquiryAccept(
+                                                selectedTicket?._id
+                                              )
+                                            }
                                           >
-                                            Accept with Internal Note
-                                          </Dropdown.Item>
-                                          <Dropdown.Item href="#/action-2">
-                                            Accept with Email
-                                          </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
-                                    </div>
+                                            Accept
+                                          </button>
+                                          <Dropdown type="button">
+                                            <Dropdown.Toggle
+                                              variant="success"
+                                              id="dropdown-basic"
+                                              className="btn btn-info dropdown-toggle"
+                                              style={{
+                                                borderTopRightRadius: "50px",
+                                                borderBottomRightRadius: "50px"
+                                              }}
+                                            ></Dropdown.Toggle>
 
-                                    <div
-                                      className="btn-group w-100"
-                                      role="group"
-                                      aria-label="Basic example"
-                                      style={{ maxWidth: "115px" }}
-                                    >
-                                      <button
-                                        type="button"
+                                            <Dropdown.Menu>
+                                              <Dropdown.Item
+                                                href="#/action-1"
+                                                disabled
+                                              >
+                                                Accept with Internal Note
+                                              </Dropdown.Item>
+                                              <Dropdown.Item href="#/action-2">
+                                                Accept with Email
+                                              </Dropdown.Item>
+                                            </Dropdown.Menu>
+                                          </Dropdown>
+                                        </div>
+                                        {contentTemplate !=
+                                          "OnlineCatalogue" && (
+                                          <div
+                                            className="btn-group w-100"
+                                            role="group"
+                                            aria-label="Basic example"
+                                            style={{ maxWidth: "115px" }}
+                                          >
+                                            <button
+                                              type="button"
+                                              style={{
+                                                backgroundColor: "#e00000",
+                                                borderTopLeftRadius: "50px",
+                                                borderBottomLeftRadius: "50px",
+                                                borderRight: "1px solid orange"
+                                              }}
+                                              className="btn btn-danger btn-left"
+                                              onClick={() =>
+                                                handleInquiryReject(
+                                                  selectedTicket?._id
+                                                )
+                                              }
+                                            >
+                                              Reject
+                                            </button>
+                                            <Dropdown type="button">
+                                              <Dropdown.Toggle
+                                                variant="danger"
+                                                id="dropdown-basic"
+                                                className="btn btn-danger dropdown-toggle"
+                                                style={{
+                                                  borderTopRightRadius: "50px",
+                                                  borderBottomRightRadius:
+                                                    "50px"
+                                                }}
+                                              ></Dropdown.Toggle>
+
+                                              <Dropdown.Menu>
+                                                <Dropdown.Item
+                                                  href="#/action-1"
+                                                  disabled
+                                                >
+                                                  Reject with Internal Note
+                                                </Dropdown.Item>
+                                                <Dropdown.Item href="#/action-2">
+                                                  Reject with Email
+                                                </Dropdown.Item>
+                                              </Dropdown.Menu>
+                                            </Dropdown>
+                                          </div>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <div
+                                        className="btn-group w-100"
+                                        role="group"
+                                        aria-label="Basic example"
                                         style={{
-                                          backgroundColor: "#e00000",
-                                          borderTopLeftRadius: "50px",
-                                          borderBottomLeftRadius: "50px",
-                                          borderRight: "1px solid orange"
+                                          maxWidth: "115px"
                                         }}
-                                        className="btn btn-danger btn-left"
-                                        onClick={() =>
-                                          handleInquiryReject(
-                                            selectedTicket?._id
-                                          )
-                                        }
                                       >
-                                        Reject
-                                      </button>
-                                      <Dropdown type="button">
-                                        <Dropdown.Toggle
-                                          variant="danger"
-                                          id="dropdown-basic"
-                                          className="btn btn-danger dropdown-toggle"
-                                          style={{
-                                            borderTopRightRadius: "50px",
-                                            borderBottomRightRadius: "50px"
-                                          }}
-                                        ></Dropdown.Toggle>
-
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item
-                                            href="#/action-1"
-                                            disabled
-                                          >
-                                            Reject with Internal Note
-                                          </Dropdown.Item>
-                                          <Dropdown.Item href="#/action-2">
-                                            Reject with Email
-                                          </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
-                                    </div>
+                                        <button
+                                          type="button"
+                                          className="btn btn-info rounded-pill pl-5"
+                                          onClick={() =>
+                                            handleInquiryAccept(
+                                              selectedTicket?._id
+                                            )
+                                          }
+                                        >
+                                          Check
+                                        </button>
+                                      </div>
+                                    )}
                                   </>
                                 )}
                             </div>

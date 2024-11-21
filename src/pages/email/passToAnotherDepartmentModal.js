@@ -77,6 +77,8 @@ const PassToAnotherDepartmentModal = ({
                 isMulti
                 options={adminEmails}
                 value={selectedOptions}
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
                 onChange={setSelectedOptions}
                 placeholder="Select Emails"
               />
