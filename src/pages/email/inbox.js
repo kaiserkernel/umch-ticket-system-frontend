@@ -1697,8 +1697,7 @@ function EmailInbox() {
                                     selectedTicket,
                                     userPermissionCategory
                                   ) != "Active") ||
-                                  (userData?.role == 0 &&
-                                    userData?.position == 1)) && (
+                                  userData?.role == 0) && (
                                   <>
                                     {contentTemplate != "OnlineCatalogue" ? (
                                       <>
