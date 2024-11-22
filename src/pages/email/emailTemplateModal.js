@@ -75,13 +75,14 @@ const EmailTemplateModal = ({
 
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
+    console.log(authUser);
     let replacedEmailTemplate = data
       .replace(
         "[Student's Name]",
         selectedTicket?.firstName + " " + selectedTicket?.lastName
       )
       .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-      .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
+
       .replace(
         "[Institution/Organization Name]",
         authUser.position
@@ -99,10 +100,10 @@ const EmailTemplateModal = ({
       .replace("[requested group]", details?.switchStudyGroup)
       .replace("[requested subject]", details?.subject)
       .replace("[Subject Name]", details?.subject)
-      .replace("[Date]", moment(details?.examDate).format("MM-DD-YYYY"))
+      .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
       .replace(
         "[interval of time requested]",
-        moment(details?.diplomaCollectionDate).format("MM-DD-YYYY")
+        moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
       );
     setMailTemplateData(replacedEmailTemplate);
     setDefaultTemplateData(replacedEmailTemplate);
@@ -115,6 +116,7 @@ const EmailTemplateModal = ({
   ) => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
+
     let replaceSubject =
       "Decision on Your Request of Absence - Ticket Number [Ticket Number]".replace(
         "[Ticket Number]",
@@ -130,10 +132,12 @@ const EmailTemplateModal = ({
           selectedTicket?.firstName + " " + selectedTicket?.lastName
         )
         .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-        .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
+
         .replace(
           "[Institution/Organization Name]",
-          authUser.position ? POSITIONNAMES[authUser.position] : "Vice Rector"
+          authUser.position
+            ? POSITIONNAMES[authUser.position]
+            : "UMCH University Team"
         )
         .replace("[Contact Information]", authUser?.email)
         .replace(
@@ -146,10 +150,10 @@ const EmailTemplateModal = ({
         .replace("[requested group]", details?.switchStudyGroup)
         .replace("[requested subject]", details?.subject)
         .replace("[Subject Name]", details?.subject)
-        .replace("[Date]", moment(details?.examDate).format("MM/DD/YYYY"))
+        .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
         .replace(
           "[interval of time requested]",
-          moment(details?.diplomaCollectionDate).format("MM/DD/YYYY")
+          moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
         );
     } catch (err) {
       console.log(err);

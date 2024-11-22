@@ -6,7 +6,7 @@ const TranscriptRecords = ({ selectedTicket }) => {
     <div className="text-black">
       <p className="text-black fw-bold">Date of Birth:</p>
       <p className="text-black">
-        {moment(selectedTicket?.details?.birthday).format("MM-DD-YYYY")}
+        {moment(selectedTicket?.details?.birthday).format("DD-MM-YYYY")}
       </p>
       <p className="text-black fw-bold">Comments:</p>
       <p className="text-black">{selectedTicket?.details?.comment}</p>

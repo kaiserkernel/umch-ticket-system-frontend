@@ -415,7 +415,7 @@ const ExamInspection = ({ applicationRequest }) => {
                   examDate: date
                 })
               }
-              dateFormat="yyyy/MM/dd"
+              dateFormat="dd/MM/yyyy"
               isClearable
               className="custom-input"
             />
@@ -488,7 +488,6 @@ const ExamInspection = ({ applicationRequest }) => {
             type="file"
             name="file"
             id="file"
-            accept=".pdf"
             style={{ visibility: "hidden" }}
             onChange={handleFileChange}
           />

@@ -198,10 +198,6 @@ const Absence = ({ applicationRequest }) => {
       newErrors.timeToAbsence = "Period of time (to) is required";
     }
 
-    if (files.length == 0) {
-      newErrors.file = "File Uploading is required";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -268,7 +264,7 @@ const Absence = ({ applicationRequest }) => {
                     timeFromAbsence: date
                   })
                 }
-                dateFormat="yyyy/MM/dd"
+                dateFormat="dd/MM/yyyy"
                 isClearable
                 className="custom-input"
               />
@@ -288,7 +284,7 @@ const Absence = ({ applicationRequest }) => {
                 onChange={(date) =>
                   setformDetailData({ ...formDetailData, timeToAbsence: date })
                 }
-                dateFormat="yyyy/MM/dd"
+                dateFormat="dd/MM/yyyy"
                 isClearable
                 className="custom-input"
               />
@@ -312,7 +308,6 @@ const Absence = ({ applicationRequest }) => {
               type="file"
               name="file"
               id="file"
-              accept=".pdf"
               style={{ visibility: "hidden" }}
               onChange={handleFileChange}
             />
@@ -321,7 +316,6 @@ const Absence = ({ applicationRequest }) => {
               className="btn btn-primary upload-btn"
             ></label>
 
-            {errors.file && <p className="error-content">{errors.file}</p>}
             <div className="d-flex flex-column mt-3">
               {files.map((fileObj, index) => (
                 <div

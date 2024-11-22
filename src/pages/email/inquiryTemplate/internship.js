@@ -23,13 +23,13 @@ const Internship = ({ selectedTicket }) => {
         <Col lg={6}>
           <p className="text-black fw-bold">Interval of time from:</p>
           <p className="text-black">
-            {moment(selectedTicket?.details?.timeFrom).format("MM-DD-YYY")}
+            {moment(selectedTicket?.details?.timeFrom).format("DD-MM-YYYY")}
           </p>
         </Col>
         <Col lg={6}>
           <p className="text-black fw-bold">Interval of time to:</p>
           <p className="text-black">
-            {moment(selectedTicket?.details?.timeTo).format("MM-DD-YYYY")}
+            {moment(selectedTicket?.details?.timeTo).format("DD-MM-YYYY")}
           </p>
         </Col>
       </Row>

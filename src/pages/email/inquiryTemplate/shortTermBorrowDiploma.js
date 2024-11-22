@@ -7,7 +7,7 @@ const ShortTermBorrowDiploma = ({ selectedTicket }) => {
       <p className="text-black fw-bold">Date of diploma collection:</p>
       <p className="text-black">
         {moment(selectedTicket?.details?.diplomaCollectionDate).format(
-          "MM-DD-YYYY"
+          "DD-MM-YYYY"
         )}
       </p>
       <p className="text-black fw-bold">Comments:</p>

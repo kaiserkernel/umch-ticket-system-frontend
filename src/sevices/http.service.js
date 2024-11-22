@@ -40,7 +40,7 @@ export class HttpService {
     localStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userData");
-    window.location.href = "/login"; // Redirect to login
+    window.location.href = "/#/login"; // Redirect to login
   };
 
   addRequestInterceptor = (onFulfilled, onRejected) => {

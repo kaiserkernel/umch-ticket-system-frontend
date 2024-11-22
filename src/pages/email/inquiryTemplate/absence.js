@@ -12,7 +12,7 @@ const Absence = ({ selectedTicket }) => {
           <p className="text-black">
             {selectedTicket?.details?.timeFromAbsence
               ? moment(selectedTicket?.details?.timeFromAbsence).format(
-                  "MMMM DD, YYYY"
+                  "DD-MM-YYYY"
                 )
               : ""}
           </p>
@@ -22,7 +22,7 @@ const Absence = ({ selectedTicket }) => {
           <p className="text-black">
             {selectedTicket?.details?.timeToAbsence
               ? moment(selectedTicket?.details?.timeToAbsence).format(
-                  "MMMM DD, YYYY"
+                  "DD-MM-YYYY"
                 )
               : ""}
           </p>
