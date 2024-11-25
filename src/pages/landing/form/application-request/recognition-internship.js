@@ -194,6 +194,9 @@ const RecognitionInternship = ({ applicationRequest }) => {
     if (formDetailData.recognitionMedicalInternship == "") {
       newErrors.subject = "This field is required";
     }
+    if (files.length == 0) {
+      newErrors.file = "This field is required";
+    }
 
     console.log(newErrors, "========newErrors");
 
@@ -211,16 +214,14 @@ const RecognitionInternship = ({ applicationRequest }) => {
           Practice” to verify whether the required content was covered in your
           internship.
         </p>
-        <p>
-          For this, we will need the following documents from your previous
-          university:
-        </p>
+
         <p>
           In the second step, you can have the "Certificate for Submission to
           the University" verified by your internship supervisor. Please upload
-          this certificate in the designated upload area. We will review your
-          request internally and get back to you.
+          this certificate in the designated upload area.
         </p>
+        <p>For this, we will need the following documents</p>
+        <p>We will review your request internally and get back to you.</p>
       </div>
       <Row className=" g-4 g-md-4">
         <Col lg={12}>
@@ -306,7 +307,7 @@ const RecognitionInternship = ({ applicationRequest }) => {
         <Form.Group controlId="custom-checkbox" className="me-2 ">
           <Form.Check type="checkbox" className="custom-checkbox" />
         </Form.Group>
-        <div className="input-label   ">
+        <div className="input-label">
           I confirm that all official documents are translated into English
           language.
         </div>
@@ -324,6 +325,7 @@ const RecognitionInternship = ({ applicationRequest }) => {
             onChange={handleFileChange}
           />
           <label htmlFor="file" className="btn btn-primary upload-btn"></label>
+          {errors.file && <p className="error-content">{errors.file}</p>}
           <div className="d-flex flex-column mt-3">
             {files.map((fileObj, index) => (
               <div
