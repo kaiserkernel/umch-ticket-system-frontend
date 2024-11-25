@@ -371,7 +371,7 @@ const ApplicationRequests = () => {
               <option value="4">Demonstrator student</option>
               <option value="5">Enrollment</option>
               <option value="6">Exam inspection</option>
-              <option value="7">Online Catalogue (Carnet)</option>
+              <option value="7">Online Catalogue (Solaris)</option>
               <option value="8">Recognition of Courses</option>
               <option value="9">Recognition of Internship</option>
               <option value="10">Short term borrow of Diploma</option>

@@ -61,6 +61,7 @@ const Absence = ({ applicationRequest }) => {
     ]);
 
     if (newFile) {
+      console.log("new file");
       let previewUrl;
       let fileType = newFile.type;
       if (!fileType.includes("image")) {
@@ -166,7 +167,7 @@ const Absence = ({ applicationRequest }) => {
                 agreement: false
               });
             } catch (err) {
-              const errors = err?.errors || err?.error;
+              const errors = err?.message;
 
               if (typeof errors != "object") {
                 errorNotify(errors);
@@ -176,6 +177,21 @@ const Absence = ({ applicationRequest }) => {
                   errorNotify(error.msg);
                 });
               }
+
+              setformDetailData({
+                ...formDetailData,
+                reasonForAbsence: "",
+                timeFromAbsence: "",
+                timeToAbsence: "",
+                comment: ""
+              });
+              setFiles([]);
+              setOriginalFiles([]);
+              setFormData({
+                ...formData,
+                agreement: false
+              });
+              setLoading(false);
             }
           }
         }
@@ -308,7 +324,7 @@ const Absence = ({ applicationRequest }) => {
               type="file"
               name="file"
               id="file"
-              style={{ visibility: "hidden" }}
+              style={{ display: "none" }}
               onChange={handleFileChange}
             />
             <label

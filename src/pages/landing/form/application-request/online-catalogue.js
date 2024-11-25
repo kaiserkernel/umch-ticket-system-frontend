@@ -175,7 +175,7 @@ const OnlineCatalogue = ({ applicationRequest }) => {
         <p> Dear Student,</p>
         <p>
           If you have found corrections, requests for changes, or missing grades
-          in the online catalog Carnet, please feel free to contact us. We will
+          in the online catalog Solaris, please feel free to contact us. We will
           gladly assist in resolving the issue.
         </p>
       </div>
