@@ -41,11 +41,11 @@ function Profile() {
     lastName: userData.lastName,
     enrollmentNumber: userData.enrollmentNumber,
     firstYearOfStudy: userData.firstYearOfStudy,
-    position: userData.position,
-    title: userData.title,
     password: "",
     avatar: userData.avatar,
-    confirmPassword: ""
+    confirmPassword: "",
+    position: userData.position,
+    title: userData.title,
   });
   const [validated, setValidated] = useState(false);
   const [confirmPasswordValidate, setConfirmPasswordValidate] = useState(true);
