@@ -147,7 +147,8 @@ function AccountManagement() {
           ? [...subcategoryOptions]
           : [mainCategory];
       });
-
+      console.log(selectedAdmin, 'sel admin')
+      console.log(allOptions, 'all opts')
       setSelectedItems(allOptions);
 
       // Initialize permissions for all subcategories and main categories
@@ -155,7 +156,7 @@ function AccountManagement() {
       selectedAdmin?.category.forEach((category) => {
         initialPermissions[category.value] = category.permissionValue;
       });
-
+      console.log(initialPermissions, 'init per s')
       setPermissions(initialPermissions);
     }
   }, [show]);
@@ -319,11 +320,8 @@ function AccountManagement() {
   );
 
   const handleEditModal = (id) => {
-    console.log(id);
     setBtnType("edit");
     const user = admins.filter((admin) => admin?._id == id);
-    console.log(admins);
-    console.log(user[0]);
     setSelectedAdmin(user[0]);
     setFormData({
       ...formData,

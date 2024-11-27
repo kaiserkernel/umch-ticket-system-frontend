@@ -29,7 +29,14 @@ const PagesRegister = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPass: "",
+    enrollmentNumber: ""
+  });
 
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -52,41 +59,55 @@ const PagesRegister = () => {
       ...formData,
       [name]: type === "file" ? files[0] : value
     });
+    setErrors(prev => ({
+      ...prev,
+      [name]: ""
+    }))
   };
 
   // Validate form data
   const validateForm = () => {
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPass,
-      role,
-      enrollmentNumber,
-      firstYearOfStudy
-    } = formData;
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !password ||
-      !confirmPass ||
-      !enrollmentNumber ||
-      !firstYearOfStudy
-    ) {
-      return "All fields are required";
+    let error = {};
+
+    // required field validation
+    Object.keys(formData).map(log => {
+      if (!formData[log] || formData[log]?.trim().length == 0) {
+        error[log] = 'error'
+      }
+    })
+
+    // password validation - role
+    // min lenght 8
+    // at least - one number, one capital letter, one small letter, one special letter
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (formData.password && !passwordRegex.test(formData.password)) {
+      error.password = 'warn'
     }
-    if (password !== confirmPass) {
-      return "Passwords do not match";
+
+    // confirm password validation
+    // if (formData.password && formData.confirmPass && formData.password !== formData.confirmPass) {
+    //   error.confirmPass = 'warn'
+    // } else if (formData.password && !formData.confirmPass) {
+    //   error.confirmPass = 'error'
+    // } else {
+    //   error.confirmPass = ''
+    // }
+    if (!error.password && !formData.confirmPass) {
+      error.confirmPass = 'error'
+      console.log('error')
+    } else if (!error.password && (formData.password !== formData.confirmPass)) {
+      error.confirmPass = 'warn'
+      console.log('warn')
+    } else {
+      error.confirmPass = ''
     }
-    if (role === "student" && (!enrollmentNumber || !firstYearOfStudy)) {
-      return "Enrollment number and year of study are required for students";
+
+    if (Object.keys(error).length > 0) {
+      setErrors(prev => ({ ...prev, ...error }));
+      return false
+    } else {
+      return true
     }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      return "Email is invalid";
-    }
-    return "";
   };
 
   // Handle form submission
@@ -99,6 +120,11 @@ const PagesRegister = () => {
       }, 2000);
     };
 
+    // sign up validation
+    const validation = validateForm();
+    if (!validation)
+      return;
+
     try {
       const formDataToSend = new FormData();
       for (const key in formData) {
@@ -108,7 +134,6 @@ const PagesRegister = () => {
       const response = await AuthService.register(formDataToSend);
       successNotify(response.message);
       setLoading(false);
-      setError("");
       handleLoginNavigation();
     } catch (err) {
       setLoading(false);
@@ -186,6 +211,7 @@ const PagesRegister = () => {
                       className="custom-input"
                     />
                   </Form.Group>
+                  {errors.firstName == 'error' && <p className="text-danger sm-font">Required field</p>}
                 </Col>
                 <Col lg={6}>
                   <Form.Group controlId="lastName">
@@ -201,6 +227,7 @@ const PagesRegister = () => {
                       className="custom-input"
                     />
                   </Form.Group>
+                  {errors.lastName == 'error' && <p className="text-danger sm-font">Required field</p>}
                 </Col>
               </Row>
               <Row className="mt-4">
@@ -219,6 +246,7 @@ const PagesRegister = () => {
                       className="custom-input"
                     />
                   </Form.Group>
+                  {errors.email == 'error' && <p className="text-danger sm-font">Required field</p>}
                 </Col>
               </Row>
               <Row className="mt-2 g-3">
@@ -235,6 +263,8 @@ const PagesRegister = () => {
                       className="custom-input"
                     />
                   </Form.Group>
+                  {errors.password == 'warn' && <p className="text-warning sm-font">It must be at least 8 characters, include upper, lowercase letters, a number, and a special character.</p>}
+                  {errors.password == 'error' && <p className="text-danger sm-font">Required field</p>}
                 </Col>
 
                 <Col lg={6}>
@@ -251,12 +281,14 @@ const PagesRegister = () => {
                       className="custom-input"
                     />
                   </Form.Group>
+                  {errors.confirmPass == 'warn' && <p className="text-warning sm-font">Retype confirm password</p>}
+                  {errors.confirmPass == 'error' && <p className="text-danger sm-font">Required field</p>}
                 </Col>
               </Row>
 
               <Row className="mt-2 g-3">
                 <Col lg={6}>
-                  <Form.Group controlId="lastName">
+                  <Form.Group controlId="enrollmentNumber">
                     <Form.Label className="input-label">
                       Enrollment Number
                       <span className="ms-1 required-label">*</span>
@@ -269,6 +301,7 @@ const PagesRegister = () => {
                       className="custom-input"
                     />
                   </Form.Group>
+                  {errors.enrollmentNumber == 'error' && <p className="text-danger sm-font">Required field</p>}
                 </Col>
                 <Col lg={6}>
                   <Form.Group>
@@ -398,7 +431,7 @@ const PagesRegister = () => {
               </p>
 
               <p className="sm-font text-center">
-                Technical questions:
+                Technical questions:{` `}
                 <a
                   href="mailto:secretary@edu.umch.de"
                   className="default-color text-decoration-none"
@@ -408,7 +441,7 @@ const PagesRegister = () => {
               </p>
 
               <div className="text-inverse text-opacity-50 text-center">
-                Already have an Admin ID?{" "}
+                Already have an Account?{" "}
                 <Link to="/login" className="default-color">
                   Sign In
                 </Link>

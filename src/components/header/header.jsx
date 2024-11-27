@@ -129,6 +129,7 @@ function Header() {
               className="menu-link"
             >
               <div className="menu-icon text-white">
+                <div className="d-md-inline d-none me-2 sm-font">Open a new ticket</div>
                 <i className="bi bi-pencil-square nav-icon"></i>
               </div>
             </a>

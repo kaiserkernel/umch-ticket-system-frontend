@@ -236,7 +236,7 @@ function PagesLogin() {
               </p>
 
               <p className="sm-font text-center">
-                Technical questions:
+                Technical questions:{` `}
                 <a
                   href="mailto:secretary@edu.umch.de"
                   className="default-color text-decoration-none"

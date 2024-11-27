@@ -60,6 +60,7 @@ import TarguModal from "./transferToTarguMures.js";
 
 import BeatLoader from "react-spinners/BeatLoader";
 import { INQUIRYCATEGORIES, CATEGORYDATA } from "../../globalVariables.js";
+import UserService from "../../sevices/user-service.js";
 
 function EmailInbox() {
   const host = process.env.REACT_APP_API_URL;
@@ -123,6 +124,7 @@ function EmailInbox() {
   const handleTarguModalClose = () => {
     setTarguModalShow(false);
   };
+  const [responsibleCategoryList, setResponsibleCategoryList] = useState([]);
 
   // Prepare main options for Select component
   const formatOptions = (data) =>
@@ -277,12 +279,12 @@ function EmailInbox() {
       if (
         selectedTicket &&
         INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1]["subCategories"][
-          selectedTicket?.subCategory1 - 1
+        selectedTicket?.subCategory1 - 1
         ]
       ) {
         const ticketComponent =
           INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1][
-            "subCategories"
+          "subCategories"
           ][selectedTicket?.subCategory1 - 1]["component"];
         console.log(ticketComponent);
         setContentTemplate(ticketComponent);
@@ -458,6 +460,12 @@ function EmailInbox() {
     try {
       setLoading(true);
       const res = await FormService.getAllInquiries();
+      const _responsibleCategoryList = res.userCategory.filter(log => {
+        if (log.permissionValue == "3") {
+          return { inquiryCategory: log.inquiryCategory, subCategory1: log.subCategory1 }
+        }
+      })
+      setResponsibleCategoryList(_responsibleCategoryList);
 
       if (res?.inquiries) {
         let result = res.inquiries.reverse();
@@ -918,6 +926,11 @@ function EmailInbox() {
     setPassToAnotherDepartmentModalShow(true);
   };
 
+  const checkTicketItemVisibility = (_ticket) => {
+    const res = responsibleCategoryList.some(log => log.inquiryCategory == _ticket.inquiryCategory && log.subCategory1 == _ticket.subCategory1);
+    return res;
+  }
+
   return (
     <div className="h-100 border border-gray">
       <div className="mailbox">
@@ -928,9 +941,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               to=""
-              className={`d-flex mailbox-toolbar-link ${
-                activeTab == "All" && !showTicketDetail ? "active" : ""
-              } `}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "All" && !showTicketDetail ? "active" : ""
+                } `}
               onClick={handleShowNewTickets}
             >
               New tickets
@@ -952,15 +964,13 @@ function EmailInbox() {
             </Link>
           </div>
           <div
-            className={`mailbox-toolbar-item ${
-              showTicketDetail ? "" : "d-none"
-            }`}
+            className={`mailbox-toolbar-item ${showTicketDetail ? "" : "d-none"
+              }`}
           >
             <Link
               to=""
-              className={`mailbox-toolbar-link ${
-                showTicketDetail ? "active" : ""
-              } `}
+              className={`mailbox-toolbar-link ${showTicketDetail ? "active" : ""
+                } `}
             >
               Detail
             </Link>
@@ -968,9 +978,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowApprovedTickets}
-              className={`d-flex mailbox-toolbar-link ${
-                activeTab == "Approved" && !showTicketDetail ? "active" : ""
-              } `}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "Approved" && !showTicketDetail ? "active" : ""
+                } `}
             >
               Approved
               {userRole != 2 && (
@@ -993,9 +1002,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowRejectedTickets}
-              className={`d-flex mailbox-toolbar-link ${
-                activeTab == "Rejected" && !showTicketDetail ? "active" : ""
-              } `}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "Rejected" && !showTicketDetail ? "active" : ""
+                } `}
             >
               Rejected
               {userRole != 2 && (
@@ -1017,14 +1025,14 @@ function EmailInbox() {
           </div>
 
           <div className="mailbox-toolbar-item">
-            {userData?.role != 2 && (
+            {/* {userData?.role != 2 && (
               <Link
                 to="/email/compose"
                 className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
               >
                 Internal Message <i className="fa fa-pen fs-12px ms-1"></i>
               </Link>
-            )}
+            )} */}
 
             {userData?.role == 2 && (
               <Link
@@ -1093,139 +1101,168 @@ function EmailInbox() {
               >
                 {ticketData && ticketData.length > 0 ? (
                   ticketData.map((ticket, index) => (
-                    <div
-                      key={index}
-                      className={
-                        userData?.role == 2
-                          ? "mailbox-list-item border-bottom" +
+                    <div className={`${checkTicketItemVisibility(ticket) ? 'd-block' : 'd-none'} `}>
+                      <div
+                        key={index}
+                        className={
+                          userData?.role == 2
+                            ? "mailbox-list-item border-bottom" +
                             (ticket?.documents ? " has-attachment " : "")
-                          : "mailbox-list-item border-bottom border-white" +
+                            : "mailbox-list-item border-bottom border-white" +
                             (ticket?.documents &&
-                            (ticket?.status == 0 ||
-                              ticket?.status == 1 ||
-                              ticket?.status == 4 ||
-                              ticket?.status == 5)
+                              (ticket?.status == 0 ||
+                                ticket?.status == 1 ||
+                                ticket?.status == 4 ||
+                                ticket?.status == 5)
                               ? " has-attachment "
                               : "") +
                             (Math.floor(
                               (new Date() - new Date(ticket?.createdAt)) /
-                                (1000 * 60 * 60)
+                              (1000 * 60 * 60)
                             ) > 45
                               ? "mailbox-list-danger "
                               : Math.floor(
-                                  (new Date() - new Date(ticket?.createdAt)) /
-                                    (1000 * 60 * 60)
-                                ) > 24
-                              ? "mailbox-list-warning"
-                              : "mailbox-list-general")
-                      }
-                    >
-                      <div
-                        className="mailbox-message"
-                        onClick={() => handleSelectTicket(ticket?._id)}
-                        style={{ cursor: "pointer" }}
+                                (new Date() - new Date(ticket?.createdAt)) /
+                                (1000 * 60 * 60)
+                              ) > 24
+                                ? "mailbox-list-warning"
+                                : "mailbox-list-general")
+                        }
                       >
-                        <div className="mailbox-sender">
-                          <span className="mailbox-sender-name">
-                            [
-                            {ticket?.inquiryCategory &&
-                            ticket?.subCategory1 &&
-                            INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                              "subCategories"
-                            ][ticket?.subCategory1 - 1]["subCategory1"]
-                              ? INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                                  "subCategories"
+                        <div
+                          className="mailbox-message"
+                          onClick={() => handleSelectTicket(ticket?._id)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div className="mailbox-sender">
+                            <span className="mailbox-sender-name">
+                              [
+                              {ticket?.inquiryCategory &&
+                                ticket?.subCategory1 &&
+                                INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                                "subCategories"
                                 ][ticket?.subCategory1 - 1]["subCategory1"]
-                              : ""}
-                            ]
-                          </span>
-                          <span className="mailbox-time">
-                            {getTimeDifference(
-                              new Date(ticket?.createdAt),
-                              new Date()
-                            )}
-                          </span>
-                        </div>
-
-                        <div
-                          className={
-                            userData?.role == 2
-                              ? "fw-bold"
-                              : ticket?.status == 0 ||
-                                ticket?.status == 1 ||
-                                ticket?.status == 4 ||
-                                ticket?.status == 5
-                              ? "text-white fw-bold"
-                              : "fw-bold"
-                          }
-                        >
-                          {ticket?.inquiryCategory &&
-                            INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                              "inquiryCategory"
-                            ]}
-                        </div>
-                        <div
-                          className={
-                            userRole != 2 &&
-                            ticket?.status != 0 &&
-                            ticket?.status != 1 &&
-                            ticket?.status != 4 &&
-                            ticket?.status != 5
-                              ? "text-black"
-                              : "mailbox-desc"
-                          }
-                        >
-                          {ticket?.email}
-                        </div>
-                        {userData?.role != 2 ? (
-                          ticket?.status == 0 ||
-                          ticket?.status == 1 ||
-                          ticket?.status == 4 ||
-                          ticket?.status == 5 ? (
-                            <>
-                              <DownTimer
-                                remainTime={getTimeRemain(
-                                  new Date(ticket?.createdAt),
-                                  new Date()
-                                )}
-                              />
-                              {ticket?.isClicked == 1 ? (
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <span>
-                                    Ticket Number: {ticket?.inquiryNumber}
-                                  </span>
-
-                                  <Badge
-                                    style={{
-                                      fontSize: "14px",
-                                      fontWeight: "300"
-                                    }}
-                                    bg="primary"
-                                  >
-                                    Viewed
-                                  </Badge>
-                                </div>
-                              ) : (
-                                <div className="d-flex align-items-center justify-content-between">
-                                  Ticket Number: {ticket?.inquiryNumber}
-                                  <Badge
-                                    style={{
-                                      fontSize: "14px",
-                                      fontWeight: "300"
-                                    }}
-                                    bg="danger"
-                                  >
-                                    No Viewed
-                                  </Badge>
-                                </div>
+                                ? INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                                "subCategories"
+                                ][ticket?.subCategory1 - 1]["subCategory1"]
+                                : ""}
+                              ]
+                            </span>
+                            <span className="mailbox-time">
+                              {getTimeDifference(
+                                new Date(ticket?.createdAt),
+                                new Date()
                               )}
-                            </>
-                          ) : ticket?.isClicked ? (
-                            <div className="d-flex align-items-center justify-content-between">
-                              <span>
-                                {" "}
+                            </span>
+                          </div>
+
+                          <div
+                            className={
+                              userData?.role == 2
+                                ? "fw-bold"
+                                : ticket?.status == 0 ||
+                                  ticket?.status == 1 ||
+                                  ticket?.status == 4 ||
+                                  ticket?.status == 5
+                                  ? "text-white fw-bold"
+                                  : "fw-bold"
+                            }
+                          >
+                            {ticket?.inquiryCategory &&
+                              INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                              "inquiryCategory"
+                              ]}
+                          </div>
+                          <div
+                            className={
+                              userRole != 2 &&
+                                ticket?.status != 0 &&
+                                ticket?.status != 1 &&
+                                ticket?.status != 4 &&
+                                ticket?.status != 5
+                                ? "text-black"
+                                : "mailbox-desc"
+                            }
+                          >
+                            {ticket?.email}
+                          </div>
+                          {userData?.role != 2 ? (
+                            ticket?.status == 0 ||
+                              ticket?.status == 1 ||
+                              ticket?.status == 4 ||
+                              ticket?.status == 5 ? (
+                              <>
+                                <DownTimer
+                                  remainTime={getTimeRemain(
+                                    new Date(ticket?.createdAt),
+                                    new Date()
+                                  )}
+                                />
+                                {ticket?.isClicked == 1 ? (
+                                  <div className="d-flex align-items-center justify-content-between">
+                                    <span>
+                                      Ticket Number: {ticket?.inquiryNumber}
+                                    </span>
+
+                                    <Badge
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "300"
+                                      }}
+                                      bg="primary"
+                                    >
+                                      Viewed
+                                    </Badge>
+                                  </div>
+                                ) : (
+                                  <div className="d-flex align-items-center justify-content-between">
+                                    Ticket Number: {ticket?.inquiryNumber}
+                                    <Badge
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "300"
+                                      }}
+                                      bg="danger"
+                                    >
+                                      No Viewed
+                                    </Badge>
+                                  </div>
+                                )}
+                              </>
+                            ) : ticket?.isClicked ? (
+                              <div className="d-flex align-items-center justify-content-between">
+                                <span>
+                                  {" "}
+                                  Ticket Number: {ticket?.inquiryNumber}
+                                </span>
+
+                                <Badge
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: "300"
+                                  }}
+                                  bg="primary"
+                                >
+                                  Viewed
+                                </Badge>
+                              </div>
+                            ) : (
+                              <div className="d-flex align-items-center justify-content-between">
                                 Ticket Number: {ticket?.inquiryNumber}
-                              </span>
+                                <Badge
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: "300"
+                                  }}
+                                  bg="danger"
+                                >
+                                  No Viewed
+                                </Badge>
+                              </div>
+                            )
+                          ) : ticket.isClicked == 1 ? (
+                            <div className="d-flex align-items-center justify-content-between mt-2">
+                              <span>Ticket Number: {ticket?.inquiryNumber}</span>
 
                               <Badge
                                 style={{
@@ -1238,7 +1275,7 @@ function EmailInbox() {
                               </Badge>
                             </div>
                           ) : (
-                            <div className="d-flex align-items-center justify-content-between">
+                            <div className="d-flex align-items-center justify-content-between mt-2">
                               Ticket Number: {ticket?.inquiryNumber}
                               <Badge
                                 style={{
@@ -1250,35 +1287,8 @@ function EmailInbox() {
                                 No Viewed
                               </Badge>
                             </div>
-                          )
-                        ) : ticket.isClicked == 1 ? (
-                          <div className="d-flex align-items-center justify-content-between mt-2">
-                            <span>Ticket Number: {ticket?.inquiryNumber}</span>
-
-                            <Badge
-                              style={{
-                                fontSize: "14px",
-                                fontWeight: "300"
-                              }}
-                              bg="primary"
-                            >
-                              Viewed
-                            </Badge>
-                          </div>
-                        ) : (
-                          <div className="d-flex align-items-center justify-content-between mt-2">
-                            Ticket Number: {ticket?.inquiryNumber}
-                            <Badge
-                              style={{
-                                fontSize: "14px",
-                                fontWeight: "300"
-                              }}
-                              bg="danger"
-                            >
-                              No Viewed
-                            </Badge>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))
@@ -1295,9 +1305,8 @@ function EmailInbox() {
           </div>
 
           <div
-            className={`mailbox-content d-lg-block ${
-              showTicketDetail ? "" : "d-none"
-            }`}
+            className={`mailbox-content d-lg-block ${showTicketDetail ? "" : "d-none"
+              }`}
           >
             {loading ? (
               <div
@@ -1375,9 +1384,9 @@ function EmailInbox() {
                           {selectedTicket?.inquiryCategory &&
                             selectedTicket?.subCategory1 &&
                             INQUIRYCATEGORIES[
-                              selectedTicket?.inquiryCategory - 1
+                            selectedTicket?.inquiryCategory - 1
                             ]["subCategories"][
-                              selectedTicket?.subCategory1 - 1
+                            selectedTicket?.subCategory1 - 1
                             ]["subCategory1"]}{" "}
                           Request from{" "}
                           {selectedTicket?.firstName +
@@ -1752,55 +1761,55 @@ function EmailInbox() {
                                         </div>
                                         {contentTemplate !=
                                           "OnlineCatalogue" && (
-                                          <div
-                                            className="btn-group w-100"
-                                            role="group"
-                                            aria-label="Basic example"
-                                            style={{ maxWidth: "115px" }}
-                                          >
-                                            <button
-                                              type="button"
-                                              style={{
-                                                backgroundColor: "#e00000",
-                                                borderTopLeftRadius: "50px",
-                                                borderBottomLeftRadius: "50px",
-                                                borderRight: "1px solid orange"
-                                              }}
-                                              className="btn btn-danger btn-left"
-                                              onClick={() =>
-                                                handleInquiryReject(
-                                                  selectedTicket?._id
-                                                )
-                                              }
+                                            <div
+                                              className="btn-group w-100"
+                                              role="group"
+                                              aria-label="Basic example"
+                                              style={{ maxWidth: "115px" }}
                                             >
-                                              Reject
-                                            </button>
-                                            <Dropdown type="button">
-                                              <Dropdown.Toggle
-                                                variant="danger"
-                                                id="dropdown-basic"
-                                                className="btn btn-danger dropdown-toggle"
+                                              <button
+                                                type="button"
                                                 style={{
-                                                  borderTopRightRadius: "50px",
-                                                  borderBottomRightRadius:
-                                                    "50px"
+                                                  backgroundColor: "#e00000",
+                                                  borderTopLeftRadius: "50px",
+                                                  borderBottomLeftRadius: "50px",
+                                                  borderRight: "1px solid orange"
                                                 }}
-                                              ></Dropdown.Toggle>
+                                                className="btn btn-danger btn-left"
+                                                onClick={() =>
+                                                  handleInquiryReject(
+                                                    selectedTicket?._id
+                                                  )
+                                                }
+                                              >
+                                                Reject
+                                              </button>
+                                              <Dropdown type="button">
+                                                <Dropdown.Toggle
+                                                  variant="danger"
+                                                  id="dropdown-basic"
+                                                  className="btn btn-danger dropdown-toggle"
+                                                  style={{
+                                                    borderTopRightRadius: "50px",
+                                                    borderBottomRightRadius:
+                                                      "50px"
+                                                  }}
+                                                ></Dropdown.Toggle>
 
-                                              <Dropdown.Menu>
-                                                <Dropdown.Item
-                                                  href="#/action-1"
-                                                  disabled
-                                                >
-                                                  Reject with Internal Note
-                                                </Dropdown.Item>
-                                                <Dropdown.Item href="#/action-2">
-                                                  Reject with Email
-                                                </Dropdown.Item>
-                                              </Dropdown.Menu>
-                                            </Dropdown>
-                                          </div>
-                                        )}
+                                                <Dropdown.Menu>
+                                                  <Dropdown.Item
+                                                    href="#/action-1"
+                                                    disabled
+                                                  >
+                                                    Reject with Internal Note
+                                                  </Dropdown.Item>
+                                                  <Dropdown.Item href="#/action-2">
+                                                    Reject with Email
+                                                  </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                              </Dropdown>
+                                            </div>
+                                          )}
                                       </>
                                     ) : (
                                       <div
