@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { Link, Navigate } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
@@ -11,8 +11,18 @@ import BannerSection from "../landing/banner/index.js";
 import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
+import {
+  GoogleReCaptchaProvider,
+  useGoogleReCaptcha
+} from 'react-google-recaptcha-v3';
 
-const PagesRegister = () => {
+const PagesRegister = () => (
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
+    <ReCaptchaComponent />
+  </GoogleReCaptchaProvider>
+)
+
+const ReCaptchaComponent = () => {
   const context = useContext(AppSettings);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -26,6 +36,25 @@ const PagesRegister = () => {
     firstYearOfStudy: "2024",
     avatar: null
   });
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [recaptChatoken, setReCaptChaToken] = useState < string > ('');
+
+  const handleReCaptchaVerify = useCallback(async () => {
+    if (!executeRecaptcha) {
+      console.log('Execute recaptcha not yet available');
+      return;
+    }
+
+    const _recaptChatoken = await executeRecaptcha('submit_form');
+    setReCaptChaToken(_recaptChatoken);
+    // Do whatever you want with the recaptChatoken
+  }, [executeRecaptcha]);
+
+  useEffect(() => {
+    if (executeRecaptcha) {
+      handleReCaptchaVerify();
+    }
+  }, [executeRecaptcha]);
 
   const [loading, setLoading] = useState(false);
 
@@ -131,7 +160,7 @@ const PagesRegister = () => {
         formDataToSend.append(key, formData[key]);
       }
       setLoading(true);
-      const response = await AuthService.register(formDataToSend);
+      const response = await AuthService.register({ ...formDataToSend, recaptChatoken: recaptChatoken });
       successNotify(response.message);
       setLoading(false);
       handleLoginNavigation();

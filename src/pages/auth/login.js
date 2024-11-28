@@ -11,12 +11,41 @@ import BannerSection from "../landing/banner/index.js";
 import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
+import {
+  GoogleReCaptchaProvider,
+  useGoogleReCaptcha
+} from 'react-google-recaptcha-v3';
 
-function PagesLogin() {
+const PagesLogin = () => (
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
+    <ReCaptchaComponent />
+  </GoogleReCaptchaProvider>
+)
+
+function ReCaptchaComponent() {
   const navigate = useNavigate();
   const context = useContext(AppSettings);
   const { setIsAuthenticated } = useAuth();
   const [redirect, setRedirect] = useState(false);
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [recaptChatoken, setReCaptChaToken] = useState < string > ('');
+
+  const handleReCaptchaVerify = useCallback(async () => {
+    if (!executeRecaptcha) {
+      console.log('Execute recaptcha not yet available');
+      return;
+    }
+
+    const _recaptChatoken = await executeRecaptcha('submit_form');
+    setReCaptChaToken(_recaptChatoken);
+    // Do whatever you want with the recaptChatoken
+  }, [executeRecaptcha]);
+
+  useEffect(() => {
+    if (executeRecaptcha) {
+      handleReCaptchaVerify();
+    }
+  }, [executeRecaptcha]);
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -65,7 +94,7 @@ function PagesLogin() {
 
     try {
       setLoading(true);
-      const response = await AuthService.login(formData);
+      const response = await AuthService.login({ ...formData, recaptChatoken: recaptChatoken });
       setLoading(false);
       if (response?.success) {
         successNotify("Login is successfully.");

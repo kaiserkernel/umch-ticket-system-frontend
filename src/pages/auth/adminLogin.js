@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
@@ -12,12 +12,41 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { setDefaultLocale } from "react-datepicker";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
+import {
+  GoogleReCaptchaProvider,
+  useGoogleReCaptcha
+} from 'react-google-recaptcha-v3';
 
-function AdminLogin() {
+const AdminLogin = () => (
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
+    <ReCaptchaComponent />
+  </GoogleReCaptchaProvider>
+)
+
+function ReCaptchaComponent() {
   const navigate = useNavigate();
   const context = useContext(AppSettings);
   const { setIsAuthenticated } = useAuth();
   const [redirect, setRedirect] = useState(false);
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [recaptChatoken, setReCaptChaToken] = useState < string > ('');
+
+  const handleReCaptchaVerify = useCallback(async () => {
+    if (!executeRecaptcha) {
+      console.log('Execute recaptcha not yet available');
+      return;
+    }
+
+    const _recaptChatoken = await executeRecaptcha('submit_form');
+    setReCaptChaToken(_recaptChatoken);
+    // Do whatever you want with the recaptChatoken
+  }, [executeRecaptcha]);
+
+  useEffect(() => {
+    if (executeRecaptcha) {
+      handleReCaptchaVerify();
+    }
+  }, [executeRecaptcha]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -61,6 +90,7 @@ function AdminLogin() {
 
     setFormData({
       ...formData,
+      recaptChatoken: recaptChatoken,
       rememberMe: rememberMe
     });
 
