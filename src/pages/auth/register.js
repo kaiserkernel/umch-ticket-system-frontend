@@ -37,7 +37,7 @@ const ReCaptchaComponent = () => {
     avatar: null
   });
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptChatoken, setReCaptChaToken] = useState < string > ('');
+  const [recaptChatoken, setReCaptChaToken] = useState('');
 
   const handleReCaptchaVerify = useCallback(async () => {
     if (!executeRecaptcha) {

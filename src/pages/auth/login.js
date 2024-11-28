@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
@@ -28,7 +28,7 @@ function ReCaptchaComponent() {
   const { setIsAuthenticated } = useAuth();
   const [redirect, setRedirect] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptChatoken, setReCaptChaToken] = useState < string > ('');
+  const [recaptChatoken, setReCaptChaToken] = useState('');
 
   const handleReCaptchaVerify = useCallback(async () => {
     if (!executeRecaptcha) {

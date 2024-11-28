@@ -29,7 +29,7 @@ function ReCaptchaComponent() {
   const { setIsAuthenticated } = useAuth();
   const [redirect, setRedirect] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptChatoken, setReCaptChaToken] = useState < string > ('');
+  const [recaptChatoken, setReCaptChaToken] = useState('');
 
   const handleReCaptchaVerify = useCallback(async () => {
     if (!executeRecaptcha) {
