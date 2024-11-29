@@ -1481,10 +1481,8 @@ function EmailInbox() {
                       )}
 
                       <div className="mailbox-detail-body mt-5 border-bottom border-gray ">
-                        <p className="text-black">Hi Dear Admin,</p>
                         {renderContentTemplate()}
                         <div className="mt-5">
-                          <p className="text-black">Regards,</p>
                           <div className="d-flex">
                             <p className="text-black">Name:</p>
                             <p className="text-black">

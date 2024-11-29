@@ -51,8 +51,7 @@ function ReCaptchaComponent() {
   const [formData, setFormData] = useState({
     enrollmentNumber: "",
     password: "",
-    role: "2",
-    rememberMe: false
+    role: "2"
   });
 
   const [rememberMe, setRememberMe] = useState(false);
@@ -87,26 +86,28 @@ function ReCaptchaComponent() {
       return;
     }
 
-    setFormData({
-      ...formData,
-      rememberMe: rememberMe
-    });
-
     try {
       setLoading(true);
       const response = await AuthService.login({ ...formData, recaptChatoken: recaptChatoken });
       setLoading(false);
       if (response?.success) {
+
+        if (rememberMe) {
+          localStorage.setItem('enrollmentNumber', formData.enrollmentNumber);
+          localStorage.setItem('enrollmentPassword', formData.password);
+          localStorage.setItem('enrollmentRememberMe', rememberMe)
+        } else {
+          localStorage.removeItem('enrollmentNumber');
+          localStorage.removeItem('enrollmentPassword');
+          localStorage.removeItem('enrollmentRememberMe');
+        }
+
         successNotify("Login is successfully.");
 
         const bearToken = response?.token;
         const token = bearToken.slice(7);
 
-        if (rememberMe) {
-          localStorage.setItem("token", token);
-        } else {
-          localStorage.setItem("token", token);
-        }
+        localStorage.setItem("token", token);
 
         localStorage.setItem("isAuthenticated", true);
 
@@ -156,6 +157,24 @@ function ReCaptchaComponent() {
     context.setAppHeaderNone(true);
     context.setAppSidebarNone(true);
     context.setAppContentClass("p-0");
+
+    // check localstorage and set password and enrollment number
+    const _enrollmentNumber = localStorage.getItem('enrollmentNumber');
+    const _enrollmentPassword = localStorage.getItem('enrollmentPassword');
+    const _enrollmentRememberMe = localStorage.getItem('enrollmentRememberMe');
+
+    const lsFormData = {};
+    if (_enrollmentNumber) {
+      lsFormData.enrollmentNumber = _enrollmentNumber
+    }
+    if (_enrollmentPassword) {
+      lsFormData.password = _enrollmentPassword
+    }
+    if (_enrollmentRememberMe == 'true') {
+      console.log(_enrollmentRememberMe, 'kkk')
+      setRememberMe(true)
+    }
+    setFormData(prev => ({ ...prev, ...lsFormData }));
 
     return function cleanUp() {
       context.setAppHeaderNone(false);
@@ -232,6 +251,12 @@ function ReCaptchaComponent() {
                 </label>
               </div>
             </div> */}
+              <Form className="mb-3">
+                <Form.Check type="switch" label="Remember me"
+                  onChange={(evt) => setRememberMe(!rememberMe)}
+                  checked={rememberMe}
+                />
+              </Form>
               <button
                 type="submit"
                 className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
