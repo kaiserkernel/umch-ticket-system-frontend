@@ -335,6 +335,18 @@ function Profile() {
                 </Form.Group>
               </Col>
             </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>Email *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={userData.email}
+                    disabled
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
             {userData?.role == 2 && (
               <Row>
                 <Col md={6}>
