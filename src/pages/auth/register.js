@@ -69,6 +69,24 @@ const ReCaptchaComponent = () => {
 
   const [imagePreview, setImagePreview] = useState(null);
 
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+
+    if (droppedFile) {
+      // Create a mock event to reuse the handleFileChange logic
+      const mockEvent = {
+        target: {
+          files: [droppedFile],
+        },
+      };
+      handleFileChange(mockEvent);
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
@@ -383,7 +401,10 @@ const ReCaptchaComponent = () => {
                       style={{ display: "none" }}
                       onChange={handleFileChange}
                     />
-                    <label htmlFor="avatar" style={{ width: "60%" }}>
+                    <label htmlFor="avatar" style={{ width: "60%" }}
+                      onDrop={handleDrop}
+                      onDragOver={handleDragOver}
+                    >
                       <div
                         style={{
                           width: "100%",

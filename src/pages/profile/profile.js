@@ -66,6 +66,25 @@ function Profile() {
     <Tooltip id="tooltip">Click and Update your image</Tooltip>
   );
 
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+
+    if (droppedFile) {
+      // Create a mock event to reuse the handleFileChange logic
+      const mockEvent = {
+        target: {
+          files: [droppedFile],
+        },
+      };
+      onImageChange(mockEvent);
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
   // Handle image selection
   const onImageChange = (event) => {
     const file = event.target.files[0];
@@ -252,6 +271,8 @@ function Profile() {
                 <div
                   className="cursor-pointer mx-auto"
                   onClick={() => document.getElementById("imageUpload").click()}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
                 >
                   {imagePreview ? (
                     <img

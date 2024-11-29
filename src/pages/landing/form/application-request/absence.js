@@ -52,6 +52,25 @@ const Absence = ({ applicationRequest }) => {
     };
   }, []);
 
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+
+    if (droppedFile) {
+      // Create a mock event to reuse the handleFileChange logic
+      const mockEvent = {
+        target: {
+          files: [droppedFile],
+        },
+      };
+      handleFileChange(mockEvent);
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
   const handleFileChange = (event) => {
     const newFile = event.target.files[0];
 
@@ -330,6 +349,8 @@ const Absence = ({ applicationRequest }) => {
             <label
               htmlFor="file"
               className="btn btn-primary upload-btn"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
             ></label>
 
             <div className="d-flex flex-column mt-3">

@@ -38,6 +38,25 @@ const RecognitionInternship = ({ applicationRequest }) => {
     };
   }, []);
 
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+
+    if (droppedFile) {
+      // Create a mock event to reuse the handleFileChange logic
+      const mockEvent = {
+        target: {
+          files: [droppedFile],
+        },
+      };
+      handleFileChange(mockEvent);
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
   const handleFileChange = (event) => {
     const newFile = event.target.files[0];
 
@@ -255,7 +274,7 @@ const RecognitionInternship = ({ applicationRequest }) => {
             onClick={() =>
               handleDownload(
                 process.env.REACT_APP_API_URL +
-                  "/download/Bescheinigung_Praktikum(2).pdf",
+                "/download/Bescheinigung_Praktikum(2).pdf",
                 "Bescheinigung_Praktikum(2).pdf"
               )
             }
@@ -270,7 +289,7 @@ const RecognitionInternship = ({ applicationRequest }) => {
             onClick={() =>
               handleDownload(
                 process.env.REACT_APP_API_URL +
-                  "/download/Syllabus_Speciality Practice_1st year_MEH2022.pdf",
+                "/download/Syllabus_Speciality Practice_1st year_MEH2022.pdf",
                 "Syllabus_Speciality Practice_1st year_MEH2022.pdf"
               )
             }
@@ -324,7 +343,11 @@ const RecognitionInternship = ({ applicationRequest }) => {
             style={{ visibility: "hidden" }}
             onChange={handleFileChange}
           />
-          <label htmlFor="file" className="btn btn-primary upload-btn"></label>
+          <label
+            htmlFor="file" className="btn btn-primary upload-btn"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+          ></label>
           {errors.file && <p className="error-content">{errors.file}</p>}
           <div className="d-flex flex-column mt-3">
             {files.map((fileObj, index) => (
