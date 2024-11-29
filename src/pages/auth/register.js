@@ -167,14 +167,14 @@ const ReCaptchaComponent = () => {
       handleLoginNavigation();
     } catch (err) {
       setLoading(false);
-      const errors = err?.errors;
+      const _errors = err?.errors;
 
-      if (typeof errors != "object") {
-        errorNotify(errors);
+      if (typeof _errors != "object") {
+        errorNotify(_errors);
         setLoading(false);
       } else {
-        console.log(typeof errors);
-        errors.map((error) => {
+        console.log(typeof _errors);
+        _errors.map((error) => {
           errorNotify(error.msg);
         });
       }
