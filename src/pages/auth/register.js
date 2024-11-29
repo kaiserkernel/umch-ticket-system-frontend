@@ -123,13 +123,13 @@ const ReCaptchaComponent = () => {
     // }
     if (!error.password && !formData.confirmPass) {
       error.confirmPass = 'error'
-      console.log('error')
     } else if (!error.password && (formData.password !== formData.confirmPass)) {
       error.confirmPass = 'warn'
-      console.log('warn')
     } else {
-      error.confirmPass = ''
+      delete error.confirmPass
     }
+
+    delete error.avatar
 
     if (Object.keys(error).length > 0) {
       setErrors(prev => ({ ...prev, ...error }));
@@ -151,6 +151,7 @@ const ReCaptchaComponent = () => {
 
     // sign up validation
     const validation = validateForm();
+    console.log(validation, 'res')
     if (!validation)
       return;
 
