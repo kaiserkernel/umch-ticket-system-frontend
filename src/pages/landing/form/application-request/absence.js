@@ -180,16 +180,16 @@ const Absence = ({ applicationRequest }) => {
 
               setformDetailData({
                 ...formDetailData,
-                reasonForAbsence: "",
-                timeFromAbsence: "",
-                timeToAbsence: "",
-                comment: ""
+                // reasonForAbsence: "",
+                // timeFromAbsence: "",
+                // timeToAbsence: "",
+                // comment: ""
               });
               setFiles([]);
               setOriginalFiles([]);
               setFormData({
                 ...formData,
-                agreement: false
+                agreement: true
               });
               setLoading(false);
             }
