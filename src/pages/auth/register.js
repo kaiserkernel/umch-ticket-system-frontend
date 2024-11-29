@@ -161,7 +161,10 @@ const ReCaptchaComponent = () => {
         formDataToSend.append(key, formData[key]);
       }
       setLoading(true);
-      const response = await AuthService.register({ ...formDataToSend, recaptChatoken: recaptChatoken });
+
+      formDataToSend.append("recaptChatoken", recaptChatoken);
+
+      const response = await AuthService.register(formDataToSend);
       successNotify(response.message);
       setLoading(false);
       handleLoginNavigation();
