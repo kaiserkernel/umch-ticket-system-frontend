@@ -31,14 +31,18 @@ function ReCaptchaComponent() {
   const [recaptChatoken, setReCaptChaToken] = useState('');
 
   const handleReCaptchaVerify = useCallback(async () => {
-    if (!executeRecaptcha) {
-      console.log('Execute recaptcha not yet available');
-      return;
-    }
+    try {
+      if (!executeRecaptcha) {
+        console.log('Execute recaptcha not yet available');
+        return;
+      }
 
-    const _recaptChatoken = await executeRecaptcha('submit_form');
-    setReCaptChaToken(_recaptChatoken);
-    // Do whatever you want with the recaptChatoken
+      const _recaptChatoken = await executeRecaptcha('submit_form');
+      setReCaptChaToken(_recaptChatoken);
+      // Do whatever you want with the recaptChatoken
+    } catch (error) {
+      console.log(error, 'recaptcha verify error')
+    }
   }, [executeRecaptcha]);
 
   useEffect(() => {

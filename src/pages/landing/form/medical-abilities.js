@@ -196,6 +196,10 @@ const MedicalAbilities = () => {
       newErrors.hospital = "This field is required";
     }
 
+    if (files.length == 0) {
+      newErrors.files = "This field is required"
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
