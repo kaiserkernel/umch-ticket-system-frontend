@@ -27,28 +27,10 @@ function ReCaptchaComponent() {
   const context = useContext(AppSettings);
   const { setIsAuthenticated } = useAuth();
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptChatoken, setReCaptChaToken] = useState('');
-
-  const handleReCaptchaVerify = useCallback(async () => {
-    try {
-      if (!executeRecaptcha) {
-        console.log('Execute recaptcha not yet available');
-        return;
-      }
-
-      const _recaptChatoken = await executeRecaptcha('submit_form');
-      setReCaptChaToken(_recaptChatoken);
-      // Do whatever you want with the recaptChatoken
-    } catch (error) {
-      console.log(error, 'recaptcha verify error')
-    }
-  }, [executeRecaptcha]);
-
-  useEffect(() => {
-    if (executeRecaptcha) {
-      handleReCaptchaVerify();
-    }
-  }, [executeRecaptcha]);
+  const [error, setError] = useState({
+    enrollmentNumber: true,
+    password: true
+  })
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,33 +41,42 @@ function ReCaptchaComponent() {
 
   const [rememberMe, setRememberMe] = useState(false);
 
-  const [error, setError] = useState("");
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
     });
+    setError(prev => ({
+      ...prev,
+      [name]: ture
+    }))
   };
 
   // Validate form data
   const validateForm = () => {
     const { enrollmentNumber, password } = formData;
-    if (!enrollmentNumber || !password) {
-      return "All fields are required";
+    if (enrollmentNumber && password) {
+      return true;
+    } else {
+      const _error = {}
+      if (!enrollmentNumber) {
+        _error.enrollmentNumber = false
+      }
+      if (!password) {
+        _error.password = false;
+      }
+      setError(_error);
+      return false;
     }
-
-    return "";
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
+    const validationResult = validateForm();
+    if (!validationResult) {
       return;
     }
 
@@ -93,13 +84,13 @@ function ReCaptchaComponent() {
       setLoading(true);
 
       if (!executeRecaptcha) {
-        setError('reCAPTCHA is not ready. Please try again')
+        errorNotify('reCAPTCHA is not ready. Please try again');
         setLoading(false)
         return;
       }
 
       // Fecth the reCAPTCHA token dynamically at submission time
-      const recaptChatoken = await executeRecaptcha('submit_form')
+      const recaptChatoken = await executeRecaptcha('user_login_action')
 
       const response = await AuthService.login({ ...formData, recaptChatoken });
 
@@ -133,7 +124,10 @@ function ReCaptchaComponent() {
 
         setIsAuthenticated(true);
       }
-      setError("");
+      setError({
+        enrollmentNumber: true,
+        password: true
+      });
     } catch (err) {
       setLoading(false);
       const errors = err?.errors ? err?.errors : err?.message;
@@ -235,6 +229,7 @@ function ReCaptchaComponent() {
                   className="custom-input"
                 />
               </Form.Group>
+              {!error.enrollmentNumber ? "Required Field" : ""}
               <div className="mb-3 mt-4">
                 <Form.Group controlId="password">
                   <Form.Label className="input-label">
@@ -256,6 +251,7 @@ function ReCaptchaComponent() {
                   checked={rememberMe}
                 />
               </Form.Group>
+              {!error.password ? "Required Field" : ""}
               <button
                 type="submit"
                 className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"

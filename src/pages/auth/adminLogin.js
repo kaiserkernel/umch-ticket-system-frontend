@@ -55,7 +55,10 @@ function ReCaptchaComponent() {
 
   const [rememberMe, setRememberMe] = useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState({
+    email: true,
+    password: true
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,25 +66,36 @@ function ReCaptchaComponent() {
       ...formData,
       [name]: value
     });
+    setError(prev => ({
+      ...prev,
+      [name]: true
+    }))
   };
 
   // Validate form data
   const validateForm = () => {
     const { email, password } = formData;
-    if (!email || !password) {
-      return "All fields are required";
+    if (email && password) {
+      return true;
+    } else {
+      const _error = {};
+      if (!email) {
+        _error.email = false
+      }
+      if (!password) {
+        _error.password = false;
+      }
+      setError(_error);
+      return false;
     }
-
-    return "";
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
+    const validationResult = validateForm();
+    if (!validationResult) {
       return;
     }
 
@@ -123,7 +137,10 @@ function ReCaptchaComponent() {
 
         setIsAuthenticated(true);
       }
-      setError("");
+      setError({
+        email: true,
+        password: true
+      });
     } catch (err) {
       setLoading(false);
       const errors = err?.errors ? err?.errors : err?.message;
@@ -217,6 +234,7 @@ function ReCaptchaComponent() {
                     className="custom-input"
                   />
                 </Form.Group>
+                {!error.email ? "Required field" : ""}
               </div>
               <div className="mb-3">
                 <Form.Group controlId="password">
@@ -232,13 +250,14 @@ function ReCaptchaComponent() {
                     className="custom-input"
                   />
                 </Form.Group>
+                {!error.password ? "Required field" : ""}
               </div>
-              <Form className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Check type="switch" label="Remember me"
                   onChange={(evt) => setRememberMe(!rememberMe)}
                   checked={rememberMe}
                 />
-              </Form>
+              </Form.Group>
 
               <button
                 type="submit"
