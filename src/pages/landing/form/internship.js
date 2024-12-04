@@ -295,7 +295,7 @@ const Internship = () => {
               onChange={(date) =>
                 setformDetailData({ ...formDetailData, timeFrom: date })
               }
-              dateFormat="yyyy/MM/dd"
+              dateFormat="dd/MM/yyyy"
               isClearable
               className="custom-input"
             />
@@ -315,7 +315,7 @@ const Internship = () => {
               onChange={(date) =>
                 setformDetailData({ ...formDetailData, timeTo: date })
               }
-              dateFormat="yyyy/MM/dd"
+              dateFormat="dd/MM/yyyy"
               isClearable
               className="custom-input"
             />
