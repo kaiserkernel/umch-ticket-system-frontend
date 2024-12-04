@@ -131,6 +131,7 @@ function ReCaptchaComponent() {
     } catch (err) {
       setLoading(false);
       const errors = err?.errors ? err?.errors : err?.message;
+      console.log(errors, 'errors')
 
       if (typeof errors != "object") {
         errorNotify(errors);
