@@ -185,7 +185,6 @@ function ReCaptchaComponent() {
       lsFormData.password = _enrollmentPassword
     }
     if (_enrollmentRememberMe == 'true') {
-      console.log(_enrollmentRememberMe, 'kkk')
       setRememberMe(true)
     }
     setFormData(prev => ({ ...prev, ...lsFormData }));
