@@ -2224,6 +2224,7 @@ function EmailInbox() {
         <Modal.Header>Are you sure to export this data?</Modal.Header>
         <Modal.Body>
           <Form.Group>
+            <Form.Label>File Name</Form.Label>
             <Form.Control
               value={excelFileName}
               onChange={(evt) => setExcelFileName(evt.target.value)}
