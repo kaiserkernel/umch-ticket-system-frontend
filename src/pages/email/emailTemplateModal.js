@@ -39,20 +39,20 @@ const EmailTemplateModal = ({
   if (actionBtnType == "accept" && subCategory1) {
     data =
       INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
+      subCategory1 - 1
       ]["accept"];
   }
   if (actionBtnType == "reject" && subCategory1) {
     data =
       INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
+      subCategory1 - 1
       ]["reject"];
   }
 
   if (actionBtnType == "notify" && subCategory1) {
     data =
       INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
+      subCategory1 - 1
       ]["notify"];
   }
 
@@ -75,7 +75,7 @@ const EmailTemplateModal = ({
 
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
-    console.log(authUser);
+    console.log(authUser, 'authuser');
     let replacedEmailTemplate = data
       .replace(
         "[Student's Name]",
@@ -85,7 +85,7 @@ const EmailTemplateModal = ({
 
       .replace(
         "[Institution/Organization Name]",
-        authUser.position
+        Number.isInteger(authUser.position)
           ? POSITIONNAMES[authUser.position]
           : "UMCH University Team"
       )
@@ -232,14 +232,14 @@ const EmailTemplateModal = ({
         try {
           res = await FormService.notifyTranscriptRecord(payload);
           setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-        } catch (err) {}
+        } catch (err) { }
       }
       setTicketStatusChange(false);
       setSelectedTicket(res?.inquiry);
 
       successNotify(res?.message);
       setLoading(false);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleChangeTemplate = (e) => {
