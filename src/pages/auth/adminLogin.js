@@ -67,7 +67,7 @@ function ReCaptchaComponent() {
       if (!password) {
         _error.password = false;
       }
-      setError(_error);
+      setError(prev => ({ ...prev, ..._error }));
       return false;
     }
   };
@@ -181,7 +181,6 @@ function ReCaptchaComponent() {
       lsFormData.password = _emailPassword
     }
     if (_emailRememberMe == 'true') {
-      console.log(_emailRememberMe, 'kkk')
       setRememberMe(true)
     }
     setFormData(prev => ({ ...prev, ...lsFormData }));

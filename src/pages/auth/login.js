@@ -66,7 +66,7 @@ function ReCaptchaComponent() {
       if (!password) {
         _error.password = false;
       }
-      setError(_error);
+      setError(prev => ({ ...prev, ..._error }));
       return false;
     }
   };
