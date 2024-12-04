@@ -977,20 +977,33 @@ function EmailInbox() {
   }
 
   const exportData = () => {
-    const _ticketData = ticketData.map((log, idx) => ({
-      No: idx + 1,
-      name: log.firstName + " " + log.lastName,
-      email: log.email,
-      enrollmentNumber: log?.enrollmentNumber,
-      firstYearOfStudy: log?.firstYearOfStudy,
-      category: CATEGORYVALUELABEL[`${log.inquiryCategory}-${log.subCategory1}`],
-      detail: log.detail ? log.detail : "",
-      documents: log.documents,
-      agreement: log.agreement,
-      viewed: log.status ? 'viewed' : "no viewed",
-      createdAt: log.createdAt,
-      inquiryNumber: log.inquiryNumber
-    }))
+    const _ticketData = ticketData.map((log, idx) => {
+      const _res = {
+        No: idx + 1,
+        name: log.firstName + " " + log.lastName,
+        email: log.email,
+        enrollmentNumber: log?.enrollmentNumber,
+        firstYearOfStudy: log?.firstYearOfStudy,
+        category: CATEGORYVALUELABEL[`${log.inquiryCategory}-${log.subCategory1}`],
+        detail: log.detail ? log.detail : "",
+        documents: log.documents,
+        agreement: log.agreement,
+        viewed: log.status ? 'viewed' : "no viewed",
+        createdAt: log.createdAt,
+        inquiryNumber: log.inquiryNumber
+      }
+
+      if (log.details.subject && log.details.examSpecification) {
+        _res.subject = log.details.subject;
+        _res.examSpecification = log.details.examSpecification;
+        _res.examDate = log.details.examDate;
+      }
+      if (log.details.comment) {
+        _res.detailComment = log.details.comment
+      }
+
+      return _res
+    })
     // Create a worksheet from the data
     const worksheet = XLSX.utils.json_to_sheet(_ticketData);
 
@@ -2221,7 +2234,7 @@ function EmailInbox() {
         selectedTicket={selectedTicket}
       />
       <Modal show={showExcelExportModal} onHide={() => setShowExcelExportModal(false)} centered>
-        <Modal.Header>Are you sure to export this data?</Modal.Header>
+        <Modal.Header className="h4">Are you sure to export this data?</Modal.Header>
         <Modal.Body>
           <Form.Group>
             <Form.Label>File Name</Form.Label>
@@ -2231,14 +2244,14 @@ function EmailInbox() {
             />
           </Form.Group>
           {excelFileName == '' ? <small className="text-danger mt-3">Required field *</small> : ""}
-          <div className="my-3 float-end">
+          <Modal.Footer>
             <button onClick={exportData} className="me-3 btn btn-secondary" disabled={excelFileName == '' ? true : false}>
               Confirm
             </button>
             <button onClick={() => setShowExcelExportModal(false)} className="btn btn-secondary">
               Cancel
             </button>
-          </div>
+          </Modal.Footer>
         </Modal.Body>
       </Modal>
     </div>
