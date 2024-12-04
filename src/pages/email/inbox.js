@@ -1096,9 +1096,11 @@ function EmailInbox() {
               )}
             </Link>
           </div>
-          <div className="mailbox-toolbar-item">
-            <button className="mailbox-toolbar-link" onClick={openExportExcelConfirmModal}>Export</button>
-          </div>
+          {userData?.role !== 2 && (
+            <div className="mailbox-toolbar-item">
+              <button className="mailbox-toolbar-link btn-info btn text-white" onClick={openExportExcelConfirmModal}>Export</button>
+            </div>
+          )}
 
           <div className="mailbox-toolbar-item">
             {/* {userData?.role != 2 && (
