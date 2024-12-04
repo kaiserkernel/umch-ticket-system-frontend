@@ -383,6 +383,38 @@ const INQUIRYCATEGORIES = [
   }
 ];
 
+const CATEGORYVALUELABEL = {
+  "1-1": "Applications and Requests(Absence)",
+  "1-2": "Applications and Requests(Change of teaching hospital)",
+  "1-3": "Applications and Requests(Change of study group)",
+  "1-4": "Applications and Requests(Demonstrator student)",
+  "1-5": "Applications and Requests(Enrollment)",
+  "1-6": "Applications and Requests(Exam inspection)",
+  "1-7": "Applications and Requests(Online Catalogue)",
+  "1-8": "Applications and Requests(Recognition of Courses)",
+  "1-9": "Applications and Requests(Recognition of Internship)",
+  "1-10": "Applications and Requests(Short term borrow of Diploma)",
+  "1-11": "Applications and Requests(Syllabus of the academic year)",
+  "1-12": "Applications and Requests(Transcript of Records)",
+  "1-13": "Applications and Requests(Transfer to Targu Mures)",
+  "1-14": "Applications and Requests(Other)",
+  "2-1": "Book rental UMCH library",
+  "3-1": "Campus IT(Canvas)",
+  "3-2": "Campus IT(Streaming / Panopto)",
+  "4-1": "Complaints(Campus)",
+  "4-2": "Complaints(Dean’s Office)",
+  "4-3": "Complaints(German Teaching Department)",
+  "4-4": "Complaints(Teaching Hospital)",
+  "4-5": "Complaints(Teacher)",
+  "4-6": "Complaints(Online Catalouge)",
+  "4-7": "Complaints(Exam)",
+  "4-8": "Complaints(Other)",
+  "5-1": "Internship",
+  "6-1": "Medical Abilities",
+  "7-1": "Thesis",
+  "8-1": "Other"
+}
+
 const CATEGORYDATA = [
   {
     label: "Select All Category",
@@ -557,5 +589,6 @@ export {
   INQUIRYCATEGORIESEmailTemplates,
   INQUIRYCATEGORIES,
   POSITIONNAMES,
-  CATEGORYDATA
+  CATEGORYDATA,
+  CATEGORYVALUELABEL
 };

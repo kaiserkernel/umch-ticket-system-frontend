@@ -58,7 +58,8 @@ import PassToAnotherDepartmentModal from "./passToAnotherDepartmentModal.js";
 import TarguModal from "./transferToTarguMures.js";
 
 import BeatLoader from "react-spinners/BeatLoader";
-import { INQUIRYCATEGORIES, CATEGORYDATA } from "../../globalVariables.js";
+import { INQUIRYCATEGORIES, CATEGORYDATA, CATEGORYVALUELABEL } from "../../globalVariables.js";
+import * as XLSX from "xlsx";
 
 function EmailInbox() {
   const host = process.env.REACT_APP_API_URL;
@@ -100,7 +101,9 @@ function EmailInbox() {
   const [examFilter, setExamFilter] = useState({
     examSpecification: "",
     subject: ""
-  })
+  });
+  const [showExcelExportModal, setShowExcelExportModal] = useState(false);
+  const [excelFileName, setExcelFileName] = useState('');
 
   const [
     passToAnotherDepartmentModalShow,
@@ -491,7 +494,6 @@ function EmailInbox() {
         const unClickedRejectTickets = result.filter(
           (ticket) => ticket.isClicked === 0 && ticket.status === 3
         );
-        console.log(result, "===unClickedApprovedTickets");
 
         setUnClickedNewTicketsCount(unClickedNewTickets.length);
         setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
@@ -530,7 +532,6 @@ function EmailInbox() {
       const unClickedRejectTickets = newTickets.filter(
         (ticket) => ticket.isClicked === 0 && ticket.status === 3
       );
-      console.log(newTickets, "===unClickedApprovedTickets");
 
       setUnClickedNewTicketsCount(unClickedNewTickets.length);
       setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
@@ -940,6 +941,7 @@ function EmailInbox() {
       }));
     }
 
+
     let _ticketData = ticketsByYear;
 
     switch (name) {
@@ -963,6 +965,43 @@ function EmailInbox() {
     }
 
     setTicketData(_ticketData)
+  }
+
+  const openExportExcelConfirmModal = () => {
+    setShowExcelExportModal(true);
+    const _filter_options = (new Date().toDateString()) + (selectedItems?.label ? `-${selectedItems.label.replace(" ", "_")}` : "")
+      + (firstYearOfStudy !== 'all' ? `-${firstYearOfStudy}` : "-all_Year")
+      + (examFilter.subject ? `-${examFilter.subject.replace(" ", "_")}` : "")
+      + (examFilter.examSpecification ? `-${examFilter.examSpecification.replace(" ", "_")}` : "");
+    setExcelFileName(_filter_options);
+  }
+
+  const exportData = () => {
+    const _ticketData = ticketData.map((log, idx) => ({
+      No: idx + 1,
+      name: log.firstName + " " + log.lastName,
+      email: log.email,
+      enrollmentNumber: log?.enrollmentNumber,
+      firstYearOfStudy: log?.firstYearOfStudy,
+      category: CATEGORYVALUELABEL[`${log.inquiryCategory}-${log.subCategory1}`],
+      detail: log.detail ? log.detail : "",
+      documents: log.documents,
+      agreement: log.agreement,
+      viewed: log.status ? 'viewed' : "no viewed",
+      createdAt: log.createdAt,
+      inquiryNumber: log.inquiryNumber
+    }))
+    // Create a worksheet from the data
+    const worksheet = XLSX.utils.json_to_sheet(_ticketData);
+
+    // Create a new workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Write the workbook and trigger a download
+    XLSX.writeFile(workbook, `${excelFileName}.xlsx`);
+
+    setShowExcelExportModal(false);
   }
 
   return (
@@ -1056,6 +1095,9 @@ function EmailInbox() {
                 </Badge>
               )}
             </Link>
+          </div>
+          <div className="mailbox-toolbar-item">
+            <button className="mailbox-toolbar-link" onClick={openExportExcelConfirmModal}>Export</button>
           </div>
 
           <div className="mailbox-toolbar-item">
@@ -2176,6 +2218,26 @@ function EmailInbox() {
         handleModalClose={handlePassToAnotherDepartmentModalClose}
         selectedTicket={selectedTicket}
       />
+      <Modal show={showExcelExportModal} onHide={() => setShowExcelExportModal(false)}>
+        <Modal.Header>Are you sure to export this data?</Modal.Header>
+        <Modal.Body>
+          <Form.Group>
+            <Form.Control
+              value={excelFileName}
+              onChange={(evt) => setExcelFileName(evt.target.value)}
+            />
+          </Form.Group>
+          {excelFileName == '' ? <small className="text-danger mt-3">Required field *</small> : ""}
+          <div className="my-3 float-end">
+            <button onClick={exportData} className="me-3 btn btn-secondary" disabled={excelFileName == '' ? true : false}>
+              Confirm
+            </button>
+            <button onClick={() => setShowExcelExportModal(false)} className="btn btn-secondary">
+              Cancel
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

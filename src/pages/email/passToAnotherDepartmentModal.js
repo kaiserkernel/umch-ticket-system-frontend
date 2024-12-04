@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Row, Col } from "react-bootstrap";
 import Select from "react-select";
 
 import formService from "../../sevices/form-service";
 import BeatLoader from "react-spinners/BeatLoader";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const PassToAnotherDepartmentModal = ({
   show,
@@ -19,12 +19,11 @@ const PassToAnotherDepartmentModal = ({
     const getAdminUsers = async () => {
       try {
         const res = await formService.getAdminUsers();
-        let emailList = [];
         const adminlist = res.map((user) => ({
           value: user?.email,
           label: user?.email
         }));
-        console.log(adminlist);
+        console.log(adminlist, 'admin list');
         setAdminEmails(adminlist);
       } catch (err) {
         console.log(err);
