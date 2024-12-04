@@ -49,7 +49,7 @@ function ReCaptchaComponent() {
     });
     setError(prev => ({
       ...prev,
-      [name]: ture
+      [name]: true
     }))
   };
 
