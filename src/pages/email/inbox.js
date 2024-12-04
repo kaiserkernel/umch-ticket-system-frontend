@@ -54,13 +54,11 @@ import Other from "./inquiryTemplate/other.js";
 import EmailTemplateModal from "./emailTemplateModal.js";
 import EnrollmentModal from "./enrollmentModal.js";
 import ExamInspectionModal from "./examInspectionModal.js";
-import TranscriptRecordsModal from "./transcriptRecordsModal.js";
 import PassToAnotherDepartmentModal from "./passToAnotherDepartmentModal.js";
 import TarguModal from "./transferToTarguMures.js";
 
 import BeatLoader from "react-spinners/BeatLoader";
 import { INQUIRYCATEGORIES, CATEGORYDATA } from "../../globalVariables.js";
-import UserService from "../../sevices/user-service.js";
 
 function EmailInbox() {
   const host = process.env.REACT_APP_API_URL;
@@ -99,6 +97,10 @@ function EmailInbox() {
   const [enrollmentModalShow, setEnrollmentModalShow] = useState(false);
   const [examInspectionModalShow, setExamInspectionModalShow] = useState(false);
   const [targuModalshow, setTarguModalShow] = useState(false);
+  const [examFilter, setExamFilter] = useState({
+    examSpecification: "",
+    subject: ""
+  })
 
   const [
     passToAnotherDepartmentModalShow,
@@ -214,8 +216,10 @@ function EmailInbox() {
 
   // Handle selection of subcategory in main select component
   const handleSelectChange = (selectedOption) => {
-    setSelectedItems(selectedOption || []);
+    // init exam filter
+    setExamFilter({ examSpecification: "", subject: "" })
 
+    setSelectedItems(selectedOption || []);
     let label;
     if (typeof selectedOption?.label != "string") {
       label = selectedOption?.label?.props?.children;
@@ -236,20 +240,6 @@ function EmailInbox() {
     } else {
       setTicketData(filteredTempTickets);
       setTicketsByYear(filteredTempTickets);
-    }
-  };
-
-  const handleFirstStudyOfYear = (e) => {
-    setFirstYearOfStudy(e.target.value);
-
-    const filteredTempTickets = ticketsByYear.filter(
-      (ticket) => ticket?.firstYearOfStudy == e.target.value
-    );
-
-    if (e.target.value == "all") {
-      setTicketData(ticketsByYear);
-    } else {
-      setTicketData(filteredTempTickets);
     }
   };
 
@@ -635,7 +625,6 @@ function EmailInbox() {
         const filteredAllTickets = allTickets?.inquiries?.filter(
           (ticket) => ticket.status === 2 || ticket.status === 6
         );
-        console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
         setOriginalTicketData(filteredAllTickets);
         setTicketsByYear(filteredAllTickets);
@@ -926,6 +915,56 @@ function EmailInbox() {
     setPassToAnotherDepartmentModalShow(true);
   };
 
+  const filterByExam = (_data, _name, _value) => {
+    if (_value !== '' && _value !== 'all') {
+      _data = _data.filter(log => log.details[_name] == _value);
+    }
+    return _data;
+  }
+
+  const filterByYear = (_data, _value) => {
+    if (_value !== 'all') {
+      _data = _data.filter(log => log.firstYearOfStudy == _value)
+    }
+    return _data;
+  }
+
+  const handleFilterChange = (evt) => {
+    const { name, value } = evt.target;
+    if (name == 'firstYearOfStudy') {
+      setFirstYearOfStudy(value);
+    } else {
+      setExamFilter(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+
+    let _ticketData = ticketsByYear;
+
+    switch (name) {
+      case 'firstYearOfStudy':
+        _ticketData = filterByYear(_ticketData, value);
+        _ticketData = filterByExam(_ticketData, "subject", examFilter.subject);
+        _ticketData = filterByExam(_ticketData, "examSpecification", examFilter.examSpecification);
+        break;
+      case 'subject':
+        _ticketData = filterByExam(_ticketData, "subject", value);
+        _ticketData = filterByYear(_ticketData, firstYearOfStudy);
+        _ticketData = filterByExam(_ticketData, "examSpecification", examFilter.examSpecification);
+        break;
+      case 'examSpecification':
+        _ticketData = filterByExam(_ticketData, "examSpecification", value);
+        _ticketData = filterByYear(_ticketData, firstYearOfStudy);
+        _ticketData = filterByExam(_ticketData, "subject", examFilter.subject);
+        break;
+      default:
+        break;
+    }
+
+    setTicketData(_ticketData)
+  }
+
   return (
     <div className="h-100 border border-gray">
       <div className="mailbox">
@@ -1070,7 +1109,7 @@ function EmailInbox() {
                         value={firstYearOfStudy}
                         className="custom-input"
                         placeholder="Select First Study Year"
-                        onChange={handleFirstStudyOfYear}
+                        onChange={handleFilterChange}
                       >
                         <option value="all">Select First Study Year</option>
                         <option value="2024">2024</option>
@@ -1083,6 +1122,216 @@ function EmailInbox() {
                     </Form.Group>
                   </Col>
                 </Row>
+                {
+                  selectedItems.value === '1-6' && (
+                    <>
+                      <Row>
+                        <Col md={12}>
+                          <Form.Group className="mt-3">
+                            <Form.Control
+                              as="select"
+                              name="subject"
+                              value={examFilter.subject}
+                              onChange={handleFilterChange}
+                              className="custom-input"
+                            >
+                              <option value="" disabled>Select Subject</option>
+                              <option value="all">--All--</option>
+                              <option></option>
+                              <optgroup label="1st year of study">
+                                <option disabled=""></option>
+                                <option value="Anatomy 1">Anatomy 1</option>
+                                <option value="Anatomy 2">Anatomy 2</option>
+                                <option value="BioChemistry 1">BioChemistry 1</option>
+                                <option value="Biochemistry 2">BioChemistry 2</option>
+                                <option value="Biophysics">Biophysics</option>
+                                <option value="Medical Informatics">Medical Informatics</option>
+                                <option value="Medical Biostatistics">
+                                  Medical Biostatistics
+                                </option>
+                                <option value="Molecular and Cell Biology">
+                                  Molecular and Cell Biology
+                                </option>
+                                <option value="Medical Terminology">Medical Terminology</option>
+                                <option value="Physiology 1">Physiology 1</option>
+                                <option value="Romanian Cultural Studies 1.1">
+                                  Romanian Cultural Studies 1.1
+                                </option>
+                                <option value="Romanian Cultural Studies 1.2">
+                                  Romanian Cultural Studies 1.2
+                                </option>
+                              </optgroup>
+                              <option disabled=""></option>
+                              <optgroup label="2nd year of study">
+                                <option disabled=""></option>
+                                <option value="Physiology 2">Physiology 2</option>
+                                <option value="Physiology 3">Physiology 3</option>
+                                <option value="Histology 1">Histology 1</option>
+                                <option value="Histology 2">Histology 2</option>
+                                <option value="Anatomy 3">Anatomy 3</option>
+                                <option value="Patient Doctor Communication">
+                                  Patient Doctor Communication
+                                </option>
+                                <option value="Medical Deontology Bioethics">
+                                  Medical Deontology Bioethics
+                                </option>
+                                <option value="Genetics">Genetics</option>
+                                <option value="Introduction in Practical Work">
+                                  Introduction in Practical Work
+                                </option>
+                                <option value="First Aid">First Aid</option>
+                                <option value="Romanian Cultural Strudies 2.1">
+                                  Romanian Cultural Strudies 2.1
+                                </option>
+                                <option value="Romanian Cultural Strudies 2.2">
+                                  Romanian Cultural Strudies 2.2
+                                </option>
+                              </optgroup>
+                              <option disabled=""></option>
+                              <optgroup label="3rd year of study">
+                                <option disabled=""></option>
+                                <option value="Pathology 1">Pathology 1</option>
+                                <option value="Pathology 2">Pathology 2</option>
+                                <option value="Pharmacology 1">Pharmacology 1</option>
+                                <option value="Pharmacology 2">Pharmacology 2</option>
+                                <option value="Scientific Research Methodology">
+                                  Scientific Research Methodology
+                                </option>
+                                <option value="Pathophysiology 1">Pathophysiology 1</option>
+                                <option value="Pathophysiology 2">Pathophysiology 2</option>
+                                <option value="Medical Semiology 1">Medical Semiology 1</option>
+                                <option value="Medical Semiology 2">Medical Semiology 2</option>
+                                <option value="Surgical Semiology 1">
+                                  Surgical Semiology 1
+                                </option>
+                                <option value="Surgical Semiology 2">
+                                  Surgical Semiology 2
+                                </option>
+                                <option value="Bacteriology. Virusology. Parasitology 1">
+                                  Bacteriology. Virusology. Parasitology 1
+                                </option>
+                                <option value="Bacteriology. Virusology. Parasitology 2">
+                                  Bacteriology. Virusology. Parasitology 2
+                                </option>
+                                <option value="Hygiene, Environmental Health and Food Safety">
+                                  Hygiene, Environmental Health and Food Safety
+                                </option>
+                                <option value="Clinical Biochemistry. Immunology">
+                                  Clinical Biochemistry. Immunology
+                                </option>
+                              </optgroup>
+                              <option disabled=""></option>
+                              <optgroup label="4th year of study">
+                                <option disabled=""></option>
+                                <option value="Orthopedics and Traumatology">
+                                  Orthopedics and Traumatology
+                                </option>
+                                <option value="General Surgery">General Surgery</option>
+                                <option value="Urology">Urology</option>
+                                <option value="Endocrinology">Endocrinology</option>
+                                <option value="Pediatric Surgery. Pediatric Orthopedics">
+                                  Pediatric Surgery. Pediatric Orthopedics
+                                </option>
+                                <option value="Plastic, Esthetics and Reconstructive Microsurgery">
+                                  Plastic, Esthetics and Reconstructive Microsurgery
+                                </option>
+                                <option value="Cardiology-Internal medicine">
+                                  Cardiology-Internal medicine
+                                </option>
+                                <option value="Hematology-Internal medicine">
+                                  Hematology-Internal medicine
+                                </option>
+                                <option value="Emergency medicine">Emergency medicine</option>
+                                <option value="Child Care">Child Care</option>
+                                <option value="Radiology and medical imaging">
+                                  Radiology and medical imaging
+                                </option>
+                                <option value="Occupational medicine and professional diseases">
+                                  Occupational medicine and professional diseases
+                                </option>
+                                <option value="Oral-maxillo-facial Surgery">
+                                  Oral-maxillo-facial Surgery
+                                </option>
+                              </optgroup>
+                              <option disabled=""></option>
+                              <optgroup label="5th year of study">
+                                <option disabled=""></option>
+                                <option value="Gastroenterology-Internal medicine">
+                                  Gastroenterology-Internal medicine
+                                </option>
+                                <option value="Nephrology-Internal medicine">
+                                  Nephrology-Internal medicine
+                                </option>
+                                <option value="Diabetology and Nutritional Diseases-Internal medicine">
+                                  Diabetology and Nutritional Diseases-Internal medicine
+                                </option>
+                                <option value="ENT (Ear Nose Throat)">
+                                  ENT (Ear Nose Throat)
+                                </option>
+                                <option value="Ophthalmology">Ophthalmology</option>
+                                <option value="Anesthesia-Intensive Care">
+                                  Anesthesia-Intensive Care
+                                </option>
+                                <option value="Rheumatology">Rheumatology</option>
+                                <option value="Rehabilitation, Physical Medicine and Balneology">
+                                  Rehabilitation, Physical Medicine and Balneology
+                                </option>
+                                <option value="Dermatology">Dermatology</option>
+                                <option value="Neurology">Neurology</option>
+                                <option value="Pediatrics">Pediatrics</option>
+                                <option value="Pneumology">Pneumology</option>
+                                <option value="Medical Oncology">Medical Oncology</option>
+                                <option value="Pediatric Psychiatry">
+                                  Pediatric Psychiatry
+                                </option>
+                              </optgroup>
+                              <option disabled=""></option>
+                              <optgroup label="6th year of study">
+                                <option disabled=""></option>
+                                <option value="Obstetrics-Gynecology. Neonatology">
+                                  Obstetrics-Gynecology. Neonatology
+                                </option>
+                                <option value="Infectious Diseases">Infectious Diseases</option>
+                                <option value="Family medicine">Family medicine</option>
+                                <option value="Public Health">Public Health</option>
+                                <option value="Health Management">Health Management</option>
+                                <option value="Primary Care">Primary Care</option>
+                                <option value="Palliative Care">Palliative Care</option>
+                                <option value="Epidemiology">Epidemiology</option>
+                                <option value="Psychiatry">Psychiatry</option>
+                                <option value="Forensic Medicine">Forensic Medicine</option>
+                              </optgroup>
+                            </Form.Control>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={12}>
+                          <Form.Group className="mt-3">
+                            <Form.Select
+                              required
+                              name="examSpecification"
+                              value={examFilter.examSpecification}
+                              className="custom-input"
+                              onChange={handleFilterChange}
+                            >
+                              <option value="" disabled>Select Specification of exam</option>
+                              <option value="all">--All--</option>
+                              <option value="PA exam">PA exam</option>
+                              <option value="PA re-exam">PA re-exam</option>
+                              <option value="PA re-re-exam">PA re-re-exam</option>
+                              <option value="Written exam">Written exam</option>
+                              <option value="Written Re-exam">Written Re-exam</option>
+                              <option value="Written Re-re-exam">Written Re-re-exam</option>
+                              <option value="OSCE">OSCE</option>
+                              <option value="Re-OSCE">Re-OSCE</option>
+                            </Form.Select>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </>
+                  )
+                }
               </div>
             )}
             <PerfectScrollbar
