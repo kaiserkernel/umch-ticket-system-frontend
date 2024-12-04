@@ -969,10 +969,10 @@ function EmailInbox() {
 
   const openExportExcelConfirmModal = () => {
     setShowExcelExportModal(true);
-    const _filter_options = (new Date().toDateString()) + (selectedItems?.label ? `-${selectedItems.label.replace(" ", "_")}` : "")
+    const _filter_options = (new Date().toDateString()) + (selectedItems?.label ? `-${selectedItems.label.replaceAll(" ", "_")}` : "")
       + (firstYearOfStudy !== 'all' ? `-${firstYearOfStudy}` : "-all_Year")
-      + (examFilter.subject ? `-${examFilter.subject.replace(" ", "_")}` : "")
-      + (examFilter.examSpecification ? `-${examFilter.examSpecification.replace(" ", "_")}` : "");
+      + (examFilter.subject ? `-${examFilter.subject.replaceAll(" ", "_")}` : "")
+      + (examFilter.examSpecification ? `-${examFilter.examSpecification.replaceAll(" ", "_")}` : "");
     setExcelFileName(_filter_options);
   }
 
@@ -2220,7 +2220,7 @@ function EmailInbox() {
         handleModalClose={handlePassToAnotherDepartmentModalClose}
         selectedTicket={selectedTicket}
       />
-      <Modal show={showExcelExportModal} onHide={() => setShowExcelExportModal(false)}>
+      <Modal show={showExcelExportModal} onHide={() => setShowExcelExportModal(false)} centered>
         <Modal.Header>Are you sure to export this data?</Modal.Header>
         <Modal.Body>
           <Form.Group>
