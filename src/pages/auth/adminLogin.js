@@ -27,24 +27,6 @@ function ReCaptchaComponent() {
   const context = useContext(AppSettings);
   const { setIsAuthenticated } = useAuth();
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptChatoken, setReCaptChaToken] = useState('');
-
-  const handleReCaptchaVerify = useCallback(async () => {
-    if (!executeRecaptcha) {
-      console.log('Execute recaptcha not yet available');
-      return;
-    }
-
-    const _recaptChatoken = await executeRecaptcha('submit_form');
-    setReCaptChaToken(_recaptChatoken);
-    // Do whatever you want with the recaptChatoken
-  }, [executeRecaptcha]);
-
-  useEffect(() => {
-    if (executeRecaptcha) {
-      handleReCaptchaVerify();
-    }
-  }, [executeRecaptcha]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -101,6 +83,12 @@ function ReCaptchaComponent() {
 
     try {
       setLoading(true);
+
+      if (!executeRecaptcha) {
+        errorNotify('reCAPTCHA is not ready. Please try again');
+        setLoading(false)
+        return;
+      }
 
       // Fecth the reCAPTCHA token dynamically at submission time
       const recaptChatoken = await executeRecaptcha('submit_form')
@@ -234,7 +222,7 @@ function ReCaptchaComponent() {
                     className="custom-input"
                   />
                 </Form.Group>
-                {!error.email ? "Required field" : ""}
+                {!error.email ? <p className="text-danger">Required field</p> : ""}
               </div>
               <div className="mb-3">
                 <Form.Group controlId="password">
@@ -250,7 +238,7 @@ function ReCaptchaComponent() {
                     className="custom-input"
                   />
                 </Form.Group>
-                {!error.password ? "Required field" : ""}
+                {!error.password ? <p className="text-danger">Required field</p> : ""}
               </div>
               <Form.Group className="mb-3">
                 <Form.Check type="switch" label="Remember me"
