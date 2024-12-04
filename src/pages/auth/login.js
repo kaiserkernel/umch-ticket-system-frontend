@@ -92,6 +92,7 @@ function ReCaptchaComponent() {
 
     try {
       setLoading(true);
+      console.log(recaptChatoken, 'recaptchatoken')
       const response = await AuthService.login({ ...formData, recaptChatoken: recaptChatoken });
       setLoading(false);
       if (response?.success) {
