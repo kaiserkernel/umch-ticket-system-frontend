@@ -1,15 +1,14 @@
 import React, { useEffect, useContext, useState, useCallback } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
 import { useAuth } from "../../context/authProvider.js";
 import AuthService from "../../sevices/auth-service.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { Form } from "react-bootstrap";
 import Header from "../landing/header/index.js";
 import BannerSection from "../landing/banner/index.js";
 import BeatLoader from "react-spinners/BeatLoader";
-import { setDefaultLocale } from "react-datepicker";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
 import {
@@ -27,7 +26,6 @@ function ReCaptchaComponent() {
   const navigate = useNavigate();
   const context = useContext(AppSettings);
   const { setIsAuthenticated } = useAuth();
-  const [redirect, setRedirect] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [recaptChatoken, setReCaptChaToken] = useState('');
 
@@ -89,8 +87,14 @@ function ReCaptchaComponent() {
 
     try {
       setLoading(true);
-      const response = await AuthService.adminLogin({ ...formData, recaptChatoken: recaptChatoken });
+
+      // Fecth the reCAPTCHA token dynamically at submission time
+      const recaptChatoken = await executeRecaptcha('submit_form')
+
+      const response = await AuthService.adminLogin({ ...formData, recaptChatoken });
+
       setLoading(false);
+
       if (response?.success) {
 
         if (rememberMe) {
