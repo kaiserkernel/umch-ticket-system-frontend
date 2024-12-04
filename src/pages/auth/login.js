@@ -93,7 +93,6 @@ function ReCaptchaComponent() {
       const recaptChatoken = await executeRecaptcha('user_login_action')
 
       const response = await AuthService.login({ ...formData, recaptChatoken });
-      console.log(response, 'response')
       setLoading(false);
 
       if (response?.success) {
@@ -131,7 +130,6 @@ function ReCaptchaComponent() {
     } catch (err) {
       setLoading(false);
       const errors = err?.errors ? err?.errors : err?.message;
-      console.log(errors, 'errors')
 
       if (typeof errors != "object") {
         errorNotify(errors);
