@@ -244,6 +244,7 @@ function ReCaptchaComponent() {
                     className="custom-input"
                   />
                 </Form.Group>
+                {!error.password ? <p className="text-danger">Required Field</p> : ""}
               </div>
               <Form.Group className="mb-3">
                 <Form.Check type="switch" label="Remember me"
@@ -251,7 +252,6 @@ function ReCaptchaComponent() {
                   checked={rememberMe}
                 />
               </Form.Group>
-              {!error.password ? <p className="text-danger">Required Field</p> : ""}
               <button
                 type="submit"
                 className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
