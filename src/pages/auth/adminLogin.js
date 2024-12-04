@@ -185,10 +185,16 @@ function ReCaptchaComponent() {
     }
     setFormData(prev => ({ ...prev, ...lsFormData }));
 
+    // recaptcha session - short live token
+    const timer = setTimeout(() => {
+      errorNotify("Session expired. Please retry login.");
+    }, 120 * 1000); // 2 minutes
+
     return function cleanUp() {
       context.setAppHeaderNone(false);
       context.setAppSidebarNone(false);
       context.setAppContentClass("");
+      clearTimeout(timer); // Cleanup on component unmount
     };
 
     // eslint-disable-next-line
