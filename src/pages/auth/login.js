@@ -256,12 +256,12 @@ function ReCaptchaComponent() {
                 </label>
               </div>
             </div> */}
-              <Form className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Check type="switch" label="Remember me"
                   onChange={(evt) => setRememberMe(!rememberMe)}
                   checked={rememberMe}
                 />
-              </Form>
+              </Form.Group>
               <button
                 type="submit"
                 className="btn btn-primary btn-lg d-block w-100 fw-500 mb-3"
