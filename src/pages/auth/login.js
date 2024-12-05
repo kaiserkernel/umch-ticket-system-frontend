@@ -17,7 +17,7 @@ import {
 } from 'react-google-recaptcha-v3';
 
 const PagesLogin = () => (
-  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || '6LcZeYwqAAAAANssjBRSJOmmr0LoVzQH9A4g3lnZ'}>
     <ReCaptchaComponent />
   </GoogleReCaptchaProvider>
 )
