@@ -50,6 +50,7 @@
     "jquery": "^3.7.1",
     "jsvectormap": "^1.5.3",
     "jszip": "^3.10.1",
+    "jwt-decode": "^4.0.0",
     "lity": "^2.4.1",
     "masonry-layout": "^4.2.2",
     "node-sass": "^9.0.0",
