@@ -56,7 +56,7 @@ function App() {
     }
 
     // Redirect based on token state
-    if (tokenInfo() && (location.pathname == "/" || location.pathname == "/login" || location.pathname == "/admin")) {
+    if (tokenInfo() && (location.pathname == "/" || location.pathname == "/login")) {
       navigate("/profile", { replace: true });
     } else {
       navigate("/login", { replace: true });
