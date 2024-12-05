@@ -58,7 +58,8 @@ function App() {
     // Redirect based on token state
     if (tokenInfo() && (location.pathname == "/" || location.pathname == "/login")) {
       navigate("/profile", { replace: true });
-    } else {
+    }
+    if (!tokenInfo()) {
       navigate("/login", { replace: true });
     }
   }, [location.pathname]);
