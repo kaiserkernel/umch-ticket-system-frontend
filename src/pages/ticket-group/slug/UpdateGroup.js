@@ -39,11 +39,9 @@ const UpdateGroup = ({ show, hideModal, setRefetchTicketGroup, successNotify, er
 
             const res = await TicketGroupService.updateTicketGroup(_data);
 
-            if (res.status === 200) {
-                successNotify(res.message);
-                setRefetchTicketGroup(prev => !prev)
-                hideModal();
-            }
+            successNotify(res.message);
+            setRefetchTicketGroup(prev => !prev)
+            hideModal();
         } catch (error) {
             console.error("Error updating ticket group", error);
             errorNotify(error.message);

@@ -13,11 +13,9 @@ const CreateGroup = ({ show, hideModal, setRefetchTicketGroup, successNotify, er
         // send request
         try {
             const res = await TicketGroupService.createTicketGroup(ticketData);
-            if (res.status == 201) {
-                successNotify(`Create new Ticket Group: ${ticketData.name}`);
-                setRefetchTicketGroup(prev => !prev);
-                hideModal();
-            }
+            successNotify(`Create new Ticket Group: ${ticketData.name}`);
+            setRefetchTicketGroup(prev => !prev);
+            hideModal();
         } catch (error) {
             console.error("Error creating ticket group", error);
             errorNotify(error.message);

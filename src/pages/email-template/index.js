@@ -146,6 +146,7 @@ function EmailTemplateManagement() {
     setShow(true);
     try {
       const res = await EmailTemplateService.getEmailTemplate(id);
+      console.log(res, "ddd")
       setFormData({
         ...formData,
         id: res?.emailTemplate?._id,

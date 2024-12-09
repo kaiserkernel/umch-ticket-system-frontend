@@ -85,7 +85,7 @@ export class HttpService {
     return new Promise((resolve, reject) => {
       this._axios
         .request(options)
-        .then((res) => resolve({ ...res.data, status: res.status }))
+        .then((res) => resolve(res.data))
         .catch((ex) => reject(ex.response?.data || ex.message));
     });
   }

@@ -83,6 +83,7 @@ function AccountManagement() {
     const fetchData = async () => {
       try {
         const res = await UserService.getAdmins();
+        console.log(res, 'res')
         setAdmins(res);
       } catch (err) {
         errorNotify(err.message);
@@ -282,7 +283,7 @@ function AccountManagement() {
         <button
           className="btn btn-sm btn-primary rounded-2"
           onClick={async (evt) => {
-            const response = await AuthService.resetPasswordToDefault(email);
+            await AuthService.resetPasswordToDefault(email);
             successNotify("Password reseted successfully");
           }}
         >
@@ -403,7 +404,7 @@ function AccountManagement() {
   ];
 
   // Filter data based on search text
-  const filteredData = admins ? admins.filter((item) =>
+  const filteredData = admins.length > 0 ? admins.filter((item) =>
     item.firstName.toLowerCase().includes(searchText.toLowerCase())
   ) : [];
 
