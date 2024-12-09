@@ -40,34 +40,54 @@ const TicketTypes = () => {
         }
     }
 
-    const fetchAllTicketGroup = async () => {
-        setLoading(true);
-        try {
-            const res = await TicketGroupService.fetchAllTicketGroups();
-
-            setLoading(false);
-            setTicketGroup(res.data);
-
-            const registedTypes = await TicketGroupService.fetchAllRegistedTicketTypes();
-            const _allTypes = TicketTypeList.map((log) => {
-                const key = Object.keys(log)[0];
-                const matchingItem = registedTypes.data.find((logSec) => logSec[key] !== undefined);
-
-                return matchingItem || log;
-            })
-            setAllTicketTypes(_allTypes);
-
-        } catch (error) {
-            setLoading(false);
-            console.error("Error fetching ticket groups", error);
-        }
-    };
-
     useEffect(() => {
+        const fetchAllTicketGroup = async () => {
+            setLoading(true);
+            try {
+                const res = await TicketGroupService.fetchAllTicketGroups();
+
+                setLoading(false);
+                setTicketGroup(res.data);
+
+                const registedTypes = await TicketGroupService.fetchAllRegistedTicketTypes();
+                const _allTypes = TicketTypeList.map((log) => {
+                    const key = Object.keys(log)[0];
+                    const matchingItem = registedTypes.data.find((logSec) => logSec[key] !== undefined);
+
+                    return matchingItem || log;
+                })
+                setAllTicketTypes(_allTypes);
+
+            } catch (error) {
+                setLoading(false);
+                console.error("Error fetching ticket groups", error);
+            }
+        };
+
         fetchAllTicketGroup();
     }, [])
 
     useEffect(() => {
+        const fetchAllTicketGroup = async () => {
+            try {
+                const res = await TicketGroupService.fetchAllTicketGroups();
+
+                setTicketGroup(res.data);
+
+                const registedTypes = await TicketGroupService.fetchAllRegistedTicketTypes();
+                const _allTypes = TicketTypeList.map((log) => {
+                    const key = Object.keys(log)[0];
+                    const matchingItem = registedTypes.data.find((logSec) => logSec[key] !== undefined);
+
+                    return matchingItem || log;
+                })
+                setAllTicketTypes(_allTypes);
+
+            } catch (error) {
+                console.error("Error fetching ticket groups", error);
+            }
+        };
+
         fetchAllTicketGroup();
     }, [refetchTypes])
 
