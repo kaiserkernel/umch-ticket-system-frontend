@@ -404,9 +404,9 @@ function AccountManagement() {
   ];
 
   // Filter data based on search text
-  const filteredData = admins.length > 0 ? admins.filter((item) =>
+  const filteredData = admins.filter((item) =>
     item.firstName.toLowerCase().includes(searchText.toLowerCase())
-  ) : [];
+  );
 
   return (
     <div className="">
