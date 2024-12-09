@@ -42,10 +42,11 @@ const TicketGroup = () => {
 
     useEffect(() => {
         const fetchAllTicketGroup = async () => {
+            setLoading(true);
             try {
                 const res = await TicketGroupService.fetchAllTicketGroups();
-                setLoading(false);
                 setAllTicketGroup(res.data);
+                setLoading(false);
             } catch (error) {
                 setLoading(false);
                 console.error("Error fetching ticket groups", error);

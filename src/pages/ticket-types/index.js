@@ -12,7 +12,7 @@ const TicketTypes = () => {
     const [ticketGroup, setTicketGroup] = useState([]);
     const [allTicketTypes, setAllTicketTypes] = useState([]);
     const [refetchTypes, setRefetchTypes] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const successNotify = (msg) => {
         toast.info(msg, {
@@ -46,7 +46,6 @@ const TicketTypes = () => {
             try {
                 const res = await TicketGroupService.fetchAllTicketGroups();
 
-                setLoading(false);
                 setTicketGroup(res.data);
 
                 const registedTypes = await TicketGroupService.fetchAllRegistedTicketTypes();
@@ -58,6 +57,7 @@ const TicketTypes = () => {
                 })
                 setAllTicketTypes(_allTypes);
 
+                setLoading(false);
             } catch (error) {
                 setLoading(false);
                 console.error("Error fetching ticket groups", error);
