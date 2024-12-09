@@ -3,8 +3,6 @@ import Header from "./components/header/header.jsx";
 import TopNav from "./components/top-nav/top-nav.jsx";
 import Sidebar from "./components/sidebar/sidebar.jsx";
 import Content from "./components/content/content.jsx";
-// import Footer from "./components/footer/footer.jsx";
-import ThemePanel from "./components/theme-panel/theme-panel.jsx";
 import { AppSettings } from "./config/app-settings.js";
 import { AuthProvider } from "./context/authProvider.js";
 

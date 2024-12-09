@@ -62,8 +62,8 @@ export class HttpService {
   patch = async (url, data) =>
     await this.request(this.getOptionsConfig("patch", url, data));
 
-  delete = async (url) =>
-    await this.request(this.getOptionsConfig("delete", url));
+  delete = async (url, data) =>
+    await this.request(this.getOptionsConfig("delete", url, data));
 
   getOptionsConfig = (method, url, data) => {
     const headers = { "Content-Type": "application/json" };
@@ -85,7 +85,7 @@ export class HttpService {
     return new Promise((resolve, reject) => {
       this._axios
         .request(options)
-        .then((res) => resolve(res.data))
+        .then((res) => resolve({ ...res.data, status: res.status }))
         .catch((ex) => reject(ex.response?.data || ex.message));
     });
   }

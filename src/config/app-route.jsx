@@ -17,6 +17,8 @@ import TicketReopen from "../pages/ticket/reopen.js";
 import EmailTemplateManagement from "../pages/email-template/index.js";
 import ResetPassword from "../pages/auth/resetPassword.js";
 import AdminResetPassword from "../pages/auth/adminResetPassword.js";
+import TicketGroup from "./../pages/ticket-group/index.js";
+import TicketTypes from "./../pages/ticket-types/index.js";
 
 const AppRoute = [
   {
@@ -69,7 +71,14 @@ const AppRoute = [
           </ProtectedRoute>
         )
       },
-
+      {
+        path: "ticket-group",
+        element: (
+          <ProtectedRoute>
+            <TicketGroup />
+          </ProtectedRoute>
+        )
+      },
       {
         path: "email/*",
         children: [
@@ -98,6 +107,14 @@ const AppRoute = [
             )
           }
         ]
+      },
+      {
+        path: "ticket-types",
+        element: (
+          <ProtectedRoute>
+            <TicketTypes />
+          </ProtectedRoute>
+        )
       },
       { path: "*", element: <PagesError /> }
     ]

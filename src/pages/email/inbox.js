@@ -66,7 +66,6 @@ function EmailInbox() {
   const context = useContext(AppSettings);
   const navigate = useNavigate();
 
-  const [mailData, setMailData] = useState();
   const [ticketData, setTicketData] = useState();
   const [originalTicketData, setOriginalTicketData] = useState([]);
   const [ticketsByYear, setTicketsByYear] = useState([]);

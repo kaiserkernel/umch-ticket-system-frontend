@@ -50,18 +50,21 @@ function App() {
       slideToggle(document.querySelector(".app-top-nav"));
     }
 
-    if (location.pathname === "/admin") {
-      navigate('/admin');
+    if (location.pathname === "/admin" || location.pathname === "/register" || location.pathname === "/reset-password") {
+      navigate(location.pathname);
       return;
     }
 
     // Redirect based on token state
     if (tokenInfo() && (location.pathname == "/" || location.pathname == "/login")) {
       navigate("/profile", { replace: true });
+      return;
     }
+
     if (!tokenInfo()) {
       navigate("/login", { replace: true });
     }
+
   }, [location.pathname]);
 
   return element;

@@ -538,6 +538,11 @@ function AccountManagement() {
                     name="email"
                     className="custom-input"
                     value={formData.email}
+                    onChange={(evt) => {
+                      if (btnType === "add") {
+                        handleChange(evt)
+                      }
+                    }}
                     disabled
                   />
                 </Form.Group>

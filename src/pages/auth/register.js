@@ -1,9 +1,9 @@
 import React, { useEffect, useContext, useState, useCallback } from "react";
 import { Row, Col, Form } from "react-bootstrap";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
 import AuthService from "../../sevices/auth-service.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../landing/header/index.js";
@@ -17,7 +17,7 @@ import {
 } from 'react-google-recaptcha-v3';
 
 const PagesRegister = () => (
-  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || '6LcZeYwqAAAAANssjBRSJOmmr0LoVzQH9A4g3lnZ'}>
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
     <ReCaptchaComponent />
   </GoogleReCaptchaProvider>
 )

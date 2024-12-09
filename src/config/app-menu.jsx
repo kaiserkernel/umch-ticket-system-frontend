@@ -18,6 +18,16 @@ const Menu = [
     path: "/email-template",
     icon: "bi bi-file-earmark-code",
     title: "Email Template"
+  },
+  {
+    path: "/ticket-group",
+    icon: "bi bi-ticket-detailed",
+    title: "Ticket Group"
+  },
+  {
+    path: "/ticket-types",
+    icon: "bi bi-card-text",
+    title: "Ticket Types"
   }
 ];
 

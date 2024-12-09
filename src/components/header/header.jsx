@@ -247,15 +247,15 @@ function Header() {
               INBOX{" "}
               <i className="bi bi-envelope ms-auto text-theme fs-16px my-n1"></i>
             </Link>
-            <Link
+            {/* <Link
               to="/calendar"
               className="dropdown-item d-flex align-items-center"
             >
               CALENDAR{" "}
               <i className="bi bi-calendar ms-auto text-theme fs-16px my-n1"></i>
-            </Link>
+            </Link> */}
             <Link
-              to="/settings"
+              to="/profile"
               className="dropdown-item d-flex align-items-center"
             >
               SETTINGS{" "}

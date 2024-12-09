@@ -341,7 +341,7 @@ function Profile() {
                   <Form.Label>Email *</Form.Label>
                   <Form.Control
                     type="text"
-                    value={userData.email}
+                    defaultValue={userData.email}
                     disabled
                   />
                 </Form.Group>
@@ -356,8 +356,7 @@ function Profile() {
                       required
                       type="text"
                       name="enrollmentNumber"
-                      value={profileData.enrollmentNumber}
-                      onChange={handleChange}
+                      defaultValue={profileData.enrollmentNumber}
                       disabled
                     />
                   </Form.Group>
@@ -394,8 +393,7 @@ function Profile() {
                         required
                         type="text"
                         name="title"
-                        value={userData.title}
-                        onChange={handleChange}
+                        defaultValue={userData.title}
                         disabled
                       />
                     </Form.Group>

@@ -585,10 +585,42 @@ const CATEGORYDATA = [
     permissions: ["None", "Passive", "Active", "Responsible"]
   }
 ];
+
+const TicketTypeList = [
+  { "Absence": "" },
+  { "Change of teaching hospital": "" },
+  { "Change of study group": "" },
+  { "Demonstrator student": "" },
+  { "Enrollment": "" },
+  { "Exam inspection": "" },
+  { "Online Catalogue (Solaris)": "" },
+  { "Recongnition of Courses": "" },
+  { "Recognition of Internship": "" },
+  { "Short term borrow of Diploma": "" },
+  { "Syllabus of the academic year": "" },
+  { "Transcript of Records": "" },
+  { "Trnasfer to Targu Mures": "" },
+  { "Book rental UMCH library": "" },
+  { "Canvas": "" },
+  { "Streaming/Panopto": "" },
+  { "Campus": "" },
+  { "Dean's office": "" },
+  { "German Teaching Department": "" },
+  { "Teaching Hospital": "" },
+  { "Teacher": "" },
+  { "Online Catalougue (Carnet)": "" },
+  { "Exam": "" },
+  { "Internship": "" },
+  { "Medical Abilities": "" },
+  { "Thesis": "" },
+  { "Other": "" },
+]
+
 export {
   INQUIRYCATEGORIESEmailTemplates,
   INQUIRYCATEGORIES,
   POSITIONNAMES,
   CATEGORYDATA,
-  CATEGORYVALUELABEL
+  CATEGORYVALUELABEL,
+  TicketTypeList
 };

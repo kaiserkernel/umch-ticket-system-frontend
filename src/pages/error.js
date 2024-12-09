@@ -61,15 +61,15 @@ function PagesError() {
             Email
           </Link>
           <span className="link-divider"></span>
-          <Link
+          {/* <Link
             to="/calendar"
             className="text-decoration-none text-inverse text-opacity-50"
           >
             Calendar
-          </Link>
+          </Link> */}
           <span className="link-divider"></span>
           <Link
-            to="/settings"
+            to="/profile"
             className="text-decoration-none text-inverse text-opacity-50"
           >
             Settings

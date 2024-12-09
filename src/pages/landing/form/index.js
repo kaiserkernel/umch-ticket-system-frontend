@@ -307,8 +307,7 @@ const FormSection = () => {
                         type="text"
                         autoComplete="off"
                         name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
+                        defaultValue={formData.firstName}
                         placeholder="First Name"
                         className="custom-input"
                         disabled
@@ -329,8 +328,7 @@ const FormSection = () => {
                         type="text"
                         autoComplete="off"
                         name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
+                        defaultValue={formData.lastName}
                         placeholder="Last Name"
                         className="custom-input"
                         disabled
@@ -351,8 +349,7 @@ const FormSection = () => {
                         type="email"
                         autoComplete="off"
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        defaultValue={formData.email}
                         placeholder="Email Address"
                         className="custom-input"
                         disabled
@@ -395,8 +392,7 @@ const FormSection = () => {
                       <Form.Control
                         as="select"
                         name="firstYearOfStudy"
-                        value={formData.firstYearOfStudy}
-                        onChange={handleChange}
+                        defaultValue={formData.firstYearOfStudy}
                         style={{
                           appearance: "none", // Hides the default arrow
                           MozAppearance: "none", // For Firefox

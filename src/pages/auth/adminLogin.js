@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, useCallback } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
@@ -17,7 +17,7 @@ import {
 } from 'react-google-recaptcha-v3';
 
 const AdminLogin = () => (
-  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || '6LcZeYwqAAAAANssjBRSJOmmr0LoVzQH9A4g3lnZ'}>
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
     <ReCaptchaComponent />
   </GoogleReCaptchaProvider>
 )
