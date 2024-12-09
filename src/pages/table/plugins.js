@@ -544,7 +544,7 @@ function AccountManagement() {
                         handleChange(evt)
                       }
                     }}
-                    disabled
+                    disabled={btnType === "add" ? false : true}
                   />
                 </Form.Group>
 
