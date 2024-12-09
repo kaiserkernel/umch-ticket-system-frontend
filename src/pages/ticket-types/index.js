@@ -78,7 +78,7 @@ const TicketTypes = () => {
                 loading ? (
                     <h4>Loading...</h4>
                 ) : (
-                    allTicketTypes?.length > 0 && (
+                    allTicketTypes?.length > 0 ? (
                         allTicketTypes.map((_ticketLog, idx) => (
                             <Row key={idx} className="border rounded-1 mb-2">
                                 <Col className="py-2 align-content-center ps-3">
@@ -105,6 +105,8 @@ const TicketTypes = () => {
                                 </Col>
                             </Row>
                         ))
+                    ) : (
+                        <h4>No Ticket Type Data</h4>
                     )
                 )
             }
