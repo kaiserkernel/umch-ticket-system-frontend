@@ -90,17 +90,20 @@ function SidebarNav() {
 
   const filteredMenu = menus.filter((menu) => {
     // Only include "Account Management" if the role permits
-
-    if (
-      menu.title === "Account Management" &&
-      userData?.role != 0 &&
-      userData?.position != 1
-    ) {
-      return false;
-    }
+    // console.log(userData.role, userData.position, userRole, "aaa")
+    // if (
+    //   menu.title === "Account Management" &&
+    //   userData?.role != 0 &&
+    //   userData?.position != 1
+    // ) {
+    //   return false;
+    // }
     if (
       (menu.title === "Account Management" ||
-        menu.title === "Email Template") &&
+        menu.title === "Email Template" ||
+        menu.title === "Ticket Group" ||
+        menu.title === "Ticket Types"
+      ) &&
       userRole !== 0
     ) {
       return false; // Exclude for non-admins

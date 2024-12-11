@@ -1,26 +1,10 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import styled from "styled-components";
-import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const StyledDatePicker = styled(DatePicker)`
-  border: 1px solid !important;
-  padding: 8px !important;
-  border-radius: 0px !important;
-  outline: none !important;
-  width: 100% !important;
-
-  &:focus {
-    border-color: #2596be !important;
-  }
-`;
-
-const TranscriptRecords = ({ applicationRequest }) => {
+const ChangeStudyGroup = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -33,7 +17,9 @@ const TranscriptRecords = ({ applicationRequest }) => {
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
-    birthday: "",
+    changePartner: "",
+    currentStudyGroup: "",
+    switchStudyGroup: "",
     comment: ""
   });
 
@@ -147,7 +133,7 @@ const TranscriptRecords = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
+            let applicationRequestObject = { subCategory1: "Change of study group" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},
@@ -171,7 +157,9 @@ const TranscriptRecords = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                birthday: "",
+                changePartner: "",
+                currentStudyGroup: "",
+                switchStudyGroup: "",
                 comment: ""
               });
               setFiles([]);
@@ -202,53 +190,98 @@ const TranscriptRecords = ({ applicationRequest }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (formDetailData.birthday == "") {
-      newErrors.birthday = "This field is required";
+    if (!formDetailData.changePartner) {
+      newErrors.changePartner = "This field is required";
+    }
+
+    if (!formDetailData.currentStudyGroup) {
+      newErrors.currentStudyGroup = "This field is required";
+    }
+    if (!formDetailData.switchStudyGroup) {
+      newErrors.switchStudyGroup = "This field is required";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   return (
-    <div className="mt-4 mt-md-4 g-4 g-md-4">
-      <div className="my-5">
-        <p>Dear Students,</p>
+    <div className="">
+      <div className="mt-5">
+        <p> Dear Student,</p>
         <p>
-          With this request, you can order your Transcript of Records. You are
-          allowed to request one Transcript of Records per semester.
+          We regret that you are not satisfied with your current study group and
+          would like to request a transfer. Please note that a transfer is only
+          possible at the beginning of a new semester (winter and summer
+          semesters). We will gladly review your request and will get back to
+          you soon.
         </p>
-        <p>
-          It will be produced at UMFST and shipped to Germany. Please note that
-          processing your request will take approximately 30 days.
-        </p>
-        <p>
-          The UMCH Student Secretariat will contact you as soon as the document
-          is ready for pickup in Hamburg.
-        </p>
+        <p>Thank you very much.</p>
       </div>
-      <Row className=" g-4 g-md-4">
+      <Row className="mt-2 g-4 g-md-4">
         <Col lg={12}>
           <Form.Group controlId="">
             <Form.Label className="input-label">
-              Date of Birth
+              Changing partner:
               <span className="ms-1 required-label">*</span>
             </Form.Label>
-            <StyledDatePicker
-              selected={formDetailData.birthday}
-              onChange={(date) =>
-                setformDetailData({
-                  ...formDetailData,
-                  birthday: date
-                })
-              }
-              dateFormat="yyyy/MM/dd"
-              isClearable
-              showMonthDropdown
-              showYearDropdown
-              dropdownMode="select"
+            <Form.Control
+              type="text"
+              placeholder=""
+              name="changePartner"
+              value={formDetailData?.changePartner}
+              onChange={handleChange}
               className="custom-input"
+              autoComplete="off"
             />
           </Form.Group>
+          {errors.changePartner && (
+            <p className="error-content">{errors.changePartner}</p>
+          )}
+        </Col>
+      </Row>
+      <Row className="mt-2 g-4 g-md-4">
+        <Col lg={12}>
+          <Form.Group controlId="">
+            <Form.Label className="input-label">
+              I am currently in study group
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder=""
+              name="currentStudyGroup"
+              value={formDetailData?.currentStudyGroup}
+              onChange={handleChange}
+              className="custom-input"
+              autoComplete="off"
+            />
+          </Form.Group>
+          {errors.currentStudyGroup && (
+            <p className="error-content">{errors.currentStudyGroup}</p>
+          )}
+        </Col>
+      </Row>
+      <Row className="mt-2 g-4 g-md-4">
+        <Col lg={12}>
+          <Form.Group controlId="">
+            <Form.Label className="input-label">
+              I would like to switch to the study group :
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder=""
+              name="switchStudyGroup"
+              value={formDetailData?.switchStudyGroup}
+              onChange={handleChange}
+              className="custom-input"
+              autoComplete="off"
+            />
+          </Form.Group>
+          {errors.switchStudyGroup && (
+            <p className="error-content">{errors.switchStudyGroup}</p>
+          )}
         </Col>
       </Row>
       <Row className="mt-4">
@@ -257,7 +290,7 @@ const TranscriptRecords = ({ applicationRequest }) => {
             <Form.Label className="input-label">Comments</Form.Label>
             <Form.Control
               as="textarea"
-              rows={6}
+              rows={8}
               placeholder=""
               name="comment"
               value={formDetailData?.comment}
@@ -267,7 +300,6 @@ const TranscriptRecords = ({ applicationRequest }) => {
           </Form.Group>
         </Col>
       </Row>
-
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="">
@@ -284,7 +316,8 @@ const TranscriptRecords = ({ applicationRequest }) => {
             htmlFor="file" className="btn btn-primary upload-btn"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-          ></label>
+          >
+          </label>
           <div className="d-flex flex-column mt-3">
             {files.map((fileObj, index) => (
               <div
@@ -355,4 +388,4 @@ const TranscriptRecords = ({ applicationRequest }) => {
   );
 };
 
-export default TranscriptRecords;
+export default ChangeStudyGroup;

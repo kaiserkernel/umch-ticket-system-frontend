@@ -14,8 +14,8 @@ import { Card, CardBody } from "./../../components/card/card.jsx";
 import DataTable from "react-data-table-component";
 import UserService from "../../sevices/user-service.js";
 import moment from "moment";
-import { ToastContainer, toast } from "react-toastify";
-import Select, { components } from "react-select";
+import { toast } from "react-toastify";
+import Select from "react-select";
 import "react-toastify/dist/ReactToastify.css";
 
 import AuthService from "../../sevices/auth-service.js";
@@ -23,7 +23,7 @@ import BlockUI from "react-block-ui";
 import BeatLoader from "react-spinners/BeatLoader";
 import "react-block-ui/style.css";
 
-import { CATEGORYDATA } from "../../globalVariables.js";
+import TicketGroupService from "../../sevices/ticket-group-service.js";
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
@@ -35,6 +35,8 @@ function AccountManagement() {
   const [btnType, setBtnType] = useState("add");
   const [selectedAdmin, setSelectedAdmin] = useState({});
   const [loading, setLoading] = useState(false);
+  const [categoryData, setCategoryData] = useState([]);
+  const [initialAdminLoading, setInitialAdminLoading] = useState(true);
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -83,11 +85,11 @@ function AccountManagement() {
     const fetchData = async () => {
       try {
         const res = await UserService.getAdmins();
-        console.log(res, 'res')
         setAdmins(res);
       } catch (err) {
         errorNotify(err.message);
       }
+      setInitialAdminLoading(false);
     };
 
     fetchData();
@@ -95,8 +97,7 @@ function AccountManagement() {
 
   useEffect(() => {
     if (btnType == "add") {
-      // Flatten CATEGORYDATA to include both categories and subcategories
-      const allOptions = CATEGORYDATA.flatMap((category) => {
+      const allOptions = categoryData.flatMap((category) => {
         // Include main category
         const mainCategory = { value: category.value, label: category.label };
 
@@ -118,7 +119,7 @@ function AccountManagement() {
       // Initialize permissions for all subcategories and main categories
       const initialPermissions = {};
 
-      CATEGORYDATA.forEach((category) => {
+      categoryData.forEach((category) => {
         if (category.subcategories) {
           category.subcategories.forEach((sub) => {
             initialPermissions[sub.value] = 3; // Default permission for subcategories
@@ -131,7 +132,6 @@ function AccountManagement() {
       setPermissions(initialPermissions);
     }
     if (btnType == "edit") {
-      // Flatten CATEGORYDATA to include both categories and subcategories
       const allOptions = selectedAdmin?.category.flatMap((category) => {
         // Include main category
         const mainCategory = { value: category.value, label: category.label };
@@ -159,6 +159,38 @@ function AccountManagement() {
     }
   }, [show]);
 
+  useEffect(() => {
+    const fetchCategoryData = async () => {
+      try {
+        const { data } = await TicketGroupService.fetchAllTicketGroups();
+        const _initialData = [
+          {
+            label: "Select All Category",
+            value: "0",
+            permissions: ["None", "Passive", "Active", "Responsible"]
+          }];
+
+        const _categoryData = _initialData.concat(data.map((log, idx) => {
+          const _subCategory = log.ticketTypes.map((logSec, idxSec) => ({
+            label: logSec,
+            value: `${log.prefix}-${idxSec}`,
+            permissions: ["None", "Passive", "Active", "Responsible"]
+          }))
+          return ({
+            label: log.name,
+            value: log.prefix,
+            subcategories: _subCategory
+          })
+        }));
+
+        setCategoryData(_categoryData);
+      } catch (error) {
+        console.log("Error to get category data", error);
+      }
+    }
+    fetchCategoryData();
+  }, [])
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -167,7 +199,6 @@ function AccountManagement() {
   };
 
   const handleAddNewUser = async () => {
-    console.log(selectedItems, "====");
     const categories = [];
     selectedItems.map((item) => {
       const categoryId = item.value;
@@ -177,7 +208,7 @@ function AccountManagement() {
 
       const category = {
         inquiryCategory: categoryIdArr[0],
-        subCategory1: categoryIdArr[1] ? categoryIdArr[1] : "null",
+        subCategory1: item.label,
         value: categoryId,
         label: item.label,
         permission: defaultPermissions[permission],
@@ -202,7 +233,6 @@ function AccountManagement() {
       if (typeof errors != "object") {
         errorNotify(errors);
       } else {
-        console.log(typeof errors);
         errors.map((error) => {
           errorNotify(error.msg);
         });
@@ -432,13 +462,23 @@ function AccountManagement() {
                         style={{ padding: "5px" }}
                       />
                     </div>
-                    <DataTable
-                      columns={columns}
-                      data={filteredData}
-                      pagination
-                      paginationRowsPerPageOptions={[5, 10, 15]}
-                      defaultSortField="name"
-                    />
+                    {
+                      initialAdminLoading ? (
+                        <h4>Loading...</h4>
+                      ) : (
+                        filteredData?.length > 0 ? (
+                          <DataTable
+                            columns={columns}
+                            data={filteredData}
+                            pagination
+                            paginationRowsPerPageOptions={[5, 10, 15]}
+                            defaultSortField="name"
+                          />
+                        ) : (
+                          <h4>No Admins</h4>
+                        )
+                      )
+                    }
                   </CardBody>
                 </Card>
               </div>
@@ -526,7 +566,7 @@ function AccountManagement() {
                   </Form.Control>
                 </Form.Group>
                 <MultiLevelSelectWithPermissions
-                  options={CATEGORYDATA}
+                  options={categoryData}
                   setSelectedItems={setSelectedItems}
                   selectedItems={selectedItems}
                   setPermissions={setPermissions}

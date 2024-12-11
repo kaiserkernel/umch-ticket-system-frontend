@@ -1,8 +1,9 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import styled from "styled-components";
 import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
+import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
@@ -19,7 +20,7 @@ const StyledDatePicker = styled(DatePicker)`
   }
 `;
 
-const StreamingPanopto = ({ campusIT }) => {
+const TranscriptRecords = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -31,13 +32,9 @@ const StreamingPanopto = ({ campusIT }) => {
 
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
-
   const [formDetailData, setformDetailData] = useState({
-    room: "",
-    modules: "",
-    dateOfLecture: "",
-    timeOfLecture: "",
-    request: ""
+    birthday: "",
+    comment: ""
   });
 
   const [files, setFiles] = useState([]);
@@ -150,15 +147,13 @@ const StreamingPanopto = ({ campusIT }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: campusIT };
+            let applicationRequestObject = { subCategory1: "Transcript of Records" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},
               temp,
               applicationRequestObject
             );
-
-            console.log(combinedFormData);
 
             const formDataToSend = new FormData();
             for (const key in combinedFormData) {
@@ -176,11 +171,8 @@ const StreamingPanopto = ({ campusIT }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                room: "",
-                modules: "",
-                dateOfLecture: "",
-                timeOfLecture: "",
-                request: ""
+                birthday: "",
+                comment: ""
               });
               setFiles([]);
               setOriginalFiles([]);
@@ -210,153 +202,77 @@ const StreamingPanopto = ({ campusIT }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formDetailData.room) {
-      newErrors.room = "This field is required";
-    }
-    if (formDetailData.modules == "") {
-      newErrors.modules = "This field is required";
-    }
-    if (!formDetailData.dateOfLecture) {
-      newErrors.dateOfLecture = "This field is required";
-    }
-    if (!formDetailData.timeOfLecture) {
-      newErrors.timeOfLecture = "This field is required";
-    }
-    if (!formDetailData.request) {
-      newErrors.request = "This field is required";
+    if (formDetailData.birthday == "") {
+      newErrors.birthday = "This field is required";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
-      <Row>
-        <Col lg={6}>
-          <Form.Group controlId="Room">
-            <Form.Label className="input-label">
-              Room <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              autoComplete="off"
-              name="room"
-              value={formDetailData.room}
-              onChange={handleChange}
-              placeholder=""
-              className="custom-input"
-            />
-          </Form.Group>
-          {errors.room && <p className="error-content">{errors.room}</p>}
-        </Col>
-        <Col lg={6}>
-          <Form.Group>
-            <Form.Label className="input-label">
-              Modules
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <Form.Control
-              as="select"
-              name="modules"
-              value={formDetailData.modules}
-              onChange={handleChange}
-              style={{
-                appearance: "none", // Hides the default arrow
-                MozAppearance: "none", // For Firefox
-                WebkitAppearance: "none", // For Safari/Chrome
-                backgroundColor: "white",
-                color: "gray !important"
-                // padding: "8px 12px",
-                // border: "1px solid #007bff",
-              }}
-              className="custom-input"
-            >
-              <option value="">– Select –</option>
-              <option value="1st Module" selected="">
-                1st Module
-              </option>
-              <option value="2nd Module">2nd Module</option>
-              <option value="3rd Module">3rd Module</option>
-              <option value="4th Module">4th Module</option>
-            </Form.Control>
-          </Form.Group>
-          {errors.modules && <p className="error-content">{errors.modules}</p>}
-        </Col>
-      </Row>
-      <Row className="mt-2 g-4 g-md-4">
-        <Col lg={6}>
+      <div className="my-5">
+        <p>Dear Students,</p>
+        <p>
+          With this request, you can order your Transcript of Records. You are
+          allowed to request one Transcript of Records per semester.
+        </p>
+        <p>
+          It will be produced at UMFST and shipped to Germany. Please note that
+          processing your request will take approximately 30 days.
+        </p>
+        <p>
+          The UMCH Student Secretariat will contact you as soon as the document
+          is ready for pickup in Hamburg.
+        </p>
+      </div>
+      <Row className=" g-4 g-md-4">
+        <Col lg={12}>
           <Form.Group controlId="">
             <Form.Label className="input-label">
-              Date of Lecture/PA
+              Date of Birth
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker
-              selected={formDetailData.dateOfLecture}
-              name="dateOfLecture"
+              selected={formDetailData.birthday}
               onChange={(date) =>
-                setformDetailData({ ...formDetailData, dateOfLecture: date })
+                setformDetailData({
+                  ...formDetailData,
+                  birthday: date
+                })
               }
               dateFormat="yyyy/MM/dd"
               isClearable
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
               className="custom-input"
             />
           </Form.Group>
-          {errors.dateOfLecture && (
-            <p className="error-content">{errors.dateOfLecture}</p>
-          )}
-        </Col>
-        <Col lg={6}>
-          <Form.Group controlId="">
-            <Form.Label className="input-label">
-              Time of Lecture/PA <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              autoComplete="off"
-              name="timeOfLecture"
-              value={formDetailData.timeOfLecture}
-              onChange={handleChange}
-              placeholder=""
-              className="custom-input"
-            />
-          </Form.Group>
-          {errors.timeOfLecture && (
-            <p className="error-content">{errors.timeOfLecture}</p>
-          )}
         </Col>
       </Row>
-
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
-            <Form.Label className="input-label">
-              I hereby make the following request{" "}
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
+            <Form.Label className="input-label">Comments</Form.Label>
             <Form.Control
               as="textarea"
-              rows={4}
-              name="request"
-              value={formDetailData.request}
-              onChange={handleChange}
+              rows={6}
               placeholder=""
+              name="comment"
+              value={formDetailData?.comment}
+              onChange={handleChange}
               className="custom-textarea-input"
             />
           </Form.Group>
-          {errors.request && <p className="error-content">{errors.request}</p>}
         </Col>
       </Row>
+
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="">
-            <Form.Label className="input-label mb-0">
-              File Upload (all official documents must be translated into
-              english language)
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
+            <Form.Label className="input-label mb-0">File Upload</Form.Label>
           </Form.Group>
-
           <input
             type="file"
             name="file"
@@ -439,4 +355,4 @@ const StreamingPanopto = ({ campusIT }) => {
   );
 };
 
-export default StreamingPanopto;
+export default TranscriptRecords;

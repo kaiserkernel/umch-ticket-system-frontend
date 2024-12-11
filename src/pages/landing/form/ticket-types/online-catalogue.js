@@ -1,13 +1,10 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
-import DatePicker from "react-datepicker";
-import styled from "styled-components";
-import "react-datepicker/dist/react-datepicker.css";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const Canvas = ({ campusIT }) => {
+const OnlineCatalogue = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -19,9 +16,8 @@ const Canvas = ({ campusIT }) => {
 
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
-
   const [formDetailData, setformDetailData] = useState({
-    request: ""
+    comment: ""
   });
 
   const [files, setFiles] = useState([]);
@@ -134,15 +130,13 @@ const Canvas = ({ campusIT }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: campusIT };
+            let applicationRequestObject = { subCategory1: "Online Catalogue (Solaris)" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},
               temp,
               applicationRequestObject
             );
-
-            console.log(combinedFormData);
 
             const formDataToSend = new FormData();
             for (const key in combinedFormData) {
@@ -160,7 +154,8 @@ const Canvas = ({ campusIT }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                request: ""
+
+                comment: ""
               });
               setFiles([]);
               setOriginalFiles([]);
@@ -190,46 +185,41 @@ const Canvas = ({ campusIT }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formDetailData.request) {
-      newErrors.request = "This field is required";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   return (
-    <div className="">
+    <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div className="my-5">
+        <p> Dear Student,</p>
+        <p>
+          If you have found corrections, requests for changes, or missing grades
+          in the online catalog Solaris, please feel free to contact us. We will
+          gladly assist in resolving the issue.
+        </p>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
-            <Form.Label className="input-label">
-              I hereby make the following request{" "}
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
+            <Form.Label className="input-label">Comments</Form.Label>
             <Form.Control
               as="textarea"
-              rows={6}
-              name="request"
-              value={formDetailData.request}
+              name="comment"
+              value={formDetailData?.comment}
               onChange={handleChange}
+              rows={6}
               placeholder=""
               className="custom-textarea-input"
             />
           </Form.Group>
-          {errors.request && <p className="error-content">{errors.request}</p>}
         </Col>
       </Row>
+
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="">
-            <Form.Label className="input-label mb-0">
-              File Upload (all official documents must be translated into
-              english language)
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
+            <Form.Label className="input-label mb-0">File Upload</Form.Label>
           </Form.Group>
-
           <input
             type="file"
             name="file"
@@ -240,8 +230,8 @@ const Canvas = ({ campusIT }) => {
           <label
             htmlFor="file" className="btn btn-primary upload-btn"
             onDrop={handleDrop}
-            onDragOver={handleDragOver}
-          ></label>
+            onDragOver={handleDragOver}>
+          </label>
           <div className="d-flex flex-column mt-3">
             {files.map((fileObj, index) => (
               <div
@@ -308,27 +298,8 @@ const Canvas = ({ campusIT }) => {
           </div>
         </Col>
       </Row>
-
-      <Row className="mt-5">
-        <Col lg={12}>
-          <p className="fw-bold"> Please note:</p>
-          <p>
-            Our IT Support system is designated for issues related to our
-            systems and infrastructure only. Personal problems or inquiries not
-            connected to these areas cannot be addressed. Thank you for your
-            understanding!
-          </p>
-          <p className=" text-black">
-            For the best possible support, please provide as many details as you
-            can about the issues you are experiencing. Including screenshots is
-            highly encouraged, as it helps us understand and resolve your
-            problem more efficiently.
-          </p>
-          <p className="text-black">Thank you!</p>
-        </Col>
-      </Row>
     </div>
   );
 };
 
-export default Canvas;
+export default OnlineCatalogue;

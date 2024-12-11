@@ -43,7 +43,7 @@ import DeanOffice from "./inquiryTemplate/deanOffice.js";
 import GermanTeachingDepartment from "./inquiryTemplate/germanTeachingDepartment.js";
 import TeachingHospital from "./inquiryTemplate/teachingHospital.js";
 import Teacher from "./inquiryTemplate/teacher.js";
-import OnlineCatalougeComplaint from "./inquiryTemplate/onlineCatalougeComplaint.js";
+import OnlineCatalogueComplaint from "./inquiryTemplate/onlineCatalogueComplaint.js";
 import Exam from "./inquiryTemplate/exam.js";
 import OtherComplaint from "./inquiryTemplate/otherComplaint.js";
 import Internship from "./inquiryTemplate/internship.js";
@@ -58,8 +58,9 @@ import PassToAnotherDepartmentModal from "./passToAnotherDepartmentModal.js";
 import TarguModal from "./transferToTarguMures.js";
 
 import BeatLoader from "react-spinners/BeatLoader";
-import { INQUIRYCATEGORIES, CATEGORYDATA, CATEGORYVALUELABEL } from "../../globalVariables.js";
 import * as XLSX from "xlsx";
+
+import TicketGroupService from "../../sevices/ticket-group-service.js";
 
 function EmailInbox() {
   const host = process.env.REACT_APP_API_URL;
@@ -103,6 +104,8 @@ function EmailInbox() {
   });
   const [showExcelExportModal, setShowExcelExportModal] = useState(false);
   const [excelFileName, setExcelFileName] = useState('');
+  const [inquiryCategories, setInquiryCategories] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
 
   const [
     passToAnotherDepartmentModalShow,
@@ -228,15 +231,12 @@ function EmailInbox() {
     } else {
       label = selectedOption?.label;
     }
-    const categoryArray = selectedOption.value.split("-");
-
     const filteredTempTickets = originalTicketData.filter(
       (ticket) =>
-        ticket?.inquiryCategory == categoryArray[0] &&
-        ticket?.subCategory1 == categoryArray[1]
+        ticket.subCategory1 == selectedOption.label
     );
 
-    if (categoryArray[0] == "0") {
+    if (selectedOption.value == "0") {
       setTicketData(originalTicketData);
       setTicketsByYear(originalTicketData);
     } else {
@@ -270,16 +270,16 @@ function EmailInbox() {
     try {
       if (
         selectedTicket &&
-        INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1]["subCategories"][
-        selectedTicket?.subCategory1 - 1
-        ]
+        inquiryCategories.find(log => log.inquiryCategoryId === selectedTicket.inquiryCategory)["subCategories"]
+          .find(log => log.subCategory1 === selectedTicket.subCategory1)
+
       ) {
         const ticketComponent =
-          INQUIRYCATEGORIES[selectedTicket?.inquiryCategory - 1][
-          "subCategories"
-          ][selectedTicket?.subCategory1 - 1]["component"];
-        console.log(ticketComponent);
-        setContentTemplate(ticketComponent);
+          inquiryCategories.find(log => log.inquiryCategoryId === selectedTicket.inquiryCategory)[
+            "subCategories"
+          ].find(log => log.subCategory1 === selectedTicket.subCategory1)
+
+        setContentTemplate(ticketComponent.component);
       }
     } catch (err) {
       console.log(err);
@@ -293,6 +293,57 @@ function EmailInbox() {
 
     handleResize();
     window.addEventListener("resize", handleResize);
+
+    // set inquirycateogries
+    const fetchAllInquiry = async () => {
+      try {
+        const { data } = await TicketGroupService.fetchAllTicketGroups();
+
+        const _inquiryCategories = data.map((log) => {
+          const _subData = log.ticketTypes.map(log => {
+            return {
+              subCategory1: log,
+              component: log.replaceAll(" ", "").replaceAll("'", "")
+            }
+          })
+          return {
+            inquiryCategory: log.name,
+            inquiryCategoryId: log._id,
+            component: "",
+            subCategories: _subData
+          }
+        })
+
+        setInquiryCategories(_inquiryCategories);
+
+        const _initialData = [
+          {
+            label: "Select All Category",
+            value: "0",
+            permissions: ["None", "Passive", "Active", "Responsible"]
+          }];
+
+        const _categoryData = _initialData.concat(data.map((log, idx) => {
+          const _subCategory = log.ticketTypes.map((logSec, idxSec) => ({
+            label: logSec,
+            value: `${log.prefix}-${idxSec}`,
+            permissions: ["None", "Passive", "Active", "Responsible"]
+          }))
+          return ({
+            label: log.name,
+            value: log.prefix,
+            subcategories: _subCategory
+          })
+        }));
+
+        setCategoryData(_categoryData);
+
+      } catch (error) {
+        console.error("Error fetching ticket groups", error);
+      }
+    }
+
+    fetchAllInquiry();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -308,6 +359,7 @@ function EmailInbox() {
     const ticketPermission = permission ? permission.permission : "None";
     return ticketPermission;
   };
+
   const handleCheckEnrollment = () => {
     setActionBtnType("enrollment");
     setEnrollmentModalShow(true);
@@ -323,58 +375,58 @@ function EmailInbox() {
       case "Absence":
         return <Absence selectedTicket={selectedTicket} />;
         break;
-      case "ChangeTeachingHospital":
+      case "Changeofteachinghospital":
         return <ChangeTeachingHospital selectedTicket={selectedTicket} />;
         break;
-      case "ChangeStudyGroup":
+      case "Changeofstudygroup":
         return <ChangeStudyGroup selectedTicket={selectedTicket} />;
         break;
-      case "DemonstratorStudent":
+      case "Demonstratorstudent":
         return <DemonstratorStudent selectedTicket={selectedTicket} />;
         break;
       case "Enrollment":
         return <Enrollment selectedTicket={selectedTicket} />;
         break;
-      case "ExamInspection":
+      case "Examinspection":
         return <ExamInspection selectedTicket={selectedTicket} />;
         break;
-      case "OnlineCatalogue":
+      case "OnlineCatalogue(Solaris)":
         return <OnlineCatalogue selectedTicket={selectedTicket} />;
         break;
-      case "RecognitionCourses":
+      case "RecongnitionofCourses":
         return <RecognitionCourses selectedTicket={selectedTicket} />;
         break;
-      case "RecognitionInternship":
+      case "RecognitionofInternship":
         return <RecognitionInternship selectedTicket={selectedTicket} />;
         break;
-      case "ShotTermBorrowDiploma":
+      case "ShorttermborrowofDiploma":
         return <ShotTermBorrowDiploma selectedTicket={selectedTicket} />;
         break;
-      case "SyllabusAcademic":
+      case "Syllabusoftheacademicyear":
         return <SyllabusAcademic selectedTicket={selectedTicket} />;
         break;
-      case "TranscriptRecords":
+      case "TranscriptofRecords":
         return <TranscriptRecords selectedTicket={selectedTicket} />;
         break;
-      case "TransferTarguMures":
+      case "TransfertoTarguMures":
         return <TransferTarguMures selectedTicket={selectedTicket} />;
         break;
       case "OtherApplicationRequest":
         return <OtherApplicationRequest selectedTicket={selectedTicket} />;
         break;
-      case "BookRental":
+      case "BookrentalUMCHlibrary":
         return <BookRental selectedTicket={selectedTicket} />;
         break;
       case "Canvas":
         return <Canvas selectedTicket={selectedTicket} />;
         break;
-      case "Streaming":
+      case "Streaming/Panopto":
         return <Streaming selectedTicket={selectedTicket} />;
         break;
       case "Campus":
         return <Campus selectedTicket={selectedTicket} />;
         break;
-      case "DeanOffice":
+      case "Deansoffice":
         return <DeanOffice selectedTicket={selectedTicket} />;
         break;
       case "GermanTeachingDepartment":
@@ -386,8 +438,8 @@ function EmailInbox() {
       case "Teacher":
         return <Teacher selectedTicket={selectedTicket} />;
         break;
-      case "OnlineCatalougeComplaint":
-        return <OnlineCatalougeComplaint selectedTicket={selectedTicket} />;
+      case "OnlineCatalogue(Carnet)":
+        return <OnlineCatalogueComplaint selectedTicket={selectedTicket} />;
         break;
       case "Exam":
         return <Exam selectedTicket={selectedTicket} />;
@@ -412,6 +464,7 @@ function EmailInbox() {
     }
     return <Absence />;
   };
+
   let userData = localStorage.getItem("userData");
   userData = JSON.parse(userData);
   let userRole = "";
@@ -510,6 +563,7 @@ function EmailInbox() {
     }
     setLoading(false);
   };
+
   const getAllInquiriesByEnrollmentNumber = async () => {
     try {
       setLoading(true);
@@ -517,6 +571,7 @@ function EmailInbox() {
         enrollmentNumber
       );
       res.reverse();
+
       const newTickets = res.filter(
         (ticket) => ticket.status === 0 || ticket.status === 1
       );
@@ -535,7 +590,6 @@ function EmailInbox() {
       setUnClickedNewTicketsCount(unClickedNewTickets.length);
       setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
       setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
-      console.log(newTickets);
       setTicketData(newTickets);
       setOriginalTicketData(newTickets);
       setTicketsByYear(newTickets);
@@ -676,12 +730,12 @@ function EmailInbox() {
     if (userRole != 2) {
       try {
         const allTickets = await FormService.getAllInquiries();
-        console.log(allTickets);
+
         allTickets.inquiries.reverse();
         const filteredAllTickets = allTickets.inquiries.filter(
           (ticket) => ticket.status === 3
         );
-        console.log(filteredAllTickets);
+
         setTicketData(filteredAllTickets);
         setOriginalTicketData(filteredAllTickets);
         setTicketsByYear(filteredAllTickets);
@@ -697,7 +751,6 @@ function EmailInbox() {
         const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
           enrollmentNumber
         );
-        console.log(allTickets);
         allTickets.reverse();
         const filteredAllTickets = allTickets.filter(
           (ticket) => ticket.status === 3
@@ -983,7 +1036,7 @@ function EmailInbox() {
         email: log.email,
         enrollmentNumber: log?.enrollmentNumber,
         firstYearOfStudy: log?.firstYearOfStudy,
-        category: CATEGORYVALUELABEL[`${log.inquiryCategory}-${log.subCategory1}`],
+        category: log.subCategory1,
         detail: log.detail ? log.detail : "",
         documents: log.documents,
         agreement: log.agreement,
@@ -1144,7 +1197,7 @@ function EmailInbox() {
                   <Col lg={12}>
                     <Form.Group controlId="emailTemplateTitle" className="">
                       <Select
-                        options={formatOptions(CATEGORYDATA)}
+                        options={formatOptions(categoryData)}
                         value={selectedItems}
                         onChange={handleSelectChange}
                         isMulti={false}
@@ -1179,7 +1232,7 @@ function EmailInbox() {
                   </Col>
                 </Row>
                 {
-                  selectedItems.value === '1-6' && (
+                  selectedItems.label === 'Exam inspection' && (
                     <>
                       <Row>
                         <Col md={12}>
@@ -1438,12 +1491,12 @@ function EmailInbox() {
                             [
                             {ticket?.inquiryCategory &&
                               ticket?.subCategory1 &&
-                              INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                              "subCategories"
-                              ][ticket?.subCategory1 - 1]["subCategory1"]
-                              ? INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
-                              "subCategories"
-                              ][ticket?.subCategory1 - 1]["subCategory1"]
+                              inquiryCategories.find(log => log.inquiryCategoryId === ticket.inquiryCategory)[
+                                "subCategories"
+                              ].find(log => log.subCategory1 === ticket.subCategory1)["subCategory1"]
+                              ? inquiryCategories.find(log => log.inquiryCategoryId === ticket.inquiryCategory)[
+                                "subCategories"
+                              ].find(log => log.subCategory1 === ticket.subCategory1)["subCategory1"]
                               : ""}
                             ]
                           </span>
@@ -1468,7 +1521,7 @@ function EmailInbox() {
                           }
                         >
                           {ticket?.inquiryCategory &&
-                            INQUIRYCATEGORIES[ticket?.inquiryCategory - 1][
+                            inquiryCategories.find(log => log.inquiryCategoryId === ticket.inquiryCategory)[
                             "inquiryCategory"
                             ]}
                         </div>
@@ -1681,11 +1734,8 @@ function EmailInbox() {
                         <h4 className="mb-0">
                           {selectedTicket?.inquiryCategory &&
                             selectedTicket?.subCategory1 &&
-                            INQUIRYCATEGORIES[
-                            selectedTicket?.inquiryCategory - 1
-                            ]["subCategories"][
-                            selectedTicket?.subCategory1 - 1
-                            ]["subCategory1"]}{" "}
+                            inquiryCategories.find(log => log.inquiryCategoryId === selectedTicket.inquiryCategory)["subCategories"]
+                              .find(log => log.subCategory1 === selectedTicket.subCategory1)["subCategory1"]}{" "}
                           Request from{" "}
                           {selectedTicket?.firstName +
                             " " +

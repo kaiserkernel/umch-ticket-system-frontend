@@ -13,17 +13,15 @@ import {
   OverlayTrigger
 } from "react-bootstrap";
 import authService from "../../sevices/auth-service.js";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import { useAuth } from "../../context/authProvider.js";
+import TicketGroupService from "../../sevices/ticket-group-service.js";
 
 function Profile() {
   const {
-    isAuthenticated,
-    setIsAuthenticated,
-    isAvatarUpdated,
     setAvatarUpdated
   } = useAuth();
 

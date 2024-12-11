@@ -19,7 +19,7 @@ const StyledDatePicker = styled(DatePicker)`
   }
 `;
 
-const Enrollment = ({ applicationRequest }) => {
+const Enrollment = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -148,7 +148,7 @@ const Enrollment = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
+            let applicationRequestObject = { subCategory1: "Enrollment" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},
@@ -218,8 +218,6 @@ const Enrollment = ({ applicationRequest }) => {
     ) {
       newErrors.currentYearOfStudy = "This field is required";
     }
-
-    console.log(newErrors, "========newErrors");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

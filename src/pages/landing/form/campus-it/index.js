@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
-import Canvas from "./canvas";
+// import Canvas from "./canvas";
 import Default from "./default";
-import StreamingPanopto from "./streaming-panopto";
+// import StreamingPanopto from "./streaming-panopto";
 
 import { FormContext } from "../index";
 
@@ -96,8 +96,8 @@ const CampusIT = () => {
 
   const content = {
     default: <Default />,
-    1: <Canvas campusIT={String(formInquiryData.campusIT)} />,
-    2: <StreamingPanopto campusIT={String(formInquiryData.campusIT)} />
+    // 1: <Canvas campusIT={String(formInquiryData.campusIT)} />,
+    // 2: <StreamingPanopto campusIT={String(formInquiryData.campusIT)} />
   };
 
   return (

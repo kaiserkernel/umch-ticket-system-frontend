@@ -4,7 +4,7 @@ import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const DemonstratorStudent = ({ applicationRequest }) => {
+const DemonstratorStudent = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -131,7 +131,7 @@ const DemonstratorStudent = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
+            let applicationRequestObject = { subCategory1: "Demonstrator student" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},

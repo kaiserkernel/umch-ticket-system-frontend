@@ -21,7 +21,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
 import EmailTemplateService from "../../sevices/email-template-service.js";
-import { CATEGORYDATA } from "../../globalVariables.js";
+import TicketGroupService from "../../sevices/ticket-group-service.js";
 
 function EmailTemplateManagement() {
   const [emailTemplates, setEmailTemplates] = useState([]);
@@ -32,6 +32,7 @@ function EmailTemplateManagement() {
   const [btnType, setBtnType] = useState("");
   const [deleteTemplate, setDeleteTemplate] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -41,6 +42,8 @@ function EmailTemplateManagement() {
     emailTemplateTitle: "",
     emailTemplateContent: ""
   });
+
+
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -61,6 +64,7 @@ function EmailTemplateManagement() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -73,6 +77,38 @@ function EmailTemplateManagement() {
 
     fetchData();
   }, [show, deleteTemplate]);
+
+  useEffect(() => {
+    const fetchCategoryData = async () => {
+      try {
+        const { data } = await TicketGroupService.fetchAllTicketGroups();
+        const _initialData = [
+          {
+            label: "Select All Category",
+            value: "0",
+            permissions: ["None", "Passive", "Active", "Responsible"]
+          }];
+
+        const _categoryData = _initialData.concat(data.map((log, idx) => {
+          const _subCategory = log.ticketTypes.map((logSec, idxSec) => ({
+            label: logSec,
+            value: `${log.prefix}-${idxSec}`,
+            permissions: ["None", "Passive", "Active", "Responsible"]
+          }))
+          return ({
+            label: log.name,
+            value: log.prefix,
+            subcategories: _subCategory
+          })
+        }));
+
+        setCategoryData(_categoryData);
+      } catch (error) {
+        console.log("Error to get category data", error);
+      }
+    }
+    fetchCategoryData();
+  }, [])
 
   const handleChange = (e) => {
     setFormData({
@@ -427,7 +463,7 @@ function EmailTemplateManagement() {
               <Col lg={12}>
                 <Form.Group controlId="emailTemplateTitle" className="mt-3">
                   <Select
-                    options={formatOptions(CATEGORYDATA)}
+                    options={formatOptions(categoryData)}
                     value={selectedItems}
                     onChange={handleSelectChange}
                     isMulti={false}

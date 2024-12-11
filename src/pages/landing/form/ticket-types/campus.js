@@ -5,7 +5,7 @@ import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const GermanTeachingDepartment = ({ complaints }) => {
+const Campus = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -18,15 +18,14 @@ const GermanTeachingDepartment = ({ complaints }) => {
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
+    section: "",
     complaintComment: ""
   });
 
   useEffect(() => {
-    setIsFormSubmit(false);
     setErrors({});
 
     return () => {
-      setIsFormSubmit(false);
       setErrors({});
     };
   }, []);
@@ -60,7 +59,6 @@ const GermanTeachingDepartment = ({ complaints }) => {
         if (validate()) {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
-
             const temp = formData;
             const combinedFormData = Object.assign({}, temp);
 
@@ -71,7 +69,7 @@ const GermanTeachingDepartment = ({ complaints }) => {
             }
 
             formDataToSend.append("details", jsonFormDetailData);
-            formDataToSend.append("subCategory1", complaints);
+            formDataToSend.append("subCategory1", "Campus");
 
             try {
               setLoading(true);
@@ -81,7 +79,7 @@ const GermanTeachingDepartment = ({ complaints }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-
+                section: "",
                 complaintComment: ""
               });
 
@@ -111,18 +109,53 @@ const GermanTeachingDepartment = ({ complaints }) => {
   const validate = () => {
     const newErrors = {};
 
+    if (formDetailData.section == "") {
+      newErrors.section = "This field is required";
+    }
     if (!formDetailData.complaintComment) {
       newErrors.complaintComment = "This field is required";
     }
 
-    console.log(newErrors);
-    if (complaints == "3") {
-      setErrors(newErrors);
-    }
+    // if (complaints == "1") {
+    setErrors(newErrors);
+    // }
     return Object.keys(newErrors).length === 0;
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <Row>
+        <Col lg={12}>
+          <Form.Group>
+            <Form.Label className="input-label">
+              Section <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <Form.Control
+              as="select"
+              style={{
+                appearance: "none",
+                MozAppearance: "none",
+                WebkitAppearance: "none",
+                backgroundColor: "white",
+                color: "gray !important"
+              }}
+              name="section"
+              onChange={handleChange}
+              value={formDetailData.section}
+              className="custom-input"
+            >
+              <option value="">– Select –</option>
+              <option value="Administration Departments">
+                Administration Departments
+              </option>
+              <option value="Campus Infrustructure (Furniture/ Rooms ect. )">
+                Campus Infrustructure (Furniture/ Rooms ect. )
+              </option>
+              <option value="Finance">Finance</option>
+            </Form.Control>
+          </Form.Group>
+          {errors.section && <p className="error-content">{errors.section}</p>}
+        </Col>
+      </Row>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
@@ -149,4 +182,4 @@ const GermanTeachingDepartment = ({ complaints }) => {
   );
 };
 
-export default GermanTeachingDepartment;
+export default Campus;

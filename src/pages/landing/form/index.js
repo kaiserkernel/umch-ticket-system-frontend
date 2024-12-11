@@ -1,23 +1,25 @@
 import React, { useEffect, useState, createContext } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 
 import ApplicationRequests from "./application-request";
-import BookRental from "./book-rental";
 import CampusIT from "./campus-it";
 import Complaints from "./complaints";
 import Internship from "./internship";
 import MedicalAbilities from "./medical-abilities";
 import Thesis from "./thesis";
 import Other from "./other";
-import FormService from "../../../sevices/form-service";
 
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
+
+import TicketTypes from "./ticket-types"
+
+import TicketGroupService from "../../../sevices/ticket-group-service";
 
 export const FormContext = createContext();
 
@@ -35,16 +37,16 @@ const FormSection = () => {
     email: userData?.email,
     enrollmentNumber: userData?.enrollmentNumber,
     firstYearOfStudy: userData?.firstYearOfStudy,
-    inquiryCategory: "default",
+    inquiryCategory: "",
     subCategory2: "",
     agreement: false
   });
+  const [ticketGroupList, setTicketGroupList] = useState([]);
 
   const [mainPageErrors, setErrors] = useState({});
 
   const validate = () => {
     const newErrors = {};
-    console.log(formData, "====formdata");
     // Name validation
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First Name is required";
@@ -68,7 +70,7 @@ const FormSection = () => {
     if (formData.firstYearOfStudy == "0") {
       newErrors.firstYearOfStudy = "First year of study is required";
     }
-    if (formData.inquiryCategory == "default") {
+    if (formData.inquiryCategory == "") {
       newErrors.inquiryCategory = "Category is required";
     }
 
@@ -134,6 +136,18 @@ const FormSection = () => {
     };
   }, [location.pathname]); // Runs effect on path change
 
+  useEffect(() => {
+    const fetchAllTicketGroup = async () => {
+      try {
+        const { data } = await TicketGroupService.fetchAllTicketGroups();
+        setTicketGroupList(data);
+      } catch (error) {
+        console.log("Error fetch ticket group", error);
+      }
+    }
+    fetchAllTicketGroup();
+  }, [])
+
   // Define animation variants for each collapse effect
   const variants = {
     default: {
@@ -145,109 +159,12 @@ const FormSection = () => {
         transition: { duration: 0.5 }
       }
     },
-    1: {
+    0: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
         opacity: 1,
         originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-
-    2: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    3: {
-      hidden: { scaleY: 0, opacity: 0 },
-      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    4: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-
-    5: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    6: {
-      hidden: { scaleY: 0, opacity: 0 },
-      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    7: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    8: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
         transition: { duration: 0.5 }
       },
       exit: {
@@ -257,16 +174,6 @@ const FormSection = () => {
         transition: { duration: 0.5 }
       }
     }
-  };
-  const content = {
-    1: <ApplicationRequests />,
-    2: <BookRental />,
-    3: <CampusIT />,
-    4: <Complaints />,
-    5: <Internship />,
-    6: <MedicalAbilities />,
-    7: <Thesis />,
-    8: <Other />
   };
 
   return (
@@ -445,15 +352,12 @@ const FormSection = () => {
                         onChange={handleChange}
                         value={formData.inquiryCategory}
                       >
-                        <option value="default">- Select -</option>
-                        <option value="1">Applications and Requests</option>
-                        <option value="2">Book rental UMCH library</option>
-                        <option value="3">Campus IT</option>
-                        <option value="4">Complaints</option>
-                        <option value="5">Internship</option>
-                        <option value="6">Medical Abilities</option>
-                        <option value="7">Thesis</option>
-                        <option value="8">Other</option>
+                        <option value="">- Select -</option>
+                        {
+                          ticketGroupList.sort((a, b) => a.name.localeCompare(b.name)).map((log, idx) => (
+                            <option value={log._id} key={idx}>{log.name}</option>
+                          ))
+                        }
                       </Form.Control>
                     </Form.Group>
                     {mainPageErrors.inquiryCategory && (
@@ -465,28 +369,16 @@ const FormSection = () => {
                 </Row>
 
                 <AnimatePresence mode="wait">
-                  {formData.inquiryCategory === "default" ? (
-                    <motion.div
-                      key="default"
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      variants={variants.default}
-                    >
-                      <div>{content[formData.inquiryCategory]}</div>
-                    </motion.div>
-                  ) : (
+                  {formData.inquiryCategory !== "" && (
                     <motion.div
                       key={formData.inquiryCategory}
                       initial="hidden"
                       animate="visible"
-                      //   exit={selectedEffect === "default" ? "exit" : false}
-
                       variants={
-                        variants[formData.inquiryCategory] || variants.default
+                        variants[0] || variants.default
                       }
                     >
-                      <div>{content[formData.inquiryCategory]}</div>
+                      <TicketTypes group={formData.inquiryCategory} groupList={ticketGroupList} />
                     </motion.div>
                   )}
                 </AnimatePresence>

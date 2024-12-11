@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
+import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const ChangeStudyGroup = ({ applicationRequest }) => {
+const RecognitionInternship = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -17,9 +21,7 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
-    changePartner: "",
-    currentStudyGroup: "",
-    switchStudyGroup: "",
+    recognitionMedicalInternship: "",
     comment: ""
   });
 
@@ -97,6 +99,26 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
     }, 2000);
   };
 
+  const handleDownload = (url, filename) => {
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error fetching the file:", error);
+      });
+  };
+
   const removeFile = (fileName) => {
     setFiles((prevFiles) =>
       prevFiles.filter((file) => file.file.name !== fileName)
@@ -133,7 +155,7 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
+            let applicationRequestObject = { subCategory1: "Recognition of Internship" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},
@@ -157,9 +179,7 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                changePartner: "",
-                currentStudyGroup: "",
-                switchStudyGroup: "",
+                recognitionMedicalInternship: "",
                 comment: ""
               });
               setFiles([]);
@@ -190,116 +210,125 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (!formDetailData.changePartner) {
-      newErrors.changePartner = "This field is required";
+    if (formDetailData.recognitionMedicalInternship == "") {
+      newErrors.subject = "This field is required";
     }
-
-    if (!formDetailData.currentStudyGroup) {
-      newErrors.currentStudyGroup = "This field is required";
-    }
-    if (!formDetailData.switchStudyGroup) {
-      newErrors.switchStudyGroup = "This field is required";
+    if (files.length == 0) {
+      newErrors.file = "This field is required";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   return (
-    <div className="">
-      <div className="mt-5">
+    <div className="mt-4 mt-md-4 g-4 g-md-4">
+      <div className="my-5">
         <p> Dear Student,</p>
         <p>
-          We regret that you are not satisfied with your current study group and
-          would like to request a transfer. Please note that a transfer is only
-          possible at the beginning of a new semester (winter and summer
-          semesters). We will gladly review your request and will get back to
-          you soon.
+          With this application, you can request an evaluation to see if a
+          previously completed internship can be credited toward your studies.
+          Use the "Download" button for the module syllabus titled “Speciality
+          Practice” to verify whether the required content was covered in your
+          internship.
         </p>
-        <p>Thank you very much.</p>
+
+        <p>
+          In the second step, you can have the "Certificate for Submission to
+          the University" verified by your internship supervisor. Please upload
+          this certificate in the designated upload area.
+        </p>
+        <p>For this, we will need the following documents</p>
+        <p>We will review your request internally and get back to you.</p>
       </div>
-      <Row className="mt-2 g-4 g-md-4">
+      <Row className=" g-4 g-md-4">
         <Col lg={12}>
           <Form.Group controlId="">
             <Form.Label className="input-label">
-              Changing partner:
+              Recognition of 1st medical internship
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <Form.Control
               type="text"
               placeholder=""
-              name="changePartner"
-              value={formDetailData?.changePartner}
+              name="recognitionMedicalInternship"
+              value={formDetailData.recognitionMedicalInternship}
               onChange={handleChange}
               className="custom-input"
               autoComplete="off"
             />
           </Form.Group>
-          {errors.changePartner && (
-            <p className="error-content">{errors.changePartner}</p>
+          {errors.recognitionMedicalInternship && (
+            <p className="error-content">
+              {errors.recognitionMedicalInternship}
+            </p>
           )}
         </Col>
       </Row>
-      <Row className="mt-2 g-4 g-md-4">
-        <Col lg={12}>
-          <Form.Group controlId="">
-            <Form.Label className="input-label">
-              I am currently in study group
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder=""
-              name="currentStudyGroup"
-              value={formDetailData?.currentStudyGroup}
-              onChange={handleChange}
-              className="custom-input"
-              autoComplete="off"
-            />
-          </Form.Group>
-          {errors.currentStudyGroup && (
-            <p className="error-content">{errors.currentStudyGroup}</p>
-          )}
+
+      <Row className="d-flex  my-4">
+        <Col lg={6}>
+          <a
+            className="btn btn-primary"
+            onClick={() =>
+              handleDownload(
+                process.env.REACT_APP_API_URL +
+                "/download/Bescheinigung_Praktikum(2).pdf",
+                "Bescheinigung_Praktikum(2).pdf"
+              )
+            }
+          >
+            Syllabus for the module “Speciality Practice“ (1st year of study){" "}
+            <i className="bi bi-file-earmark-arrow-down"></i>
+          </a>
+        </Col>
+        <Col lg={6}>
+          <a
+            className="btn btn-info"
+            onClick={() =>
+              handleDownload(
+                process.env.REACT_APP_API_URL +
+                "/download/Syllabus_Speciality Practice_1st year_MEH2022.pdf",
+                "Syllabus_Speciality Practice_1st year_MEH2022.pdf"
+              )
+            }
+          >
+            Certificate for Submission to the University{" "}
+            <i className="bi bi-file-earmark-arrow-down"></i>
+          </a>
         </Col>
       </Row>
-      <Row className="mt-2 g-4 g-md-4">
-        <Col lg={12}>
-          <Form.Group controlId="">
-            <Form.Label className="input-label">
-              I would like to switch to the study group :
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder=""
-              name="switchStudyGroup"
-              value={formDetailData?.switchStudyGroup}
-              onChange={handleChange}
-              className="custom-input"
-              autoComplete="off"
-            />
-          </Form.Group>
-          {errors.switchStudyGroup && (
-            <p className="error-content">{errors.switchStudyGroup}</p>
-          )}
-        </Col>
-      </Row>
+
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
             <Form.Label className="input-label">Comments</Form.Label>
             <Form.Control
               as="textarea"
-              rows={8}
-              placeholder=""
+              rows={6}
               name="comment"
-              value={formDetailData?.comment}
+              value={formDetailData.comment}
               onChange={handleChange}
+              placeholder=""
               className="custom-textarea-input"
             />
           </Form.Group>
         </Col>
       </Row>
+      <Row className="mt-5">
+        <div className="fw-bold input-label">Please note:</div>
+        <div className="input-label mt-2 ">
+          All official documents must be translated into English language.
+        </div>
+      </Row>
+      <div className="d-flex algin-items-center  mt-5 mt-md-5">
+        <Form.Group controlId="custom-checkbox" className="me-2 ">
+          <Form.Check type="checkbox" className="custom-checkbox" />
+        </Form.Group>
+        <div className="input-label">
+          I confirm that all official documents are translated into English
+          language.
+        </div>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="">
@@ -316,8 +345,8 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
             htmlFor="file" className="btn btn-primary upload-btn"
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-          >
-          </label>
+          ></label>
+          {errors.file && <p className="error-content">{errors.file}</p>}
           <div className="d-flex flex-column mt-3">
             {files.map((fileObj, index) => (
               <div
@@ -388,4 +417,4 @@ const ChangeStudyGroup = ({ applicationRequest }) => {
   );
 };
 
-export default ChangeStudyGroup;
+export default RecognitionInternship;

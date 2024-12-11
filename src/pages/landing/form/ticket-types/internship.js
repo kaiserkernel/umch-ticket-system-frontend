@@ -1,10 +1,26 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import styled from "styled-components";
+import "react-datepicker/dist/react-datepicker.css";
+import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const OnlineCatalogue = ({ applicationRequest }) => {
+const StyledDatePicker = styled(DatePicker)`
+  border: 1px solid !important;
+  padding: 8px !important;
+  border-radius: 0px !important;
+  outline: none !important;
+  width: 100% !important;
+
+  &:focus {
+    border-color: #2596be !important;
+  }
+`;
+
+const Internship = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -16,7 +32,13 @@ const OnlineCatalogue = ({ applicationRequest }) => {
 
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
+  const today = dayjs().toDate();
+
   const [formDetailData, setformDetailData] = useState({
+    hospitalName: "",
+    country: "",
+    timeFrom: "",
+    timeTo: "",
     comment: ""
   });
 
@@ -32,6 +54,13 @@ const OnlineCatalogue = ({ applicationRequest }) => {
       setErrors({});
     };
   }, []);
+
+  const handleChange = (e) => {
+    setformDetailData({
+      ...formDetailData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -100,13 +129,6 @@ const OnlineCatalogue = ({ applicationRequest }) => {
     );
   };
 
-  const handleChange = (e) => {
-    setformDetailData({
-      ...formDetailData,
-      [e.target.name]: e.target.value
-    });
-  };
-
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false; // Mark the initial render as complete.
@@ -130,19 +152,18 @@ const OnlineCatalogue = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
             const temp = formData;
-            const combinedFormData = Object.assign(
-              {},
-              temp,
-              applicationRequestObject
-            );
+            const combinedFormData = Object.assign({}, temp);
+
+            console.log(combinedFormData);
 
             const formDataToSend = new FormData();
             for (const key in combinedFormData) {
-              formDataToSend.append(key, combinedFormData[key]);
+              formDataToSend.append(key, formData[key]);
             }
             formDataToSend.append("details", jsonFormDetailData);
+            formDataToSend.append("subCategory1", "Internship");
+
             originalFiles.forEach((file) => {
               formDataToSend.append("documents", file);
             });
@@ -154,16 +175,22 @@ const OnlineCatalogue = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-
+                hospitalName: "",
+                country: "",
+                timeFrom: "",
+                timeTo: "",
                 comment: ""
               });
+
               setFiles([]);
               setOriginalFiles([]);
+
               setFormData({
                 ...formData,
                 agreement: false
               });
             } catch (err) {
+              setLoading(false);
               const errors = err?.errors || err?.error;
 
               if (typeof errors != "object") {
@@ -185,41 +212,149 @@ const OnlineCatalogue = ({ applicationRequest }) => {
   const validate = () => {
     const newErrors = {};
 
+    if (formDetailData.hospitalName == "") {
+      newErrors.hospitalName = "This field is required";
+    }
+    if (!formDetailData.country) {
+      newErrors.country = "This field is required";
+    }
+    if (formDetailData.timeFrom == "") {
+      newErrors.timeFrom = "This field is required";
+    }
+    if (!formDetailData.timeTo) {
+      newErrors.timeTo = "This field is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   return (
-    <div className="mt-4 mt-md-4 g-4 g-md-4">
-      <div className="my-5">
-        <p> Dear Student,</p>
+    <div className="pt-5">
+      <h1 className="mt-2 mt-md-4 mb-0 mb-md-5">Internship</h1>
+      <div>
+        <p>Dear Students,</p>
         <p>
-          If you have found corrections, requests for changes, or missing grades
-          in the online catalog Solaris, please feel free to contact us. We will
-          gladly assist in resolving the issue.
+          Please use this form to register your summer internship with us. Be
+          sure to fill out the following fields: name of the teaching hospital,
+          county where the internship takes place, and the start and end dates
+          of the internship.
         </p>
+        <p>We wish you much success in your upcoming internship!</p>
       </div>
       <Row className="mt-4">
+        <Col lg={12}>
+          <Form.Group controlId="firstName">
+            <Form.Label className="input-label">
+              Name of Teaching Hospital
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder=""
+              name="hospitalName"
+              value={formDetailData.hospitalName}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </Form.Group>
+          {errors.hospitalName && (
+            <p className="error-content">{errors.hospitalName}</p>
+          )}
+        </Col>
+      </Row>
+      <Row className="mt-4">
+        <Col lg={12}>
+          <Form.Group controlId="firstName">
+            <Form.Label className="input-label">
+              County where the internship takes place
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder=""
+              name="country"
+              value={formDetailData.country}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </Form.Group>
+          {errors.country && <p className="error-content">{errors.country}</p>}
+        </Col>
+      </Row>
+      <Row className="mt-2 g-4 g-md-4">
+        <Col lg={6}>
+          <Form.Group controlId="partner">
+            <Form.Label className="input-label">
+              Interval of time from{" "}
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <StyledDatePicker
+              selected={formDetailData.timeFrom}
+              name="timeFrom"
+              onChange={(date) =>
+                setformDetailData({ ...formDetailData, timeFrom: date })
+              }
+              dateFormat="dd/MM/yyyy"
+              isClearable
+              className="custom-input"
+            />
+          </Form.Group>
+          {errors.timeFrom && (
+            <p className="error-content">{errors.timeFrom}</p>
+          )}
+        </Col>
+        <Col lg={6}>
+          <Form.Group controlId="partner">
+            <Form.Label className="input-label">
+              Interval of time to<span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <StyledDatePicker
+              selected={formDetailData.timeTo}
+              name="timeTo"
+              onChange={(date) =>
+                setformDetailData({ ...formDetailData, timeTo: date })
+              }
+              dateFormat="dd/MM/yyyy"
+              isClearable
+              className="custom-input"
+            />
+          </Form.Group>
+          {errors.timeTo && <p className="error-content">{errors.timeTo}</p>}
+        </Col>
+      </Row>
+      <Row className="mt-5">
+        <div className="fw-bold input-label">Please note:</div>
+        <div className="input-label mt-3">
+          Please submit this information by May 15th of each calendar year.
+        </div>
+      </Row>
+      <Row className="mt-5">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
             <Form.Label className="input-label">Comments</Form.Label>
             <Form.Control
               as="textarea"
+              rows={8}
               name="comment"
-              value={formDetailData?.comment}
+              value={formDetailData.comment}
               onChange={handleChange}
-              rows={6}
               placeholder=""
               className="custom-textarea-input"
             />
           </Form.Group>
         </Col>
       </Row>
-
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="">
-            <Form.Label className="input-label mb-0">File Upload</Form.Label>
+            <Form.Label className="input-label mb-0">
+              File Upload (all official documents must be translated into
+              english language)
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
           </Form.Group>
+
           <input
             type="file"
             name="file"
@@ -302,4 +437,4 @@ const OnlineCatalogue = ({ applicationRequest }) => {
   );
 };
 
-export default OnlineCatalogue;
+export default Internship;

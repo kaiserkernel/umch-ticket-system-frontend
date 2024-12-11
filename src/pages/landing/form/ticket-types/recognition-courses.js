@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import styled from "styled-components";
+import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const SyllabusAcademicYear = ({ applicationRequest }) => {
+const RecognitionCourses = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -130,7 +134,8 @@ const SyllabusAcademicYear = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
+            let applicationRequestObject = { subCategory1: "Recongnition of Courses" };
+
             const temp = formData;
             const combinedFormData = Object.assign(
               {},
@@ -190,123 +195,140 @@ const SyllabusAcademicYear = ({ applicationRequest }) => {
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
       <div className="my-5">
-        <p>Dear Students,</p>
+        <p> Dear Student,</p>
         <p>
-          With this request, you can order your syllabus for the academic year.
-          It will include all completed years of study and can be applied for
-          once a year.
+          With this application, you can request a review to see if your
+          previously completed courses can be credited.
         </p>
         <p>
-          It will be produced at UMFST and shipped to Germany.Please note that
-          processing your request will take approximately 30 days. The UMCH
-          Student Secretariat will contact you as soon as the document is ready
-          for pickup in Hamburg.
+          For this, we will need the following documents from your previous
+          university:
         </p>
+        <ul className="p">
+          <li>Syllabus</li>
+          <li>Transcript of Records</li>
+          <li>Curriculum</li>
+        </ul>
       </div>
-
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
             <Form.Label className="input-label">Comments</Form.Label>
             <Form.Control
               as="textarea"
+              name="comment"
+              value={formDetailData?.comment}
+              onChange={handleChange}
               rows={6}
               placeholder=""
-              name="comment"
-              value={formDetailData.comment}
-              onChange={handleChange}
               className="custom-textarea-input"
             />
           </Form.Group>
         </Col>
       </Row>
-
+      <Row className="mt-5">
+        <div className="fw-bold input-label">Please note:</div>
+        <div className="input-label mt-2 ">
+          All official documents must be translated into English language.
+        </div>
+      </Row>
+      <div className="d-flex algin-items-center  mt-5 mt-md-5">
+        <Form.Group controlId="custom-checkbox" className="me-2 ">
+          <Form.Check type="checkbox" className="custom-checkbox" />
+        </Form.Group>
+        <div className="input-label   ">
+          I confirm that all official documents are translated into English
+          language.
+        </div>
+      </div>
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="">
-            <Form.Label className="input-label mb-0">File Upload</Form.Label>
-          </Form.Group>
-          <input
-            type="file"
-            name="file"
-            id="file"
-            style={{ visibility: "hidden" }}
-            onChange={handleFileChange}
-          />
-          <label
-            htmlFor="file" className="btn btn-primary upload-btn"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-          >
-          </label>
-          <div className="d-flex flex-column mt-3">
-            {files.map((fileObj, index) => (
-              <div
-                className="d-flex border mb-3"
-                key={index}
-                style={{ position: "relative" }}
-              >
-                {fileObj.previewUrl && (
-                  <img
-                    src={fileObj.previewUrl}
-                    alt="File Preview"
-                    style={{ width: "80px", height: "80px" }}
-                  />
-                )}
-                {fileObj.progress > 0 && (
-                  <div className="d-flex flex-column justify-content-center flex-grow-1 px-2">
-                    <span className="mb-1" style={{ fontSize: "11px" }}>
-                      {fileObj.file.name}
-                    </span>
-                    <div
-                      style={{
-                        background: "#eee",
-                        height: "7px",
-                        width: "100%"
-                      }}
-                    >
+            <Form.Label className="input-label mb-0">
+              Upload File <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <input
+              type="file"
+              name="file"
+              id="file"
+              style={{ visibility: "hidden" }}
+              onChange={handleFileChange}
+            />
+            <label
+              htmlFor="file"
+              className="btn btn-primary upload-btn"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+            ></label>
+            <div className="d-flex flex-column mt-3">
+              {files.map((fileObj, index) => (
+                <div
+                  className="d-flex border mb-3"
+                  key={index}
+                  style={{ position: "relative" }}
+                >
+                  {fileObj.previewUrl && (
+                    <img
+                      src={fileObj.previewUrl}
+                      alt="File Preview"
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  )}
+                  {fileObj.progress > 0 && (
+                    <div className="d-flex flex-column justify-content-center flex-grow-1 px-2">
+                      <span className="mb-1" style={{ fontSize: "11px" }}>
+                        {fileObj.file.name}
+                      </span>
                       <div
                         style={{
-                          width: `${fileObj.progress}%`,
-                          borderRadius: "10px",
-                          height: "100%",
-                          background: "#1a7efb",
-                          transition: "width 0.2s"
+                          background: "#eee",
+                          height: "7px",
+                          width: "100%"
                         }}
-                      ></div>
+                      >
+                        <div
+                          style={{
+                            width: `${fileObj.progress}%`,
+                            borderRadius: "10px",
+                            height: "100%",
+                            background: "#1a7efb",
+                            transition: "width 0.2s"
+                          }}
+                        ></div>
+                      </div>
+                      <div className="mt-1" style={{ fontSize: "11px" }}>
+                        <span className="me-2">
+                          {fileObj.progress}% Completed
+                        </span>
+                        <span>{(fileObj.file.size / 1024).toFixed(2)} KB</span>
+                      </div>
                     </div>
-                    <div className="mt-1" style={{ fontSize: "11px" }}>
-                      <span className="me-2">
-                        {fileObj.progress}% Completed
-                      </span>
-                      <span>{(fileObj.file.size / 1024).toFixed(2)} KB</span>
-                    </div>
-                  </div>
-                )}
-                <button
-                  onClick={() => removeFile(fileObj.file.name)}
-                  style={{
-                    position: "absolute",
-                    top: "5px",
-                    right: "5px",
-                    background: "transparent",
-                    color: "red",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "20px",
-                    height: "20px",
-                    cursor: "pointer"
-                  }}
-                >
-                  &times;
-                </button>
-              </div>
-            ))}
-          </div>
+                  )}
+                  <button
+                    onClick={() => removeFile(fileObj.file.name)}
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "5px",
+                      background: "transparent",
+                      color: "red",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "20px",
+                      height: "20px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          </Form.Group>
         </Col>
       </Row>
     </div>
   );
 };
 
-export default SyllabusAcademicYear;
+export default RecognitionCourses;

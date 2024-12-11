@@ -264,125 +264,6 @@ const POSITIONNAMES = [
   "Admin"
 ];
 
-const INQUIRYCATEGORIES = [
-  {
-    inquiryCategory: "Applications and Requests",
-    component: "",
-    subCategories: [
-      { subCategory1: "Absence", component: "Absence" },
-      {
-        subCategory1: "Change of teaching hospital",
-        component: "ChangeTeachingHospital"
-      },
-      {
-        subCategory1: "Change of study group",
-        component: "ChangeStudyGroup"
-      },
-      {
-        subCategory1: "Demonstrator student",
-        component: "DemonstratorStudent"
-      },
-      {
-        subCategory1: "Enrollment",
-        component: "Enrollment"
-      },
-      {
-        subCategory1: "Exam inspection",
-        component: "ExamInspection"
-      },
-      {
-        subCategory1: "Online Catalogue (Solaris)",
-        component: "OnlineCatalogue"
-      },
-      {
-        subCategory1: "Recognition of Courses",
-        component: "RecognitionCourses"
-      },
-      {
-        subCategory1: "Recognition of Internship",
-        component: "RecognitionInternship"
-      },
-      {
-        subCategory1: "Short term borrow of Diploma",
-        component: "ShotTermBorrowDiploma"
-      },
-      {
-        subCategory1: "Syllabus of the academic year",
-        component: "SyllabusAcademic"
-      },
-      {
-        subCategory1: "Transcript of Records",
-        component: "TranscriptRecords"
-      },
-      {
-        subCategory1: "Transfer to Targu Mures",
-        component: "TransferTarguMures"
-      },
-      {
-        subCategory1: "Other",
-        component: "OtherApplicationRequest"
-      }
-    ]
-  },
-  {
-    inquiryCategory: "Book rental UMCH library",
-    component: "",
-    subCategories: [
-      { subCategory1: "Book rental UMCH library", component: "BookRental" }
-    ]
-  },
-  {
-    inquiryCategory: "Campus IT",
-    component: "",
-    subCategories: [
-      { subCategory1: "Canvas", component: "Canvas" },
-      { subCategory1: "Streaming / Panopto", component: "Streaming" }
-    ]
-  },
-  {
-    inquiryCategory: "Complaints",
-    component: "",
-    subCategories: [
-      { subCategory1: "Campus", component: "Campus" },
-      { subCategory1: "Dean’s Office", component: "DeanOffice" },
-      {
-        subCategory1: "German Teaching Department",
-        component: "GermanTeachingDepartment"
-      },
-      { subCategory1: "Teaching Hospital", component: "TeachingHospital" },
-      { subCategory1: "Teacher", component: "Teacher" },
-      {
-        subCategory1: "Online Catalouge (Carnet)",
-        component: "OnlineCatalougeComplaint"
-      },
-      { subCategory1: "Exam", component: "Exam" },
-      { subCategory1: "Other", component: "OtherComplaint" }
-    ]
-  },
-  {
-    inquiryCategory: "Internship",
-    component: "",
-    subCategories: [{ subCategory1: "Internship", component: "Internship" }]
-  },
-  {
-    inquiryCategory: "Medical Abilities",
-    component: "",
-    subCategories: [
-      { subCategory1: "Medical Abilities", component: "MedicalAbilities" }
-    ]
-  },
-  {
-    inquiryCategory: "Thesis",
-    component: "",
-    subCategories: [{ subCategory1: "Thesis", component: "Thesis" }]
-  },
-  {
-    inquiryCategory: "Other",
-    component: "",
-    subCategories: [{ subCategory1: "Other", component: "Other" }]
-  }
-];
-
 const CATEGORYVALUELABEL = {
   "1-1": "Applications and Requests(Absence)",
   "1-2": "Applications and Requests(Change of teaching hospital)",
@@ -406,7 +287,7 @@ const CATEGORYVALUELABEL = {
   "4-3": "Complaints(German Teaching Department)",
   "4-4": "Complaints(Teaching Hospital)",
   "4-5": "Complaints(Teacher)",
-  "4-6": "Complaints(Online Catalouge)",
+  "4-6": "Complaints(Online Catalogue)",
   "4-7": "Complaints(Exam)",
   "4-8": "Complaints(Other)",
   "5-1": "Internship",
@@ -414,177 +295,6 @@ const CATEGORYVALUELABEL = {
   "7-1": "Thesis",
   "8-1": "Other"
 }
-
-const CATEGORYDATA = [
-  {
-    label: "Select All Category",
-    value: "0",
-    permissions: ["None", "Passive", "Active", "Responsible"]
-  },
-  {
-    label: "Applications and Requests",
-    value: "1",
-    subcategories: [
-      {
-        label: "Absence",
-        value: "1-1",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Change of teaching hospital",
-        value: "1-2",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Change of study group",
-        value: "1-3",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Demonstrator student",
-        value: "1-4",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Enrollment",
-        value: "1-5",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Exam inspection",
-        value: "1-6",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Online Catalogue (Solaris)",
-        value: "1-7",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Recognition of Courses",
-        value: "1-8",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Recognition of Internship",
-        value: "1-9",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Short term borrow of Diploma",
-        value: "1-10",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Syllabus of the academic year",
-        value: "1-11",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Transcript of Records",
-        value: "1-12",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Transfer to Targu Mures",
-        value: "1-13",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Other",
-        value: "1-14",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      }
-    ]
-  },
-  {
-    label: "Book rental UMCH library",
-    value: "2-1",
-    permissions: ["None", "Passive", "Active", "Responsible"]
-  },
-  {
-    label: "Campus IT",
-    value: "3",
-    subcategories: [
-      {
-        label: "Canvas",
-        value: "3-1",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Streaming / Panopto",
-        value: "3-2",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      }
-    ]
-  },
-  {
-    label: "Complaints",
-    value: "4",
-    subcategories: [
-      {
-        label: "Campus",
-        value: "4-1",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Dean’s Office",
-        value: "4-2",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "German Teaching Department",
-        value: "4-3",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Teaching Hospital",
-        value: "4-4",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Teacher",
-        value: "4-5",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Online Catalouge (Carnet)",
-        value: "4-6",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Exam",
-        value: "4-7",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      },
-      {
-        label: "Other",
-        value: "4-8",
-        permissions: ["None", "Passive", "Active", "Responsible"]
-      }
-    ]
-  },
-  {
-    label: "Internship",
-    value: "5-1",
-    permissions: ["None", "Passive", "Active", "Responsible"]
-  },
-  {
-    label: "Medical Abilities",
-    value: "6-1",
-    permissions: ["None", "Passive", "Active", "Responsible"]
-  },
-  {
-    label: "Thesis",
-    value: "7-1",
-    permissions: ["None", "Passive", "Active", "Responsible"]
-  },
-  {
-    label: "Other",
-    value: "8-1",
-    permissions: ["None", "Passive", "Active", "Responsible"]
-  }
-];
 
 const TicketTypeList = [
   { "Absence": "" },
@@ -599,7 +309,7 @@ const TicketTypeList = [
   { "Short term borrow of Diploma": "" },
   { "Syllabus of the academic year": "" },
   { "Transcript of Records": "" },
-  { "Trnasfer to Targu Mures": "" },
+  { "Transfer to Targu Mures": "" },
   { "Book rental UMCH library": "" },
   { "Canvas": "" },
   { "Streaming/Panopto": "" },
@@ -618,9 +328,8 @@ const TicketTypeList = [
 
 export {
   INQUIRYCATEGORIESEmailTemplates,
-  INQUIRYCATEGORIES,
+  // INQUIRYCATEGORIES,
   POSITIONNAMES,
-  CATEGORYDATA,
   CATEGORYVALUELABEL,
   TicketTypeList
 };

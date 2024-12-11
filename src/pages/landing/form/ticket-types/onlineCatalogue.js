@@ -5,7 +5,7 @@ import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const TeachingHospital = ({ complaints }) => {
+const OnlineCatalogue = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -18,7 +18,6 @@ const TeachingHospital = ({ complaints }) => {
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
-    teachingHospital: "",
     complaintComment: ""
   });
 
@@ -40,10 +39,6 @@ const TeachingHospital = ({ complaints }) => {
   };
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false; // Mark the initial render as complete.
-      return; // Skip running this effect on initial render.
-    }
     const successNotify = (msg) => {
       toast.info(msg, {
         autoClose: 3000 // Duration in milliseconds
@@ -57,6 +52,10 @@ const TeachingHospital = ({ complaints }) => {
     };
 
     const createTicket = async () => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false; // Mark the initial render as complete.
+        return; // Skip running this effect on initial render.
+      }
       if (isFormSubmit != 0) {
         if (validate()) {
           if (Object.keys(mainPageErrors).length == 0) {
@@ -72,7 +71,7 @@ const TeachingHospital = ({ complaints }) => {
             }
 
             formDataToSend.append("details", jsonFormDetailData);
-            formDataToSend.append("subCategory1", complaints);
+            formDataToSend.append("subCategory1", "Online Catalogue (Carnet)");
 
             try {
               setLoading(true);
@@ -82,7 +81,7 @@ const TeachingHospital = ({ complaints }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                teachingHospital: "",
+
                 complaintComment: ""
               });
 
@@ -115,40 +114,14 @@ const TeachingHospital = ({ complaints }) => {
     if (!formDetailData.complaintComment) {
       newErrors.complaintComment = "This field is required";
     }
-    if (!formDetailData.teachingHospital) {
-      newErrors.teachingHospital = "This field is required";
-    }
 
-    console.log(newErrors);
-    if (complaints == "4") {
-      setErrors(newErrors);
-    }
+    // if (complaints == "6") {
+    setErrors(newErrors);
+    // }
     return Object.keys(newErrors).length === 0;
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
-      <Row className="mt-4">
-        <Col lg={12}>
-          <Form.Group controlId="hospital">
-            <Form.Label className="input-label">
-              Teaching Hospital
-              <span className="ms-1 required-label">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder=""
-              name="teachingHospital"
-              value={formDetailData.teachingHospital}
-              onChange={handleChange}
-              className="custom-input"
-            />
-          </Form.Group>
-          {errors.teachingHospital && (
-            <p className="error-content">{errors.teachingHospital}</p>
-          )}
-        </Col>
-      </Row>
-
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
@@ -175,4 +148,4 @@ const TeachingHospital = ({ complaints }) => {
   );
 };
 
-export default TeachingHospital;
+export default OnlineCatalogue;

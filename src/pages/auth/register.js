@@ -169,7 +169,7 @@ const ReCaptchaComponent = () => {
 
     // sign up validation
     const validation = validateForm();
-    console.log(validation, 'res')
+
     if (!validation)
       return;
 
@@ -194,7 +194,7 @@ const ReCaptchaComponent = () => {
         errorNotify(_errors);
         setLoading(false);
       } else {
-        console.log(typeof _errors);
+
         _errors.map((error) => {
           errorNotify(error.msg);
         });

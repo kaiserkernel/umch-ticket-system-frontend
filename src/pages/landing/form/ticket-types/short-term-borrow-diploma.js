@@ -20,7 +20,7 @@ const StyledDatePicker = styled(DatePicker)`
   }
 `;
 
-const ShortTermBorrowDiploma = ({ applicationRequest }) => {
+const ShortTermBorrowDiploma = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -147,7 +147,7 @@ const ShortTermBorrowDiploma = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
+            let applicationRequestObject = { subCategory1: "Short term borrow of Diploma" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},

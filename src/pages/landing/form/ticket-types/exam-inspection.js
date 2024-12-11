@@ -20,7 +20,7 @@ const StyledDatePicker = styled(DatePicker)`
   }
 `;
 
-const ExamInspection = ({ applicationRequest }) => {
+const ExamInspection = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -149,7 +149,7 @@ const ExamInspection = ({ applicationRequest }) => {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
 
-            let applicationRequestObject = { subCategory1: applicationRequest };
+            let applicationRequestObject = { subCategory1: "Exam inspection" };
             const temp = formData;
             const combinedFormData = Object.assign(
               {},
@@ -218,8 +218,6 @@ const ExamInspection = ({ applicationRequest }) => {
     ) {
       newErrors.examSpecification = "This field is required";
     }
-
-    console.log(newErrors, "========newErrors");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

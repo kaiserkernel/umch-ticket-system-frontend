@@ -10,8 +10,8 @@ import "./index.css"
 
 const TicketTypes = () => {
     const [ticketGroup, setTicketGroup] = useState([]);
-    const [allTicketTypes, setAllTicketTypes] = useState([]);
-    const [refetchTypes, setRefetchTypes] = useState(false);
+    const [allTicketGroup, setAllTicketGroup] = useState([]);
+    // const [refetchTypes, setRefetchTypes] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const successNotify = (msg) => {
@@ -26,13 +26,38 @@ const TicketTypes = () => {
         });
     };
 
+    const getAllGroupData = (_registeredGroupData) => {
+        let _unRegisteredTicketType = TicketTypeList.map(log => Object.keys(log)[0]);
+
+        _registeredGroupData.map((log, idx) => {
+            log.ticketTypes.map((logSec, idx) => {
+                const removeIndex = _unRegisteredTicketType.indexOf(logSec);
+                _unRegisteredTicketType.splice(removeIndex, 1);
+            })
+        })
+
+        if (_unRegisteredTicketType.length > 0) {
+            const _allTicketGroup = _registeredGroupData.concat({
+                name: "",
+                ticketTypes: _unRegisteredTicketType
+            });
+            setAllTicketGroup(_allTicketGroup);
+        } else {
+            setAllTicketGroup(_registeredGroupData)
+        }
+    }
+
     const handleGroupSelect = async (_data) => {
         const { id, name } = _data;
         if (id && name) {
             try {
-                const res = await TicketGroupService.addTicketTypeToTicketGroup(_data);
-                setRefetchTypes(prev => !prev)
-                successNotify(res.message);
+                const { message } = await TicketGroupService.addTicketTypeToTicketGroup(_data);
+                const res = await TicketGroupService.fetchAllTicketGroups();
+
+                setTicketGroup(res.data);
+                getAllGroupData(res.data);
+
+                successNotify(message);
             } catch (error) {
                 console.log("Error occured on adding type to group", error);
                 errorNotify(error.message);
@@ -45,17 +70,8 @@ const TicketTypes = () => {
             setLoading(true);
             try {
                 const res = await TicketGroupService.fetchAllTicketGroups();
-
                 setTicketGroup(res.data);
-
-                const registedTypes = await TicketGroupService.fetchAllRegistedTicketTypes();
-                const _allTypes = TicketTypeList.map((log) => {
-                    const key = Object.keys(log)[0];
-                    const matchingItem = registedTypes.data.find((logSec) => logSec[key] !== undefined);
-
-                    return matchingItem || log;
-                })
-                setAllTicketTypes(_allTypes);
+                getAllGroupData(res.data);
 
                 setLoading(false);
             } catch (error) {
@@ -67,30 +83,6 @@ const TicketTypes = () => {
         fetchAllTicketGroup();
     }, [])
 
-    useEffect(() => {
-        const fetchAllTicketGroup = async () => {
-            try {
-                const res = await TicketGroupService.fetchAllTicketGroups();
-
-                setTicketGroup(res.data);
-
-                const registedTypes = await TicketGroupService.fetchAllRegistedTicketTypes();
-                const _allTypes = TicketTypeList.map((log) => {
-                    const key = Object.keys(log)[0];
-                    const matchingItem = registedTypes.data.find((logSec) => logSec[key] !== undefined);
-
-                    return matchingItem || log;
-                })
-                setAllTicketTypes(_allTypes);
-
-            } catch (error) {
-                console.error("Error fetching ticket groups", error);
-            }
-        };
-
-        fetchAllTicketGroup();
-    }, [refetchTypes])
-
     return (
         <section>
             <h1>Ticket Types</h1>
@@ -98,34 +90,56 @@ const TicketTypes = () => {
                 loading ? (
                     <h4>Loading...</h4>
                 ) : (
-                    allTicketTypes?.length > 0 ? (
-                        allTicketTypes.map((_ticketLog, idx) => (
-                            <Row key={idx} className="border rounded-1 mb-2">
-                                <Col className="py-2 align-content-center ps-3">
-                                    <span>{Object.keys(_ticketLog)[0]}</span>
-                                </Col>
-                                <Col className="py-2 pe-3 d-flex align-items-center">
-                                    <span className="me-2">TicketGroup:</span>
-                                    <Form.Select
-                                        className="d-inline"
-                                        onChange={(evt) => handleGroupSelect({ id: evt.target.value, name: Object.keys(_ticketLog)[0] })}
-                                        value={Object.values(_ticketLog)[0]}
-                                    >
-                                        <option>Select Group</option>
-                                        {
-                                            ticketGroup?.length > 0 && (
-                                                ticketGroup.map((_groupLog, idx) => (
-                                                    <option key={idx} value={_groupLog._id}>
-                                                        {_groupLog.name}
-                                                    </option>
-                                                ))
-                                            )
-                                        }
-                                    </Form.Select>
-                                </Col>
-                            </Row>
-                        ))
-                    ) : (
+                    allTicketGroup?.length > 0 ? (
+                        allTicketGroup.sort((a, b) => {
+                            if (a.name === "") return 1;
+                            if (b.name === "") return -1;
+                            return a.name.localeCompare(b.name);
+                        }).map((_ticketGroup, idx) => (
+                            <div key={idx}>
+                                {
+                                    _ticketGroup.name ? (
+                                        <p className="fw-bold mb-2 mt-3">{_ticketGroup.name}</p>
+                                    ) : (
+                                        <hr className="mt-md-5 mt-4 fw-bold border-5" />
+                                    )
+                                }
+
+                                {
+                                    _ticketGroup.ticketTypes?.length > 0 ? (
+                                        _ticketGroup.ticketTypes.sort().map((log, idxSec) => (
+                                            <Row key={idxSec} className="border rounded-1 mb-2">
+                                                <Col className="py-2 align-content-center ps-3">
+                                                    <span>{log}</span>
+                                                </Col>
+                                                <Col className="py-2 pe-3 d-flex align-items-center">
+                                                    <span className="me-2">TicketGroup:</span>
+                                                    <Form.Select
+                                                        className="d-inline"
+                                                        onChange={(evt) => handleGroupSelect({ id: evt.target.value, name: log })}
+                                                        value={_ticketGroup._id ? _ticketGroup._id : ""}
+                                                    >
+                                                        <option value="">Select Group</option>
+                                                        {
+                                                            ticketGroup?.length > 0 && (
+                                                                ticketGroup.map((_groupLog, idx) => (
+                                                                    <option key={idx} value={_groupLog._id}>
+                                                                        {_groupLog.name}
+                                                                    </option>
+                                                                ))
+                                                            )
+                                                        }
+                                                    </Form.Select>
+                                                </Col>
+                                            </Row>
+                                        ))
+                                    ) : (
+                                        <p>No Ticket Types</p>
+                                    )
+                                }
+                            </div>
+                        )
+                        )) : (
                         <h4>No Ticket Type Data</h4>
                     )
                 )

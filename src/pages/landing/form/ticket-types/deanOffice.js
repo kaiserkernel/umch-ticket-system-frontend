@@ -5,7 +5,7 @@ import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const DeanOffice = ({ complaints }) => {
+const DeanOffice = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -54,7 +54,6 @@ const DeanOffice = ({ complaints }) => {
     };
 
     const createTicket = async () => {
-      console.log(isFormSubmit, "========");
       if (isFormSubmit != 0 && isFormSubmit != false) {
         if (validate()) {
           if (Object.keys(mainPageErrors).length == 0) {
@@ -70,7 +69,7 @@ const DeanOffice = ({ complaints }) => {
             }
 
             formDataToSend.append("details", jsonFormDetailData);
-            formDataToSend.append("subCategory1", complaints);
+            formDataToSend.append("subCategory1", "Dean's office");
 
             try {
               setLoading(true);
@@ -114,10 +113,9 @@ const DeanOffice = ({ complaints }) => {
       newErrors.complaintComment = "This field is required";
     }
 
-    console.log(newErrors);
-    if (complaints == "2") {
-      setErrors(newErrors);
-    }
+    // if (complaints == "2") {
+    setErrors(newErrors);
+    // }
     return Object.keys(newErrors).length === 0;
   };
   return (

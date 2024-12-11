@@ -4,15 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FormContext } from "../index";
 
 import Default from "./default";
-import Campus from "./campus";
-import DeanOffice from "./deanOffice";
-import Exam from "./exam";
-import GermanTeachingDepartment from "./germanTeachingDepartment";
+// import Campus from "./campus";
+// import DeanOffice from "./deanOffice";
+// import Exam from "./exam";
+// import GermanTeachingDepartment from "./germanTeachingDepartment";
 
 import Other from "./other";
-import Teacher from "./teacher";
-import TeachingHospital from "./teachingHospital";
-import OnlineCatalouge from "./onlineCatalouge";
+// import Teacher from "./teacher";
+// import TeachingHospital from "./teachingHospital";
+// import OnlineCatalouge from "./onlineCatalouge";
 
 const Complaints = () => {
   const { isFormSubmit, setFormData, formData, mainPageErrors } =
@@ -196,18 +196,18 @@ const Complaints = () => {
 
   const content = {
     default: <Default />,
-    1: <Campus complaints={String(formInquiryData.complaints)} />,
-    2: <DeanOffice complaints={String(formInquiryData.complaints)} />,
-    3: (
-      <GermanTeachingDepartment
-        complaints={String(formInquiryData.complaints)}
-      />
-    ),
-    4: <TeachingHospital complaints={String(formInquiryData.complaints)} />,
-    5: <Teacher complaints={String(formInquiryData.complaints)} />,
-    6: <OnlineCatalouge complaints={String(formInquiryData.complaints)} />,
-    7: <Exam complaints={String(formInquiryData.complaints)} />,
-    8: <Other complaints={String(formInquiryData.complaints)} />
+    // 1: <Campus complaints={String(formInquiryData.complaints)} />,
+    // 2: <DeanOffice complaints={String(formInquiryData.complaints)} />,
+    // 3: (
+    //   <GermanTeachingDepartment
+    //     complaints={String(formInquiryData.complaints)}
+    //   />
+    // ),
+    // 4: <TeachingHospital complaints={String(formInquiryData.complaints)} />,
+    // 5: <Teacher complaints={String(formInquiryData.complaints)} />,
+    // 6: <OnlineCatalouge complaints={String(formInquiryData.complaints)} />,
+    // 7: <Exam complaints={String(formInquiryData.complaints)} />,
+    // 8: <Other complaints={String(formInquiryData.complaints)} />
   };
   return (
     <div className="pt-5">

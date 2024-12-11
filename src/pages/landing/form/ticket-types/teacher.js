@@ -5,7 +5,7 @@ import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
 
-const Campus = ({ complaints }) => {
+const Teacher = () => {
   const {
     isFormSubmit,
     setIsFormSubmit,
@@ -18,14 +18,17 @@ const Campus = ({ complaints }) => {
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const [formDetailData, setformDetailData] = useState({
-    section: "",
+    teacherName: "",
+    subject: "",
     complaintComment: ""
   });
 
   useEffect(() => {
+    setIsFormSubmit(false);
     setErrors({});
 
     return () => {
+      setIsFormSubmit(false);
       setErrors({});
     };
   }, []);
@@ -59,6 +62,7 @@ const Campus = ({ complaints }) => {
         if (validate()) {
           if (Object.keys(mainPageErrors).length == 0) {
             let jsonFormDetailData = JSON.stringify(formDetailData);
+
             const temp = formData;
             const combinedFormData = Object.assign({}, temp);
 
@@ -69,7 +73,7 @@ const Campus = ({ complaints }) => {
             }
 
             formDataToSend.append("details", jsonFormDetailData);
-            formDataToSend.append("subCategory1", complaints);
+            formDataToSend.append("subCategory1", "Teacher");
 
             try {
               setLoading(true);
@@ -79,7 +83,8 @@ const Campus = ({ complaints }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-                section: "",
+                teacherName: "",
+                subject: "",
                 complaintComment: ""
               });
 
@@ -109,53 +114,62 @@ const Campus = ({ complaints }) => {
   const validate = () => {
     const newErrors = {};
 
-    if (formDetailData.section == "") {
-      newErrors.section = "This field is required";
-    }
     if (!formDetailData.complaintComment) {
       newErrors.complaintComment = "This field is required";
     }
-    console.log(newErrors);
-    if (complaints == "1") {
-      setErrors(newErrors);
+    if (!formDetailData.teacherName) {
+      newErrors.teacherName = "This field is required";
     }
+    if (!formDetailData.subject) {
+      newErrors.subject = "This field is required";
+    }
+
+    // if (complaints == "5") {
+    setErrors(newErrors);
+    // }
     return Object.keys(newErrors).length === 0;
   };
   return (
     <div className="mt-4 mt-md-4 g-4 g-md-4">
-      <Row>
-        <Col lg={12}>
-          <Form.Group>
+      <Row className="mt-4">
+        <Col lg={6}>
+          <Form.Group controlId="teacherName">
             <Form.Label className="input-label">
-              Section <span className="ms-1 required-label">*</span>
+              Teaching's name
+              <span className="ms-1 required-label">*</span>
             </Form.Label>
             <Form.Control
-              as="select"
-              style={{
-                appearance: "none",
-                MozAppearance: "none",
-                WebkitAppearance: "none",
-                backgroundColor: "white",
-                color: "gray !important"
-              }}
-              name="section"
+              type="text"
+              placeholder=""
+              name="teacherName"
+              value={formDetailData.teacherName}
               onChange={handleChange}
-              value={formDetailData.section}
               className="custom-input"
-            >
-              <option value="">– Select –</option>
-              <option value="Administration Departments">
-                Administration Departments
-              </option>
-              <option value="Campus Infrustructure (Furniture/ Rooms ect. )">
-                Campus Infrustructure (Furniture/ Rooms ect. )
-              </option>
-              <option value="Finance">Finance</option>
-            </Form.Control>
+            />
           </Form.Group>
-          {errors.section && <p className="error-content">{errors.section}</p>}
+          {errors.teacherName && (
+            <p className="error-content">{errors.teacherName}</p>
+          )}
+        </Col>
+        <Col lg={6}>
+          <Form.Group controlId="subject">
+            <Form.Label className="input-label">
+              Subject
+              <span className="ms-1 required-label">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder=""
+              name="subject"
+              value={formDetailData.subject}
+              onChange={handleChange}
+              className="custom-input"
+            />
+          </Form.Group>
+          {errors.subject && <p className="error-content">{errors.subject}</p>}
         </Col>
       </Row>
+
       <Row className="mt-4">
         <Col lg={12}>
           <Form.Group controlId="commentTextarea">
@@ -182,4 +196,4 @@ const Campus = ({ complaints }) => {
   );
 };
 
-export default Campus;
+export default Teacher;

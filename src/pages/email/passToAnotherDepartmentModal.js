@@ -23,7 +23,7 @@ const PassToAnotherDepartmentModal = ({
           value: user?.email,
           label: user?.email
         }));
-        console.log(adminlist, 'admin list');
+
         setAdminEmails(adminlist);
       } catch (err) {
         console.log(err);
