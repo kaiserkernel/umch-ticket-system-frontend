@@ -18,34 +18,34 @@ import loadingAnimation from './animations/loading.json'
 
 const ConfirmationDialog = ({ isOpen, isPending, setIsOpen, onConfirm }) => {
   // States
-  const [isConfirm, setisConfirm] = useState(false)
-  const [secondDialog, setSecondDialog] = useState(false)
+  // const [isConfirm, setisConfirm] = useState(false)
+  // const [secondDialog, setSecondDialog] = useState(false)
 
-  const handleSecondDialogClose = () => {
-    setSecondDialog(false)
-    onCancel()
-  }
+  // const handleSecondDialogClose = () => {
+  //   setSecondDialog(false)
+  //   onCancel()
+  // }
 
-  const handleConfirmation = async (value) => {
-    if (onConfirm && value) {
-      onConfirm()
-      setisConfirm(true)
-    }
+  // const handleConfirmation = async (value) => {
+  //   if (onConfirm && value) {
+  //     onConfirm()
+  //     setisConfirm(true)
+  //   }
 
-    onCancel()
-  }
+  //   onCancel()
+  // }
 
-  useEffect(() => {
-    if (!isPending && isConfirm) {
-      // setUserInput(true)
-      setSecondDialog(true)
-    }
-  }, [isPending, isConfirm])
+  // useEffect(() => {
+  //   if (!isPending && isConfirm) {
+  //     // setUserInput(true)
+  //     setSecondDialog(true)
+  //   }
+  // }, [isPending, isConfirm])
 
   return (
     <>
       {/* Loading Dialog */}
-      <Modal size='sm' show={isPending} centered>
+      {/* <Modal size='sm' show={isPending} centered>
         <Modal.Body className='d-flex flex-column align-items-center text-center'>
           <Lottie animationData={loadingAnimation} style={{ width: 150, height: 150 }} />
         </Modal.Body>
@@ -74,7 +74,7 @@ const ConfirmationDialog = ({ isOpen, isPending, setIsOpen, onConfirm }) => {
         </Modal.Footer>
       </Modal>
 
-      {/* Second Dialog */}
+      
       <Modal show={secondDialog} onHide={handleSecondDialogClose} centered>
         <Modal.Body className='d-flex flex-column align-items-center text-center'>
           <Lottie
@@ -93,7 +93,7 @@ const ConfirmationDialog = ({ isOpen, isPending, setIsOpen, onConfirm }) => {
             Ok
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </>
   )
 }
