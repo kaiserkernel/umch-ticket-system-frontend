@@ -4,18 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FormContext } from "../index";
 
 import Default from "./default";
-// import Campus from "./campus";
-// import DeanOffice from "./deanOffice";
-// import Exam from "./exam";
-// import GermanTeachingDepartment from "./germanTeachingDepartment";
-
+import Campus from "./campus";
+import DeanOffice from "./deanOffice";
+import Exam from "./exam";
+import GermanTeachingDepartment from "./germanTeachingDepartment";
 import Other from "./other";
-// import Teacher from "./teacher";
-// import TeachingHospital from "./teachingHospital";
-// import OnlineCatalouge from "./onlineCatalouge";
+import Teacher from "./teacher";
+import TeachingHospital from "./teachingHospital";
+import OnlineCatalouge from "./onlineCatalouge";
+
+import { TicketTypeStructure } from "../../../../globalVariables";
 
 const Complaints = () => {
-  const { isFormSubmit, setFormData, formData, mainPageErrors } =
+  const { isFormSubmit } =
     useContext(FormContext);
 
   const [formInquiryData, setFormInquiryData] = useState({
@@ -30,12 +31,8 @@ const Complaints = () => {
       isFirstRender.current = false; // Mark the initial render as complete.
       return; // Skip running this effect on initial render.
     }
-    console.log(isFormSubmit, "=======");
-    console.log(formData);
     if (isFormSubmit != 0) {
-      console.log("sumbit is done");
-      if (validate()) {
-      }
+      validate();
     }
   }, [isFormSubmit]);
 
@@ -68,121 +65,12 @@ const Complaints = () => {
         transition: { duration: 0.5 }
       }
     },
-    1: {
+    custom: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
         opacity: 1,
         originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-
-    2: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    3: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-
-    4: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    5: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-
-    6: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    7: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-
-    8: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
         transition: { duration: 0.5 }
       },
       exit: {
@@ -196,18 +84,18 @@ const Complaints = () => {
 
   const content = {
     default: <Default />,
-    // 1: <Campus complaints={String(formInquiryData.complaints)} />,
-    // 2: <DeanOffice complaints={String(formInquiryData.complaints)} />,
-    // 3: (
-    //   <GermanTeachingDepartment
-    //     complaints={String(formInquiryData.complaints)}
-    //   />
-    // ),
-    // 4: <TeachingHospital complaints={String(formInquiryData.complaints)} />,
-    // 5: <Teacher complaints={String(formInquiryData.complaints)} />,
-    // 6: <OnlineCatalouge complaints={String(formInquiryData.complaints)} />,
-    // 7: <Exam complaints={String(formInquiryData.complaints)} />,
-    // 8: <Other complaints={String(formInquiryData.complaints)} />
+    Campus: <Campus complaints={String(formInquiryData.complaints)} />,
+    "Dean's Office": <DeanOffice complaints={String(formInquiryData.complaints)} />,
+    "German Teaching Department": (
+      <GermanTeachingDepartment
+        complaints={String(formInquiryData.complaints)}
+      />
+    ),
+    "Teaching Hospital": <TeachingHospital complaints={String(formInquiryData.complaints)} />,
+    Teacher: <Teacher complaints={String(formInquiryData.complaints)} />,
+    "Online Catalogue (Carnet)": <OnlineCatalouge complaints={String(formInquiryData.complaints)} />,
+    Exam: <Exam complaints={String(formInquiryData.complaints)} />,
+    Other: <Other complaints={String(formInquiryData.complaints)} />
   };
   return (
     <div className="pt-5">
@@ -245,20 +133,15 @@ const Complaints = () => {
                 WebkitAppearance: "none", // For Safari/Chrome
                 backgroundColor: "white",
                 color: "gray !important"
-                // padding: "8px 12px",
-                // border: "1px solid #007bff",
               }}
               className="custom-input"
             >
               <option value="default">– Select –</option>
-              <option value="1">Campus</option>
-              <option value="2">Dean’s Office</option>
-              <option value="3">German Teaching Department</option>
-              <option value="4">Teaching Hospital</option>
-              <option value="5">Teacher</option>
-              <option value="6">Online Catalouge (Carnet)</option>
-              <option value="7">Exam</option>
-              <option value="8">Other</option>
+              {
+                TicketTypeStructure[3]["types"].map((log, idx) => (
+                  <option key={idx} value={log}>{log}</option>
+                ))
+              }
             </Form.Control>
           </Form.Group>
           {errors.complaints && (
@@ -272,7 +155,7 @@ const Complaints = () => {
           key={formInquiryData.complaints}
           initial="hidden"
           animate="visible"
-          variants={variants[formInquiryData.complaints]}
+          variants={variants[formInquiryData.complaints === "default" ? "default" : "custom"]}
         >
           <div>{content[formInquiryData.complaints]}</div>
         </motion.div>

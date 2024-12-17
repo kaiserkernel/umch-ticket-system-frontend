@@ -2,17 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import moment from "moment";
 import FormService from "../../sevices/form-service";
 import emailTemplateService from "../../sevices/email-template-service";
-import {
-  INQUIRYCATEGORIESEmailTemplates,
-  POSITIONNAMES
-} from "../../globalVariables";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
+
+import { formatEmailContent } from "../../utils/formatEmailContent";
 
 const StyledDatePicker = styled(DatePicker)`
   border: 1px solid !important;
@@ -44,8 +41,9 @@ const EnrollmentModal = ({
   unClickedRejectTicketsCount
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
-  const [defaultTemplate, setDefaultTemplateData] = useState();
   const [emailTemplates, setEmailTemplates] = useState([]);
+  const [selectedMailTemplate, setSelectedMailTempate] = useState();
+
   const [formData, setFormData] = useState({
     studentNo: selectedTicket?.enrollmentNumber,
     nationality: selectedTicket?.details?.nationality,
@@ -53,11 +51,8 @@ const EnrollmentModal = ({
     birthday: selectedTicket?.details?.birthday
   });
 
-  let subCategory1 = parseInt(selectedTicket?.subCategory1);
-  let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
-  let details = selectedTicket?.details;
-
-  const data = INQUIRYCATEGORIESEmailTemplates[0]["subCategories"][4]["accept"];
+  let subCategory1 = selectedTicket?.subCategory1;
+  let inquiryCategory = selectedTicket?.inquiryCategory;
 
   const handleChange = (e) => {
     setFormData({
@@ -67,131 +62,65 @@ const EnrollmentModal = ({
   };
 
   useEffect(() => {
-    const getEmailTemplatesByCategory = async () => {
+    const getEmailTemplates = async () => {
       try {
-        const payload = {
-          inquiryCategory: inquiryCategory,
-          subCategory: subCategory1
-        };
-        const res = await emailTemplateService.getEmailTemplatesByCategory(
-          payload
-        );
-        setEmailTemplates(res?.emailTemplates);
-      } catch (err) {
-        console.log(err);
+        const { data } = await emailTemplateService.getEmailTemplatesByCategory({
+          inquiryCategory,
+          subCategory1
+        });
+        setEmailTemplates(data);
+      } catch (error) {
+        console.log(error);
       }
-    };
-    getEmailTemplatesByCategory();
+    }
+    getEmailTemplates();
+  }, []);
 
-    let authUser = localStorage.getItem("userData");
-    authUser = JSON.parse(authUser);
-    let replacedEmailTemplate = data
-      .replace(
-        "[Student's Name]",
-        selectedTicket?.firstName + " " + selectedTicket?.lastName
-      )
-      .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
+  useEffect(() => {
+    if (show && emailTemplates.length > 0) {
+      const defaultTempate = emailTemplates.find(log => log.emailTemplateTitle === "Default");
+      if (defaultTempate) {
+        setSelectedMailTempate(defaultTempate.emailTemplateContent);
+        formatTempateData(defaultTempate.emailTemplateContent);
+      } else {
+        setSelectedMailTempate(emailTemplates[0].emailTemplateContent);
+        formatTempateData(emailTemplates[0].emailTemplateContent);
+      }
+    }
+  }, [show, emailTemplates])
 
-      .replace(
-        "[Institution/Organization Name]",
-        authUser.position
-          ? POSITIONNAMES[authUser.position]
-          : "UMCH University Team"
-      )
-      .replace("[Contact Information]", authUser?.email)
-      .replace(
-        "[contact us]",
-        actionBtnType == "reject"
-          ? `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
-          : `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
-      )
-      .replace("[requested teaching hospital]", details?.changePartner)
-      .replace("[requested group]", details?.switchStudyGroup)
-      .replace("[requested subject]", details?.subject)
-      .replace("[Subject Name]", details?.subject)
-      .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
-      .replace(
-        "[interval of time requested]",
-        moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
-      );
-    setMailTemplateData(replacedEmailTemplate);
-    setDefaultTemplateData(replacedEmailTemplate);
-  }, [actionBtnType]);
-
-  const replaceEmailTemplate = (
+  const formatEmailPayload = (
     mailTemplateData,
     selectedTicket,
-    contentTemplate,
     formData
   ) => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
-    let replaceSubject =
-      "Decision on Your Request of Absence - Ticket Number [Ticket Number]".replace(
-        "[Ticket Number]",
-        selectedTicket?.inquiryNumber
-      );
 
-    let replacedEmailTemplate;
+    const { subCategory1, inquiryCategory } = selectedTicket;
+    const type = subCategory1 ? (subCategory1 === "Other" ? `Other (${inquiryCategory})` : subCategory1) : inquiryCategory;
+    let title = `Decision on Your Request of ${type} - Ticket Number ` + selectedTicket?.inquiryNumber;
 
-    try {
-      replacedEmailTemplate = mailTemplateData
-        .replace(
-          "[Student's Name]",
-          selectedTicket?.firstName + " " + selectedTicket?.lastName
-        )
-        .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-
-        .replace(
-          "[Institution/Organization Name]",
-          authUser.position
-            ? POSITIONNAMES[authUser.position]
-            : "UMCH University Team"
-        )
-        .replace("[Contact Information]", authUser?.email)
-        .replace(
-          "[contact us]",
-          "<a href='" +
-            process.env.REACT_APP_URL +
-            "/#/ticket-reopen/" +
-            selectedTicket?._id +
-            "'>Contact Us</a>"
-        )
-        .replace("[requested teaching hospital]", details?.changePartner)
-        .replace("[requested group]", details?.switchStudyGroup)
-        .replace("[requested subject]", details?.subject)
-        .replace("[Subject Name]", details?.subject)
-        .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
-        .replace(
-          "[interval of time requested]",
-          moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
-        );
-    } catch (err) {
-      console.log(err);
-    }
-
-    let payload = {};
-
-    payload = {
-      replaceSubject: replaceSubject,
-      replacedEmailTemplate: replacedEmailTemplate,
-      id: selectedTicket?._id,
+    let payload = {
+      replaceSubject: title,
+      replacedEmailTemplate: mailTemplateData,
+      id: selectedTicket._id,
       studentNo: studentNo ? studentNo : "",
       selectedTicket: selectedTicket,
-      formData: formData
+      formData
     };
 
     return payload;
   };
+
   const handleSubmit = async () => {
     try {
       handleModalClose();
       setLoading(true);
 
-      const payload = replaceEmailTemplate(
+      const payload = formatEmailPayload(
         mailTemplateData,
         selectedTicket,
-        contentTemplate,
         formData
       );
 
@@ -203,12 +132,20 @@ const EnrollmentModal = ({
 
       successNotify(res?.message);
       setLoading(false);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleChangeTemplate = (e) => {
-    setMailTemplateData(e.target.value);
+    setSelectedMailTempate(e.target.value);
+    formatTempateData(e.target.value);
   };
+
+  const formatTempateData = (_data) => {
+    let studentName = selectedTicket.firstName + " " + selectedTicket.lastName;
+    const data = formatEmailContent(_data, selectedTicket.details, studentName);
+    setMailTemplateData(data);
+  }
+
   return (
     <Modal show={show} onHide={handleModalClose}>
       <Modal.Header closeButton>
@@ -257,8 +194,6 @@ const EnrollmentModal = ({
               WebkitAppearance: "none", // For Safari/Chrome
               backgroundColor: "white",
               color: "gray !important"
-              // padding: "8px 12px",
-              // border: "1px solid #007bff",
             }}
             className="custom-input"
           >
@@ -308,17 +243,15 @@ const EnrollmentModal = ({
               padding: "8px 12px",
               border: "1px solid #007bff"
             }}
+            value={selectedMailTemplate}
             className="custom-input mt-4"
           >
-            <option key="0" value={defaultTemplate}>
-              Default Template
-            </option>
-            {(emailTemplates || []).map((emailTemplate, index) => (
+            {emailTemplates.map((log, index) => (
               <option
-                key={index + 1}
-                value={emailTemplate?.emailTemplateContent}
+                key={index}
+                value={log.emailTemplateContent}
               >
-                {emailTemplate?.emailTemplateTitle}
+                {log?.emailTemplateTitle}
               </option>
             ))}
           </Form.Control>

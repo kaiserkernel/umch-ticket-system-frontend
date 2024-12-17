@@ -116,8 +116,7 @@ const Other = ({ complaints }) => {
       newErrors.complaintComment = "This field is required";
     }
 
-    console.log(newErrors);
-    if (complaints == "8") {
+    if (complaints === "Other") {
       setErrors(newErrors);
     }
     return Object.keys(newErrors).length === 0;

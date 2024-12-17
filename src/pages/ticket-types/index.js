@@ -3,7 +3,7 @@ import { Row, Col, Form } from "react-bootstrap";
 
 import TicketGroupService from "../../sevices/ticket-group-service";
 
-import { TicketTypeList } from "../../globalVariables";
+import { TicketTypeList, TicketTypeStructure } from "../../globalVariables";
 import { toast } from "react-toastify";
 
 import "./index.css"
@@ -11,7 +11,6 @@ import "./index.css"
 const TicketTypes = () => {
     const [ticketGroup, setTicketGroup] = useState([]);
     const [allTicketGroup, setAllTicketGroup] = useState([]);
-    // const [refetchTypes, setRefetchTypes] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const successNotify = (msg) => {
@@ -27,11 +26,28 @@ const TicketTypes = () => {
     };
 
     const getAllGroupData = (_registeredGroupData) => {
-        let _unRegisteredTicketType = TicketTypeList.map(log => Object.keys(log)[0]);
+        let _unRegisteredTicketType = []
+        TicketTypeStructure.map(log => {
+            if (log.types) {
+                log.types.map((logSec) => {
+                    _unRegisteredTicketType.push({
+                        inquiryCategory: log.name,
+                        subCategory1: logSec
+                    })
+                })
+            } else {
+                _unRegisteredTicketType.push({
+                    inquiryCategory: log.name,
+                    subCategory1: ""
+                })
+            }
+        })
 
         _registeredGroupData.map((log, idx) => {
             log.ticketTypes.map((logSec, idx) => {
-                const removeIndex = _unRegisteredTicketType.indexOf(logSec);
+                const removeIndex = _unRegisteredTicketType.findIndex(logThi => (
+                    logThi.inquiryCategory === logSec.inquiryCategory && logThi.subCategory1 === logSec.subCategory1
+                ));
                 _unRegisteredTicketType.splice(removeIndex, 1);
             })
         })
@@ -48,8 +64,8 @@ const TicketTypes = () => {
     }
 
     const handleGroupSelect = async (_data) => {
-        const { id, name } = _data;
-        if (id && name) {
+        const { id, inquiryCategory } = _data;
+        if (id && inquiryCategory) {
             try {
                 const { message } = await TicketGroupService.addTicketTypeToTicketGroup(_data);
                 const res = await TicketGroupService.fetchAllTicketGroups();
@@ -110,13 +126,25 @@ const TicketTypes = () => {
                                         _ticketGroup.ticketTypes.sort().map((log, idxSec) => (
                                             <Row key={idxSec} className="border rounded-1 mb-2">
                                                 <Col className="py-2 align-content-center ps-3">
-                                                    <span>{log}</span>
+                                                    <span>
+                                                        {
+                                                            log.subCategory1 === "Other" ? (
+                                                                `Other-${log.inquiryCategory}`
+                                                            ) : (
+                                                                !log.subCategory1 ? (
+                                                                    (log.inquiryCategory)
+                                                                ) : (
+                                                                    (log.subCategory1)
+                                                                )
+                                                            )
+                                                        }
+                                                    </span>
                                                 </Col>
                                                 <Col className="py-2 pe-3 d-flex align-items-center">
                                                     <span className="me-2">TicketGroup:</span>
                                                     <Form.Select
                                                         className="d-inline"
-                                                        onChange={(evt) => handleGroupSelect({ id: evt.target.value, name: log })}
+                                                        onChange={(evt) => handleGroupSelect({ id: evt.target.value, inquiryCategory: log.inquiryCategory, subCategory1: log.subCategory1 })}
                                                         value={_ticketGroup._id ? _ticketGroup._id : ""}
                                                     >
                                                         <option value="">Select Group</option>

@@ -1,26 +1,31 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
-// import Absence from "./absence";
+import Absence from "./absence";
 import Default from "./default";
-// import ChangeTeachingHospital from "./change-teaching-hospital";
-// import ChangeStudyGroup from "./change-study-group";
-// import DemonstratorStudent from "./demonstrator-student";
-// import Enrollment from "./enrollment";
-// import ExamInspection from "./exam-inspection";
-// import OnlineCatalogue from "./online-catalogue";
-// import RecognitionCourses from "./recognition-courses";
-// import RecognitionInternship from "./recognition-internship";
-// import ShortTermBorrowDiploma from "./short-term-borrow-diploma";
-// import SyllabusAcademicYear from "./syllabus-academic-year";
-// import TranscriptRecords from "./transcript-records";
-// import TransferTarguMures from "./transfer-targu-mures";
+import ChangeTeachingHospital from "./change-teaching-hospital";
+import ChangeStudyGroup from "./change-study-group";
+import DemonstratorStudent from "./demonstrator-student";
+import Enrollment from "./enrollment";
+import ExamInspection from "./exam-inspection";
+import OnlineCatalogue from "./online-catalogue";
+import RecognitionCourses from "./recognition-courses";
+import RecognitionInternship from "./recognition-internship";
+import ShortTermBorrowDiploma from "./short-term-borrow-diploma";
+import SyllabusAcademicYear from "./syllabus-academic-year";
+import TranscriptRecords from "./transcript-records";
+import TransferTarguMures from "./transfer-targu-mures";
 import Other from "./other";
+import Internship from "./internship";
+import MedicalAbilities from "./medical-abilities";
+import Thesis from "./thesis";
+
+import { TicketTypeStructure } from "../../../../globalVariables";
 
 import { FormContext } from "../index";
 
 const ApplicationRequests = () => {
-  const { isFormSubmit, setFormData, formData, mainPageErrors } =
+  const { isFormSubmit } =
     useContext(FormContext);
 
   const [formInquiryData, setFormInquiryData] = useState({
@@ -36,12 +41,9 @@ const ApplicationRequests = () => {
       isFirstRender.current = false; // Mark the initial render as complete.
       return; // Skip running this effect on initial render.
     }
-    console.log(isFormSubmit);
-    console.log(formData);
+
     if (isFormSubmit != 0) {
-      console.log("sumbit is done");
-      if (validate()) {
-      }
+      validate();
     }
   }, [isFormSubmit]);
 
@@ -74,7 +76,7 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 }
       }
     },
-    1: {
+    custom: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -89,254 +91,86 @@ const ApplicationRequests = () => {
         transition: { duration: 0.5 }
       }
     },
-
-    2: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    3: {
-      hidden: { scaleY: 0, opacity: 0 },
-      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    4: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-
-    5: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    6: {
-      hidden: { scaleY: 0, opacity: 0 },
-      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    7: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    8: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    9: {
-      hidden: { scaleY: 0, opacity: 0 },
-      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    10: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    11: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    12: {
-      hidden: { scaleY: 0, opacity: 0 },
-      visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5 } },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    13: {
-      hidden: { height: 0, opacity: 0, originY: 0 },
-      visible: {
-        height: "auto",
-        opacity: 1,
-        originY: 0,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    },
-    14: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
-    }
   };
   const content = {
     default: <Default />,
-    // 1: (
-    //   <Absence
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 2: (
-    //   <ChangeTeachingHospital
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 3: (
-    //   <ChangeStudyGroup
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 4: (
-    //   <DemonstratorStudent
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 5: (
-    //   <Enrollment
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 6: (
-    //   <ExamInspection
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 7: (
-    //   <OnlineCatalogue
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 8: (
-    //   <RecognitionCourses
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 9: (
-    //   <RecognitionInternship
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 10: (
-    //   <ShortTermBorrowDiploma
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 11: (
-    //   <SyllabusAcademicYear
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 12: (
-    //   <TranscriptRecords
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 13: (
-    //   <TransferTarguMures
-    //     applicationRequest={String(formInquiryData.applicationRequest)}
-    //   />
-    // ),
-    // 14: (
-    //   <Other applicationRequest={String(formInquiryData.applicationRequest)} />
-    // )
+    Absence: (
+      <Absence
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Change of teaching hospital": (
+      <ChangeTeachingHospital
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Change of study group": (
+      <ChangeStudyGroup
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Demonstrator student": (
+      <DemonstratorStudent
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Enrollment": (
+      <Enrollment
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Exam inspection": (
+      <ExamInspection
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Online Catalogue (Solaris)": (
+      <OnlineCatalogue
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Recognition of Courses": (
+      <RecognitionCourses
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Recognition of Internship": (
+      <RecognitionInternship
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Short term borrow of Diploma": (
+      <ShortTermBorrowDiploma
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Syllabus of the academic year": (
+      <SyllabusAcademicYear
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Transcript of Records": (
+      <TranscriptRecords
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Transcript to Targu Mures": (
+      <TransferTarguMures
+        applicationRequest={String(formInquiryData.applicationRequest)}
+      />
+    ),
+    "Other": (
+      <Other applicationRequest={String(formInquiryData.applicationRequest)} />
+    ),
+    "Internship": (
+      <Internship applicationRequest={String(formInquiryData.applicationRequest)} />
+    ),
+    "Medical Abilities": (
+      <MedicalAbilities applicationRequest={String(formInquiryData.applicationRequest)} />
+    ),
+    "Thesis": (
+      <Thesis applicationRequest={String(formInquiryData.applicationRequest)} />
+    )
   };
   return (
     <div className="pt-5">
@@ -356,8 +190,6 @@ const ApplicationRequests = () => {
                 WebkitAppearance: "none", // For Safari/Chrome
                 backgroundColor: "white",
                 color: "gray !important"
-                // padding: "8px 12px",
-                // border: "1px solid #007bff",
               }}
               name="applicationRequest"
               onChange={handleChange}
@@ -365,20 +197,11 @@ const ApplicationRequests = () => {
               className="custom-input"
             >
               <option value="default">– Select –</option>
-              <option value="1">Absence</option>
-              <option value="2">Change of teaching hospital</option>
-              <option value="3">Change of study group</option>
-              <option value="4">Demonstrator student</option>
-              <option value="5">Enrollment</option>
-              <option value="6">Exam inspection</option>
-              <option value="7">Online Catalogue (Solaris)</option>
-              <option value="8">Recognition of Courses</option>
-              <option value="9">Recognition of Internship</option>
-              <option value="10">Short term borrow of Diploma</option>
-              <option value="11">Syllabus of the academic year</option>
-              <option value="12">Transcript of Records</option>
-              <option value="13">Transfer to Targu Mures</option>
-              <option value="14">Other</option>
+              {
+                TicketTypeStructure[0]["types"].map((log, idx) => (
+                  <option key={idx} value={log}>{log}</option>
+                ))
+              }
             </Form.Control>
           </Form.Group>
           {errors.applicationRequest && (
@@ -394,7 +217,7 @@ const ApplicationRequests = () => {
           animate="visible"
           //   exit={selectedEffect === "default" ? "exit" : false}
 
-          variants={variants[formInquiryData.applicationRequest]}
+          variants={variants[formInquiryData.applicationRequest === "default" ? "default" : "custom"]}
         >
           <div>{content[formInquiryData.applicationRequest]}</div>
         </motion.div>

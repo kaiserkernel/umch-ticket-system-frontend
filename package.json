@@ -52,6 +52,7 @@
     "jszip": "^3.10.1",
     "jwt-decode": "^4.0.0",
     "lity": "^2.4.1",
+    "lottie-react": "^2.4.0",
     "masonry-layout": "^4.2.2",
     "node-sass": "^9.0.0",
     "pdfmake": "^0.2.9",

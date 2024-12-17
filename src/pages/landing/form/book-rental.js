@@ -84,14 +84,12 @@ const BookRental = () => {
             const temp = formData;
             const combinedFormData = Object.assign({}, temp);
 
-            console.log(combinedFormData);
-
             const formDataToSend = new FormData();
             for (const key in combinedFormData) {
               formDataToSend.append(key, formData[key]);
             }
             formDataToSend.append("details", jsonFormDetailData);
-            formDataToSend.append("subCategory1", "1");
+            formDataToSend.append("subCategory1", "");
 
             try {
               setLoading(true);

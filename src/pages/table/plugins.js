@@ -23,7 +23,7 @@ import BlockUI from "react-block-ui";
 import BeatLoader from "react-spinners/BeatLoader";
 import "react-block-ui/style.css";
 
-import TicketGroupService from "../../sevices/ticket-group-service.js";
+import { TicketTypeStructure } from "../../globalVariables.js";
 
 function AccountManagement() {
   const [admins, setAdmins] = useState([]);
@@ -132,29 +132,44 @@ function AccountManagement() {
       setPermissions(initialPermissions);
     }
     if (btnType == "edit") {
-      const allOptions = selectedAdmin?.category.flatMap((category) => {
-        // Include main category
-        const mainCategory = { value: category.value, label: category.label };
+      // const allOptions = selectedAdmin?.category.flatMap((category) => {
+      //   // Include main category
+      //   const mainCategory = { value: category.value, label: category.label };
 
-        // Include subcategories, if any
-        const subcategoryOptions =
-          category.subcategories?.map((sub) => ({
-            value: sub.value,
-            label: sub.label
-          })) || [];
+      //   // Include subcategories, if any
+      //   const subcategoryOptions =
+      //     category.subcategories?.map((sub) => ({
+      //       value: sub.value,
+      //       label: sub.label
+      //     })) || [];
 
-        // Return both main category and its subcategories if present, otherwise only the main category
-        return subcategoryOptions.length > 0
-          ? [...subcategoryOptions]
-          : [mainCategory];
-      });
-      setSelectedItems(allOptions);
-
-      // Initialize permissions for all subcategories and main categories
+      //   // Return both main category and its subcategories if present, otherwise only the main category
+      //   return subcategoryOptions.length > 0
+      //     ? [...subcategoryOptions]
+      //     : [mainCategory];
+      // });
       const initialPermissions = {};
-      selectedAdmin?.category.forEach((category) => {
-        initialPermissions[category.value] = category.permissionValue;
-      });
+
+      const allOptions = selectedAdmin.category.map(log => {
+        let value = "";
+        let label = "";
+        if (!log.subCategory1) {
+          label = log.inquiryCategory;
+          value = log.inquiryCategory;
+        } else {
+          label = log.subCategory1;
+          if (label === "Other")
+            label += `-${log.inquiryCategory}`
+          value = log.subCategory1 + "-" + log.inquiryCategory;
+        }
+        initialPermissions[value] = log.permissionValue;
+        return {
+          value,
+          label
+        }
+      })
+
+      setSelectedItems(allOptions);
       setPermissions(initialPermissions);
     }
   }, [show]);
@@ -162,26 +177,23 @@ function AccountManagement() {
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        const { data } = await TicketGroupService.fetchAllTicketGroups();
-        const _initialData = [
-          {
-            label: "Select All Category",
-            value: "0",
-            permissions: ["None", "Passive", "Active", "Responsible"]
-          }];
-
-        const _categoryData = _initialData.concat(data.map((log, idx) => {
-          const _subCategory = log.ticketTypes.map((logSec, idxSec) => ({
-            label: logSec,
-            value: `${log.prefix}-${idxSec}`,
-            permissions: ["None", "Passive", "Active", "Responsible"]
-          }))
-          return ({
-            label: log.name,
-            value: log.prefix,
-            subcategories: _subCategory
-          })
-        }));
+        const _categoryData = TicketTypeStructure.map((log) => {
+          if (log.types) {
+            const _subCategory = log.types.map(logSec => ({
+              label: logSec,
+              value: logSec + "-" + log.name
+            }));
+            return {
+              label: log.name,
+              subcategories: _subCategory
+            }
+          } else {
+            return {
+              label: log.name,
+              value: log.name
+            }
+          }
+        })
 
         setCategoryData(_categoryData);
       } catch (error) {
@@ -201,16 +213,27 @@ function AccountManagement() {
   const handleAddNewUser = async () => {
     const categories = [];
     selectedItems.map((item) => {
-      const categoryId = item.value;
-      let categoryIdArr = categoryId.split("-");
+      let inquiryCategory = "";
+      let subCategory1 = "";
+      let label = item.label;
+
+      if (item.value.includes("-")) {
+        const idx = item.value.indexOf("-");
+        inquiryCategory = item.value.substring(idx + 1);
+        subCategory1 = item.value.substring(0, idx);
+      } else {
+        inquiryCategory = item.value;
+      }
+
+      if (subCategory1 === "Other") {
+        label = subCategory1 + "-" + inquiryCategory
+      }
 
       const permission = permissions[item.value];
 
       const category = {
-        inquiryCategory: categoryIdArr[0],
-        subCategory1: item.label,
-        value: categoryId,
-        label: item.label,
+        inquiryCategory: inquiryCategory,
+        subCategory1: subCategory1,
         permission: defaultPermissions[permission],
         permissionValue: permission
       };
@@ -657,12 +680,10 @@ const MultiLevelSelectWithPermissions = ({
     { bg: "primary" },
     { bg: "success" }
   ];
-
   const defaultPermissions = ["None", "Passive", "Active", "Responsible"];
 
   // Handle selection of subcategory in main select component
   const handleSelectChange = (selectedOptions) => {
-    console.log(selectedOptions);
     setSelectedItems(selectedOptions || []);
 
     selectedOptions.map((option) => {
@@ -771,30 +792,35 @@ const MultiLevelSelectWithPermissions = ({
   return (
     <div>
       <div className="permissions-section mb-3">
-        {selectedItems.map((item) => (
-          <div key={item.value} style={{ marginTop: "15px" }}>
-            <Badge
-              style={{ fontSize: "14px", fontWeight: "300" }}
-              bg={selectedCategoryBadge[permissions[item.value]].bg}
-            >
-              <span>{item.label}</span>
-            </Badge>
+        {selectedItems.map((item) => {
 
-            <select
-              style={{ marginLeft: "10px" }}
-              onChange={(e) =>
-                handlePermissionChange(item.value, e.target.value)
-              }
-              value={permissions[item.value] || ""}
-            >
-              {defaultPermissions.map((perm, index) => (
-                <option key={index} value={index}>
-                  {perm}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
+          let label = item.label;
+
+          return (
+            <div key={item.value} style={{ marginTop: "15px" }}>
+              <Badge
+                style={{ fontSize: "14px", fontWeight: "300" }}
+                bg={selectedCategoryBadge[permissions[item.value]].bg}
+              >
+                <span>{label}</span>
+              </Badge>
+
+              <select
+                style={{ marginLeft: "10px" }}
+                onChange={(e) =>
+                  handlePermissionChange(item.value, e.target.value)
+                }
+                value={permissions[item.value] || ""}
+              >
+                {defaultPermissions.map((perm, index) => (
+                  <option key={index} value={index}>
+                    {perm}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )
+        })}
       </div>
       <Select
         options={formatOptions(options)}

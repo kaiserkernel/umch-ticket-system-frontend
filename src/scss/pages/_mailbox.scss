@@ -388,8 +388,8 @@
       flex-wrap: wrap;
 
       & .mailbox-attachment {
-        background: rgba(var(--#{$prefix}inverse-rgb), 0.15);
-        width: rem(120px);
+        // background: rgba(var(--#{$prefix}inverse-rgb), 0.15);
+        // width: rem(120px);
         overflow: hidden;
         margin-bottom: $spacer * 0.5;
         border-radius: $border-radius;

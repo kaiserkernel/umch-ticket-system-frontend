@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Row, Col } from "react-bootstrap";
+import { Modal, Row, Col, Form } from "react-bootstrap";
 import Select from "react-select";
 
 import formService from "../../sevices/form-service";
@@ -11,30 +11,42 @@ const PassToAnotherDepartmentModal = ({
   handleModalClose,
   selectedTicket
 }) => {
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [adminEmails, setAdminEmails] = useState();
+  // const [selectedOptions, setSelectedOptions] = useState([]);
+  // const [adminEmails, setAdminEmails] = useState();
+  const [personalMsg, setPersonalMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedMail, setSelectedMail] = useState("");
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   const getAdminUsers = async () => {
+  //     try {
+  //       const res = await formService.getAdminUsers();
+  //       const adminlist = res.map((user) => ({
+  //         value: user?.email,
+  //         label: user?.email
+  //       }));
+
+  //       setAdminEmails(adminlist);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+  //   getAdminUsers();
+  // }, []);
 
   useEffect(() => {
-    const getAdminUsers = async () => {
-      try {
-        const res = await formService.getAdminUsers();
-        const adminlist = res.map((user) => ({
-          value: user?.email,
-          label: user?.email
-        }));
-
-        setAdminEmails(adminlist);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getAdminUsers();
-  }, []);
+    if (!show) {
+      setPersonalMsg("");
+      setSelectedMail("");
+    }
+  }, [show])
 
   const handlePass = async () => {
     const payload = {
-      selectedOptions: selectedOptions,
+      // selectedMail: selectedOptions.value,
+      selectedMail: selectedMail,
+      personalMsg: personalMsg,
       selectedTicket: selectedTicket
     };
     try {
@@ -48,7 +60,6 @@ const PassToAnotherDepartmentModal = ({
       setLoading(false);
     }
     setLoading(false);
-    console.log(selectedOptions);
   };
 
   const successNotify = (msg) => {
@@ -71,9 +82,9 @@ const PassToAnotherDepartmentModal = ({
       <Modal.Body>
         <Row>
           <Col lg={12}>
-            {adminEmails && (
+            {/* {adminEmails && (
               <Select
-                isMulti
+                isMulti={false}
                 options={adminEmails}
                 value={selectedOptions}
                 closeMenuOnSelect={false}
@@ -81,7 +92,27 @@ const PassToAnotherDepartmentModal = ({
                 onChange={setSelectedOptions}
                 placeholder="Select Emails"
               />
-            )}
+            )} */}
+            <Form.Group className="mb-4">
+              <Form.Label>Please enter the email address of the person, you wnat to send this ticket to</Form.Label>
+              <Form.Control
+                as="input"
+                value={selectedMail}
+                onChange={evt => setSelectedMail(evt.target.value)}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Form.Group>
+              <Form.Label>Add a personal message (optional)</Form.Label>
+              <Form.Control
+                as="textarea" rows={5}
+                value={personalMsg}
+                onChange={evt => setPersonalMsg(evt.target.value)}
+              />
+            </Form.Group>
           </Col>
         </Row>
       </Modal.Body>
@@ -98,7 +129,7 @@ const PassToAnotherDepartmentModal = ({
                 <BeatLoader color="white" size={10} />
               </div>
             ) : (
-              <span>Pass </span>
+              <span>send </span>
             )}
           </a>
           <a className="btn btn-success" onClick={handleModalClose}>

@@ -1,27 +1,27 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Button,
   Row,
   Col,
   Form,
-  Badge,
-  Popover,
-  OverlayTrigger,
-  ButtonToolbar
+  Accordion
 } from "react-bootstrap";
 import { Card, CardBody } from "./../../components/card/card.jsx";
 import DataTable from "react-data-table-component";
-import UserService from "../../sevices/user-service.js";
 
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import ReactQuill from "react-quill";
-import Select, { components } from "react-select";
+import Select from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
 import EmailTemplateService from "../../sevices/email-template-service.js";
-import TicketGroupService from "../../sevices/ticket-group-service.js";
+import { EmailTemplateDescription } from "../../globalVariables.js";
+
+import { TicketTypeStructure } from "../../globalVariables.js";
+
+import "./index.css"
 
 function EmailTemplateManagement() {
   const [emailTemplates, setEmailTemplates] = useState([]);
@@ -31,31 +31,32 @@ function EmailTemplateManagement() {
   const [loading, setLoading] = useState(false);
   const [btnType, setBtnType] = useState("");
   const [deleteTemplate, setDeleteTemplate] = useState("");
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState("");
   const [categoryData, setCategoryData] = useState([]);
+  const [visibleEmailTemplateOption, setVisibleEmailTemplateOption] = useState("")
 
   const [formData, setFormData] = useState({
     id: "",
     inquiryCategory: "",
-    subCategory: "",
-    label: "",
+    subCategory1: "",
     emailTemplateTitle: "",
-    emailTemplateContent: ""
+    emailTemplateContent: "",
+    emailTemplateState: ""
   });
-
-
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const validate = () => {
     const newErrors = {};
-
     if (selectedItems.length == 0) {
       newErrors.subCategories = "This field is required";
     }
-    if (formData.emailTemplateTitle == "") {
+    if (selectedItems.value !== "student" && formData.emailTemplateTitle == "") {
       newErrors.emailTemplateTitle = "This field is required";
+    }
+    if (selectedItems.value !== "student" && !formData.emailTemplateState) {
+      newErrors.emailTemplateState = "This field is required"
     }
     if (!formData.emailTemplateContent) {
       newErrors.emailTemplateContent = "This field is required";
@@ -76,38 +77,53 @@ function EmailTemplateManagement() {
     };
 
     fetchData();
-  }, [show, deleteTemplate]);
+    setErrors({});
+    if (btnType === "add") {
+      setFormData({
+        id: "",
+        inquiryCategory: "",
+        subCategory1: "",
+        emailTemplateTitle: "",
+        emailTemplateContent: "",
+        emailTemplateState: ""
+      });
+      setSelectedItems("");
+    }
+
+  }, [show, deleteTemplate, btnType]);
 
   useEffect(() => {
-    const fetchCategoryData = async () => {
-      try {
-        const { data } = await TicketGroupService.fetchAllTicketGroups();
-        const _initialData = [
-          {
-            label: "Select All Category",
-            value: "0",
-            permissions: ["None", "Passive", "Active", "Responsible"]
-          }];
-
-        const _categoryData = _initialData.concat(data.map((log, idx) => {
-          const _subCategory = log.ticketTypes.map((logSec, idxSec) => ({
-            label: logSec,
-            value: `${log.prefix}-${idxSec}`,
-            permissions: ["None", "Passive", "Active", "Responsible"]
-          }))
-          return ({
-            label: log.name,
-            value: log.prefix,
-            subcategories: _subCategory
-          })
-        }));
-
-        setCategoryData(_categoryData);
-      } catch (error) {
-        console.log("Error to get category data", error);
+    const _initialData = [
+      {
+        value: "",
+        label: "Select All Categories"
+      },
+      {
+        value: "student",
+        label: "Student Default Template"
       }
-    }
-    fetchCategoryData();
+    ];
+
+    const _categoryData = _initialData.concat(
+      TicketTypeStructure.map((log) => {
+        if (log.types) {
+          const _subCategory = log.types.map(logSec => ({
+            label: logSec,
+            value: log.name + "-" + logSec
+          }));
+          return {
+            label: log.name,
+            subcategories: _subCategory
+          }
+        } else {
+          return {
+            label: log.name,
+            value: log.name
+          }
+        }
+      })
+    );
+    setCategoryData(_categoryData);
   }, [])
 
   const handleChange = (e) => {
@@ -128,10 +144,13 @@ function EmailTemplateManagement() {
         successNotify(res?.message);
         setLoading(false);
         setShow(false);
+
         setFormData({
-          id: "",
+          inquiryCategory: "",
+          subCategory1: "",
           emailTemplateTitle: "",
-          emailTemplateContent: ""
+          emailTemplateContent: "",
+          emailTemplateState: ""
         });
       }
     } catch (err) {
@@ -142,24 +161,52 @@ function EmailTemplateManagement() {
     setLoading(false);
   };
 
+  // Handle set up options for selecing email template state
+  const setUpEmailTemplateState = (inquiryCategory, subCategory1) => {
+    if (inquiryCategory === "Book rental UMCH library" || (
+      inquiryCategory === "Application and Requests" && (
+        subCategory1 === "Absence" ||
+        subCategory1 === "Change of study group" ||
+        subCategory1 === "Change of teaching hospital" ||
+        subCategory1 === "Demonstrator student" ||
+        subCategory1 === "Online Catalogue (Solaris)" ||
+        subCategory1 === "Recognition of Courses" ||
+        subCategory1 === "Recognition of Internship" ||
+        subCategory1 === "Syllabus of the academic year" ||
+        subCategory1 === "Transcript to Targu Mures" ||
+        subCategory1 === "Transcript of Records"
+      )
+    )) {
+      setVisibleEmailTemplateOption("accept")
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        emailTemplateState: "close"
+      }))
+      setVisibleEmailTemplateOption("close")
+    }
+  }
+
   // Handle selection of subcategory in main select component
   const handleSelectChange = (selectedOption) => {
     setSelectedItems(selectedOption || []);
 
-    let label;
-    if (typeof selectedOption?.label != "string") {
-      label = selectedOption?.label?.props?.children;
-    } else {
-      label = selectedOption?.label;
+    let inquiryCategory = selectedOption.value;
+    let subCategory1 = "";
+
+    if (selectedOption.value.indexOf("-")) {
+      const idx = selectedOption.value.indexOf("-");
+      inquiryCategory = selectedOption.value.substring(0, idx);
+      subCategory1 = selectedOption.value.substring(idx + 1);
     }
-    const categoryArray = selectedOption.value.split("-");
 
     setFormData({
       ...formData,
-      label: label,
-      inquiryCategory: categoryArray[0] ? categoryArray[0] : "",
-      subCategory: categoryArray[1] ? categoryArray[1] : ""
+      inquiryCategory,
+      subCategory1
     });
+
+    setUpEmailTemplateState(inquiryCategory, subCategory1)
   };
 
   const handleDeleteTemplate = async (id) => {
@@ -177,44 +224,6 @@ function EmailTemplateManagement() {
     setLoading(false);
   };
 
-  const handleEditTemplate = async (id) => {
-    setBtnType("edit");
-    setShow(true);
-    try {
-      const res = await EmailTemplateService.getEmailTemplate(id);
-      console.log(res, "ddd")
-      setFormData({
-        ...formData,
-        id: res?.emailTemplate?._id,
-        emailTemplateTitle: res?.emailTemplate?.emailTemplateTitle,
-        emailTemplateContent: res?.emailTemplate?.emailTemplateContent
-      });
-
-      let categoryValue;
-      if (
-        res?.emailTemplate?.inquiryCategory != "" &&
-        res?.emailTemplate?.subCategory != ""
-      ) {
-        categoryValue =
-          res?.emailTemplate?.inquiryCategory +
-          "-" +
-          res?.emailTemplate?.subCategory;
-      }
-      if (
-        res?.emailTemplate?.inquiryCategory != "" &&
-        res?.emailTemplate?.subCategory == ""
-      ) {
-        categoryValue = res?.emailTemplate?.inquiryCategory;
-      }
-      setSelectedItems({
-        value: categoryValue,
-        label: res?.emailTemplate?.label ? res?.emailTemplate?.label : ""
-      });
-    } catch (err) {
-      console.log(err?.message);
-    }
-  };
-
   const handleSaveEmailTemplate = async () => {
     try {
       setLoading(true);
@@ -224,7 +233,8 @@ function EmailTemplateManagement() {
       setFormData({
         id: "",
         emailTemplateTitle: "",
-        emailTemplateContent: ""
+        emailTemplateContent: "",
+        emailTemplateState: ""
       });
       setLoading(false);
     } catch (err) {
@@ -234,12 +244,46 @@ function EmailTemplateManagement() {
     setLoading(false);
   };
 
-  const handleNewEmailTemplate = async () => {
+  const handleEditTemplate = async (id) => {
+    setBtnType("edit");
+    setShow(true);
+    try {
+      const { data } = await EmailTemplateService.getEmailTemplate(id);
+
+      setFormData({
+        ...formData,
+        id: data._id,
+        emailTemplateTitle: data.emailTemplateTitle,
+        emailTemplateContent: data.emailTemplateContent,
+        emailTemplateState: data.emailTemplateState
+      });
+
+      let value;
+      if (data.subCategory1 === 'student') {
+        value = "student"
+      } else {
+        value = data.subCategory1 ? `${data.inquiryCategory}-${data.subCategory1}` : data.inquiryCategory;
+      }
+
+      setSelectedItems({
+        value: value,
+        label: (data.subCategory1 ? data.subCategory1 : data.inquiryCategory),
+        isSubcategory: true
+      });
+
+      setUpEmailTemplateState(data.inquiryCategory, data.subCategory1)
+    } catch (err) {
+      console.log(err?.message);
+    }
+  };
+
+  const handleNewEmailTemplate = () => {
     setBtnType("add");
     setFormData({
       id: "",
       emailTemplateTitle: "",
-      emailTemplateContent: ""
+      emailTemplateContent: "",
+      emailTemplateState: ""
     });
     setShow(true);
   };
@@ -279,7 +323,7 @@ function EmailTemplateManagement() {
     {
       name: "Inquiry Category",
 
-      selector: (row) => row?.label,
+      selector: (row) => (row.subCategory1 ? (row.subCategory1 === "Other" ? `Other-${row.inquiryCategory}` : row.subCategory1) : row.inquiryCategory),
       sortable: true
     },
 
@@ -397,6 +441,83 @@ function EmailTemplateManagement() {
     })
   };
 
+  const TemplateContentDescription = () => {
+    if (selectedItems?.value === "student") {
+      return (
+        <>
+          <p>
+            You can insert this dynamic variable to Template Content. To add, you should type the text inside quotation mark.
+            <br />
+            eg: <span className="fw-bold">[text1]</span>
+          </p>
+          <p>
+            -Student's Name ( "[student]" )
+          </p>
+          <p>
+            -Inquiry Category ( "[inquiryCategory]" )
+          </p>
+          <p>
+            -Subcategory ( "[subCategory1]" )
+          </p>
+          <p>
+            -Inquiry number ( "[inquiryNumber]" )
+          </p>
+          <p>
+            -Inquiry created time ( "[createdTime]" )
+          </p>
+        </>
+      )
+    } else if (selectedItems) {
+      return (
+        <>
+          <div>
+            To create default template of seleted ticket type, you select category as "Select All Category"
+          </div>
+          <div>
+            You can insert this dynamic variable to Template Content. To add, you should type the text inside quotation mark.
+            <br />
+            eg: <span className="fw-bold">[text1]</span>
+          </div>
+          {EmailTemplateDescription[selectedItems?.value.includes("-") ? selectedItems.value.substring(selectedItems.value.indexOf("-") + 1) : selectedItems.value]}
+          <hr />
+          <p>
+            -Student's Name ( "[student]" )
+          </p>
+          <p>
+            -Admin's name ( "[admin]" )
+          </p>
+          <p>
+            -Institution/Organization Name ( "[position]" )
+          </p>
+          <p>
+            -Contact Information ( "[email]" )
+          </p>
+        </>
+      )
+    } else {
+      return (
+        <>
+          <div>
+            To create default template for all ticket type, you should select ticket type as "Select All" and type "<span className="fw-bold">Default</span>" to Template Title
+          </div>
+          <hr />
+          <p>
+            -Student's Name ( "[student]" )
+          </p>
+          <p>
+            -Admin's name ( "[admin]" )
+          </p>
+          <p>
+            -Institution/Organization Name ( "[position]" )
+          </p>
+          <p>
+            -Contact Information ( "[email]" )
+          </p>
+        </>
+      )
+    }
+  }
+
   return (
     <div className="">
       <div className="row ">
@@ -472,13 +593,13 @@ function EmailTemplateManagement() {
                     hideSelectedOptions={false}
                     menuPosition="fixed"
                     styles={customStyles}
+                    isDisabled={btnType === "edit"}
                   />
                 </Form.Group>
                 {errors.subCategories && (
                   <p className="error-content">{errors.subCategories}</p>
                 )}
-
-                <Form.Group controlId="emailTemplateTitle" className="mt-3">
+                <Form.Group controlId="emailTemplateTitle" className="mt-3" hidden={selectedItems.value === "student"}>
                   <Form.Control
                     type="text"
                     placeholder="Template Title"
@@ -490,6 +611,33 @@ function EmailTemplateManagement() {
                 </Form.Group>
                 {errors.emailTemplateTitle && (
                   <p className="error-content">{errors.emailTemplateTitle}</p>
+                )}
+                <Form.Select
+                  aria-label="Select State" className="mt-3 custom-input"
+                  value={formData.emailTemplateState}
+                  onChange={(evt) => {
+                    setFormData(prev => ({ ...prev, emailTemplateState: evt.target.value }))
+                  }}
+                  hidden={selectedItems.value === "student"}
+                  disabled={btnType === "edit"}
+                >
+                  <option value="">Select State</option>
+                  {
+                    visibleEmailTemplateOption === "accept" && (
+                      <>
+                        <option value="accept">Accept</option>
+                        <option value="reject">Reject</option>
+                      </>
+                    )
+                  }
+                  {
+                    visibleEmailTemplateOption === "close" && (
+                      <option value="close">Close</option>
+                    )
+                  }
+                </Form.Select>
+                {errors.emailTemplateState && (
+                  <p className="error-content">{errors.emailTemplateState}</p>
                 )}
                 <Form.Group controlId="emailTemplateContent" className="mt-3">
                   <ReactQuill
@@ -504,6 +652,14 @@ function EmailTemplateManagement() {
                 {errors.emailTemplateContent && (
                   <p className="error-content">{errors.emailTemplateContent}</p>
                 )}
+                <Accordion className="mt-4">
+                  <Accordion.Item>
+                    <Accordion.Header>Template Content Description</Accordion.Header>
+                    <Accordion.Body>
+                      <TemplateContentDescription />
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
               </Col>
             </Row>
           </Modal.Body>

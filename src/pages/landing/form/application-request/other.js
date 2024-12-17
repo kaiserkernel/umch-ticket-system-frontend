@@ -185,7 +185,8 @@ const Other = ({ applicationRequest }) => {
   const validate = () => {
     const newErrors = {};
 
-    setErrors(newErrors);
+    if (applicationRequest === "Other")
+      setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   return (

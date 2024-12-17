@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { motion, AnimatePresence } from "framer-motion";
-// import Canvas from "./canvas";
+import Canvas from "./canvas";
 import Default from "./default";
-// import StreamingPanopto from "./streaming-panopto";
+import StreamingPanopto from "./streaming-panopto";
+
+import { TicketTypeStructure } from "../../../../globalVariables";
 
 import { FormContext } from "../index";
 
 const CampusIT = () => {
-  const { isFormSubmit, setFormData, formData, mainPageErrors } =
+  const { isFormSubmit } =
     useContext(FormContext);
 
   const [formInquiryData, setFormInquiryData] = useState({
@@ -23,12 +25,8 @@ const CampusIT = () => {
       isFirstRender.current = false; // Mark the initial render as complete.
       return; // Skip running this effect on initial render.
     }
-    console.log(isFormSubmit);
-    console.log(formData);
     if (isFormSubmit != 0) {
-      console.log("sumbit is done");
-      if (validate()) {
-      }
+      validate();
     }
   }, [isFormSubmit]);
 
@@ -61,7 +59,7 @@ const CampusIT = () => {
         transition: { duration: 0.5 }
       }
     },
-    1: {
+    custom: {
       hidden: { height: 0, opacity: 0, originY: 0 },
       visible: {
         height: "auto",
@@ -75,29 +73,13 @@ const CampusIT = () => {
         originY: 0,
         transition: { duration: 0.5 }
       }
-    },
-
-    2: {
-      hidden: { scaleY: 0, opacity: 0, originY: 1 }, // Starts from bottom
-      visible: {
-        scaleY: 1,
-        opacity: 1,
-        originY: 1,
-        transition: { duration: 0.5 }
-      },
-      exit: {
-        scaleY: 0,
-        opacity: 0,
-        originY: 0,
-        transition: { duration: 0.5 }
-      }
     }
   };
 
   const content = {
     default: <Default />,
-    // 1: <Canvas campusIT={String(formInquiryData.campusIT)} />,
-    // 2: <StreamingPanopto campusIT={String(formInquiryData.campusIT)} />
+    Canvas: <Canvas campusIT={String(formInquiryData.campusIT)} />,
+    "Streaming/Panopto": <StreamingPanopto campusIT={String(formInquiryData.campusIT)} />
   };
 
   return (
@@ -129,14 +111,15 @@ const CampusIT = () => {
                 WebkitAppearance: "none", // For Safari/Chrome
                 backgroundColor: "white",
                 color: "gray !important"
-                // padding: "8px 12px",
-                // border: "1px solid #007bff",
               }}
               className="custom-input"
             >
               <option value="default">– Select –</option>
-              <option value="1">Canvas</option>
-              <option value="2">Streaming / Panopto</option>
+              {
+                TicketTypeStructure[2]["types"].map((log, idx) => (
+                  <option key={idx} value={log}>{log}</option>
+                ))
+              }
             </Form.Control>
           </Form.Group>
           {errors.campusIT && (
@@ -149,9 +132,7 @@ const CampusIT = () => {
           key={formInquiryData.campusIT}
           initial="hidden"
           animate="visible"
-          //   exit={selectedEffect === "default" ? "exit" : false}
-
-          variants={variants[formInquiryData.campusIT]}
+          variants={variants[formInquiryData.campusIT === "default" ? "default" : "custom"]}
         >
           <div>{content[formInquiryData.campusIT]}</div>
         </motion.div>

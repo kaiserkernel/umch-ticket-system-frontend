@@ -56,11 +56,14 @@ import EnrollmentModal from "./enrollmentModal.js";
 import ExamInspectionModal from "./examInspectionModal.js";
 import PassToAnotherDepartmentModal from "./passToAnotherDepartmentModal.js";
 import TarguModal from "./transferToTarguMures.js";
+import InternalNoteModal from "./internalNoteModal.js";
 
 import BeatLoader from "react-spinners/BeatLoader";
 import * as XLSX from "xlsx";
 
-import TicketGroupService from "../../sevices/ticket-group-service.js";
+import { TicketTypeStructure, POSITIONNAMES } from "../../globalVariables.js";
+import ReplyStudentModal from "./replyStudentModal.js";
+import formService from "../../sevices/form-service";
 
 function EmailInbox() {
   const host = process.env.REACT_APP_API_URL;
@@ -94,6 +97,8 @@ function EmailInbox() {
     useState(0);
   const [unClickedRejectTicketsCount, setUnClickedRejectTicketsCount] =
     useState(0);
+  const [unClickedCloseTicketsCount, setUnClickedClosedTicketCount] =
+    useState(0);
 
   const [enrollmentModalShow, setEnrollmentModalShow] = useState(false);
   const [examInspectionModalShow, setExamInspectionModalShow] = useState(false);
@@ -104,8 +109,13 @@ function EmailInbox() {
   });
   const [showExcelExportModal, setShowExcelExportModal] = useState(false);
   const [excelFileName, setExcelFileName] = useState('');
-  const [inquiryCategories, setInquiryCategories] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
+  const [internalNoteModalShow, setInternalNoteModalShow] = useState(false);
+  const [replyStudentModalShow, setReplyStudentModalShow] = useState(false);
+
+  const [internalNotes, setInternalNotes] = useState([]);
+  const [replyStudentMessage, steReplyStudentMessage] = useState([]);
+  const [selectedInternalMessage, setSelectedInternalMessage] = useState()
 
   const [
     passToAnotherDepartmentModalShow,
@@ -114,24 +124,26 @@ function EmailInbox() {
   const handleModalClose = () => setShow(false);
   const handleModalShow = () => setShow(true);
 
-  const handleEnrollmentModalShow = () => setEnrollmentModalShow(true);
   const handleEnrollmentModalClose = () => setEnrollmentModalShow(false);
 
-  const handleExamInspectionModalShow = () => setExamInspectionModalShow(true);
   const handleExamInspectionModalClose = () =>
     setExamInspectionModalShow(false);
 
-  const handlePassToAnotherDepartmentModalShow = () => {
-    setPassToAnotherDepartmentModalShow(true);
-  };
   const handlePassToAnotherDepartmentModalClose = () => {
     setPassToAnotherDepartmentModalShow(false);
   };
 
+  const handleInterlNoteModalClose = () => {
+    setInternalNoteModalShow(false);
+  }
+
+  const handleReplyStudentModalClose = () => {
+    setReplyStudentModalShow(false);
+  }
+
   const handleTarguModalClose = () => {
     setTarguModalShow(false);
   };
-  const [responsibleCategoryList, setResponsibleCategoryList] = useState([]);
 
   // Prepare main options for Select component
   const formatOptions = (data) =>
@@ -225,18 +237,24 @@ function EmailInbox() {
     setExamFilter({ examSpecification: "", subject: "" })
 
     setSelectedItems(selectedOption || []);
-    let label;
-    if (typeof selectedOption?.label != "string") {
-      label = selectedOption?.label?.props?.children;
+
+    let inquiryCategory = "";
+    let subCategory1 = "";
+
+    if (selectedOption.value.includes("-")) {
+      const idx = selectedOption.value.indexOf("-");
+      inquiryCategory = selectedOption.value.substring(0, idx);
+      subCategory1 = selectedOption.value.substring(idx + 1);
     } else {
-      label = selectedOption?.label;
+      inquiryCategory = selectedOption.value;
     }
+
     const filteredTempTickets = originalTicketData.filter(
       (ticket) =>
-        ticket.subCategory1 == selectedOption.label
+        ticket.subCategory1 === subCategory1 && ticket.inquiryCategory === inquiryCategory
     );
 
-    if (selectedOption.value == "0") {
+    if (selectedOption.value == "") {
       setTicketData(originalTicketData);
       setTicketsByYear(originalTicketData);
     } else {
@@ -264,22 +282,44 @@ function EmailInbox() {
     "info"
   ];
 
-  const [contentTemplate, setContentTemplate] = useState("Absence");
+  const [contentTemplate, setContentTemplate] = useState();
+
+  const fetchInternalMessage = async () => {
+    try {
+      let _internalMessage;
+      let _replyMessage;
+      if (userRole !== 2) {
+        // admin - get internal and reply
+        const { data } = await formService.fetchInternalNote();
+        _internalMessage = data;
+        {
+          const { data } = await formService.fetchReplyStudentMessageList();
+          _replyMessage = data;
+          steReplyStudentMessage(_replyMessage);
+        }
+      } else {
+        // student - get only reply
+        const { data } = await formService.fetchReplyStudentMessage();
+        _replyMessage = data;
+        _internalMessage = [];
+        steReplyStudentMessage(_replyMessage);
+      }
+      setInternalNotes(_internalMessage);
+    } catch (error) {
+      console.log(error);
+      if (error.message) {
+        errorNotify(error.message)
+      }
+      setInternalNotes([]);
+      steReplyStudentMessage([]);
+    }
+  }
 
   useEffect(() => {
     try {
-      if (
-        selectedTicket &&
-        inquiryCategories.find(log => log.inquiryCategoryId === selectedTicket.inquiryCategory)["subCategories"]
-          .find(log => log.subCategory1 === selectedTicket.subCategory1)
-
-      ) {
-        const ticketComponent =
-          inquiryCategories.find(log => log.inquiryCategoryId === selectedTicket.inquiryCategory)[
-            "subCategories"
-          ].find(log => log.subCategory1 === selectedTicket.subCategory1)
-
-        setContentTemplate(ticketComponent.component);
+      if (selectedTicket) {
+        const ticketComponent = selectedTicket.inquiryCategory + (selectedTicket.subCategory1 ? `-${selectedTicket.subCategory1}` : "");
+        setContentTemplate(ticketComponent);
       }
     } catch (err) {
       console.log(err);
@@ -295,175 +335,374 @@ function EmailInbox() {
     window.addEventListener("resize", handleResize);
 
     // set inquirycateogries
-    const fetchAllInquiry = async () => {
-      try {
-        const { data } = await TicketGroupService.fetchAllTicketGroups();
+    const _initialData = [
+      {
+        value: "",
+        label: "Select All Categories"
+      }
+    ];
 
-        const _inquiryCategories = data.map((log) => {
-          const _subData = log.ticketTypes.map(log => {
-            return {
-              subCategory1: log,
-              component: log.replaceAll(" ", "").replaceAll("'", "")
-            }
-          })
-          return {
-            inquiryCategory: log.name,
-            inquiryCategoryId: log._id,
-            component: "",
-            subCategories: _subData
-          }
-        })
+    const _categoryData = _initialData.concat(
 
-        setInquiryCategories(_inquiryCategories);
-
-        const _initialData = [
-          {
-            label: "Select All Category",
-            value: "0",
-            permissions: ["None", "Passive", "Active", "Responsible"]
-          }];
-
-        const _categoryData = _initialData.concat(data.map((log, idx) => {
-          const _subCategory = log.ticketTypes.map((logSec, idxSec) => ({
+      TicketTypeStructure.map((log) => {
+        if (log.types) {
+          const _subCategory = log.types.map(logSec => ({
             label: logSec,
-            value: `${log.prefix}-${idxSec}`,
-            permissions: ["None", "Passive", "Active", "Responsible"]
-          }))
-          return ({
+            value: log.name + "-" + logSec
+          }));
+          return {
             label: log.name,
-            value: log.prefix,
             subcategories: _subCategory
-          })
-        }));
+          }
+        } else {
+          return {
+            label: log.name,
+            value: log.name
+          }
+        }
+      })
+    );
 
-        setCategoryData(_categoryData);
+    setCategoryData(_categoryData);
+    handleShowNewTickets();
 
+    // fetch internal notes and reply student message
+    const fetchInternalMessage = async () => {
+      try {
+        let _internalMessage;
+        let _replyMessage;
+        if (userRole !== 2) {
+          // admin - get internal and reply
+          const { data } = await formService.fetchInternalNote();
+          _internalMessage = data;
+          {
+            const { data } = await formService.fetchReplyStudentMessageList();
+            _replyMessage = data;
+            steReplyStudentMessage(_replyMessage);
+          }
+        } else {
+          // student - get only reply
+          const { data } = await formService.fetchReplyStudentMessage();
+          _replyMessage = data;
+          _internalMessage = [];
+          steReplyStudentMessage(_replyMessage);
+        }
+        setInternalNotes(_internalMessage);
       } catch (error) {
-        console.error("Error fetching ticket groups", error);
+        console.log(error);
+        if (error.message) {
+          errorNotify(error.message)
+        }
+        setInternalNotes([]);
+        steReplyStudentMessage([]);
       }
     }
 
-    fetchAllInquiry();
+    fetchInternalMessage();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const getPermissionOfTicket = (ticket, userPermission) => {
-    const permission = userPermission.find(
-      (p) =>
-        p.inquiryCategory === ticket.inquiryCategory &&
-        p.subCategory1 === ticket.subCategory1
-    );
-
-    // If no permission found, default to 'None'
-    const ticketPermission = permission ? permission.permission : "None";
-    return ticketPermission;
-  };
+  useEffect(() => {
+    getAllInquiries();
+    fetchInternalMessage();
+  }, [isTicketStatusChange])
 
   const handleCheckEnrollment = () => {
     setActionBtnType("enrollment");
     setEnrollmentModalShow(true);
   };
 
-  const handleCheckExamInspection = () => {
-    setActionBtnType("examInspection");
+  const handleExamInspectionCloseModalShow = () => {
     setExamInspectionModalShow(true);
-  };
+  }
 
   const renderContentTemplate = () => {
     switch (contentTemplate) {
-      case "Absence":
+      case "Application and Requests-Absence":
         return <Absence selectedTicket={selectedTicket} />;
-        break;
-      case "Changeofteachinghospital":
+      case "Application and Requests-Change of teaching hospital":
         return <ChangeTeachingHospital selectedTicket={selectedTicket} />;
-        break;
-      case "Changeofstudygroup":
+      case "Application and Requests-Change of study group":
         return <ChangeStudyGroup selectedTicket={selectedTicket} />;
-        break;
-      case "Demonstratorstudent":
+      case "Application and Requests-Demonstrator student":
         return <DemonstratorStudent selectedTicket={selectedTicket} />;
-        break;
-      case "Enrollment":
+      case "Application and Requests-Enrollment":
         return <Enrollment selectedTicket={selectedTicket} />;
-        break;
-      case "Examinspection":
+      case "Application and Requests-Exam inspection":
         return <ExamInspection selectedTicket={selectedTicket} />;
-        break;
-      case "OnlineCatalogue(Solaris)":
+      case "Application and Requests-Online Catalogue (Solaris)":
         return <OnlineCatalogue selectedTicket={selectedTicket} />;
-        break;
-      case "RecongnitionofCourses":
+      case "Application and Requests-Recognition of Courses":
         return <RecognitionCourses selectedTicket={selectedTicket} />;
-        break;
-      case "RecognitionofInternship":
+      case "Application and Requests-Recognition of Internship":
         return <RecognitionInternship selectedTicket={selectedTicket} />;
-        break;
-      case "ShorttermborrowofDiploma":
+      case "Application and Requests-Short term borrow of Diploma":
         return <ShotTermBorrowDiploma selectedTicket={selectedTicket} />;
-        break;
-      case "Syllabusoftheacademicyear":
+      case "Application and Requests-Syllabus of the academic year":
         return <SyllabusAcademic selectedTicket={selectedTicket} />;
-        break;
-      case "TranscriptofRecords":
+      case "Application and Requests-Transcript of Records":
         return <TranscriptRecords selectedTicket={selectedTicket} />;
-        break;
-      case "TransfertoTarguMures":
+      case "Application and Requests-Transcript to Targu Mures":
         return <TransferTarguMures selectedTicket={selectedTicket} />;
-        break;
-      case "OtherApplicationRequest":
-        return <OtherApplicationRequest selectedTicket={selectedTicket} />;
-        break;
-      case "BookrentalUMCHlibrary":
-        return <BookRental selectedTicket={selectedTicket} />;
-        break;
-      case "Canvas":
-        return <Canvas selectedTicket={selectedTicket} />;
-        break;
-      case "Streaming/Panopto":
-        return <Streaming selectedTicket={selectedTicket} />;
-        break;
-      case "Campus":
-        return <Campus selectedTicket={selectedTicket} />;
-        break;
-      case "Deansoffice":
-        return <DeanOffice selectedTicket={selectedTicket} />;
-        break;
-      case "GermanTeachingDepartment":
-        return <GermanTeachingDepartment selectedTicket={selectedTicket} />;
-        break;
-      case "TeachingHospital":
-        return <TeachingHospital selectedTicket={selectedTicket} />;
-        break;
-      case "Teacher":
-        return <Teacher selectedTicket={selectedTicket} />;
-        break;
-      case "OnlineCatalogue(Carnet)":
-        return <OnlineCatalogueComplaint selectedTicket={selectedTicket} />;
-        break;
-      case "Exam":
-        return <Exam selectedTicket={selectedTicket} />;
-        break;
-      case "OtherComplaint":
-        return <OtherComplaint selectedTicket={selectedTicket} />;
-        break;
-      case "Internship":
+      case "Application and Requests-Internship":
         return <Internship selectedTicket={selectedTicket} />;
-        break;
-      case "MedicalAbilities":
+      case "Application and Requests-Medical Abilities":
         return <MedicalAbilities selectedTicket={selectedTicket} />;
-        break;
-      case "Thesis":
+      case "Application and Requests-Thesis":
         return <Thesis selectedTicket={selectedTicket} />;
-        break;
+      case "Application and Requests-Other":
+        return <OtherApplicationRequest selectedTicket={selectedTicket} />;
+
+      case "Book rental UMCH library":
+        return <BookRental selectedTicket={selectedTicket} />;
+
+      case "Campus IT-Canvas":
+        return <Canvas selectedTicket={selectedTicket} />;
+      case "Campus IT-Streaming/Panopto":
+        return <Streaming selectedTicket={selectedTicket} />;
+
+      case "Complaints-Campus":
+        return <Campus selectedTicket={selectedTicket} />;
+      case "Complaints-Dean's Office":
+        return <DeanOffice selectedTicket={selectedTicket} />;
+      case "Complaints-German Teaching Department":
+        return <GermanTeachingDepartment selectedTicket={selectedTicket} />;
+      case "Complaints-Teaching Hospital":
+        return <TeachingHospital selectedTicket={selectedTicket} />;
+      case "Complaints-Teacher":
+        return <Teacher selectedTicket={selectedTicket} />;
+      case "Complaints-Online Catalogue (Carnet)":
+        return <OnlineCatalogueComplaint selectedTicket={selectedTicket} />;
+      case "Complaints-Exam":
+        return <Exam selectedTicket={selectedTicket} />;
+      case "Complaints-Other":
+        return <OtherComplaint selectedTicket={selectedTicket} />;
+
       case "Other":
         return <Other selectedTicket={selectedTicket} />;
-        break;
       default:
-        break;
+        return <></>;
     }
-    return <Absence />;
   };
+
+  const BtnUnderContent = ({ contentTemplate }) => {
+    // first check permission  
+    let _permission = "";
+    if (userPermissionCategory === "all") {
+      _permission = "Responsible"
+    } else if (userPermissionCategory && contentTemplate && userPermissionCategory[contentTemplate]) {
+      _permission = userPermissionCategory[contentTemplate]
+    }
+
+    if (_permission === "Passive" || _permission === "Active") {
+      return <></>
+    }
+
+    // second current ticket state
+    if (selectedTicket && (selectedTicket.status === 2 || selectedTicket.status === 3 || selectedTicket.status === 7)) {
+      return <></>
+    }
+    if (_permission === "Responsible") {
+      if (contentTemplate === "Application and Requests-Absence"
+        || contentTemplate === "Application and Requests-Change of study group"
+        || contentTemplate === "Application and Requests-Change of teaching hospital"
+        || contentTemplate === "Application and Requests-Demonstrator student"
+        || contentTemplate === "Application and Requests-Online Catalogue (Solaris)"
+        || contentTemplate === "Application and Requests-Recognition of Courses"
+        || contentTemplate === "Application and Requests-Recognition of Internship"
+        || contentTemplate === "Application and Requests-Syllabus of the academic year"
+        || contentTemplate === "Application and Requests-Transcript to Targu Mures"
+        || contentTemplate === "Book rental UMCH library"
+      ) {
+        // accept and reject button
+        return (
+          <div className="d-flex justify-content-end">
+            <button
+              className="py-1 px-3 rounded-pill btn btn-primary"
+              onClick={() =>
+                handleInquiryAccept(
+                  selectedTicket?._id
+                )
+              }
+            >
+              Accept
+            </button>
+            <button
+              className="py-1 px-3 rounded-pill btn btn-danger ms-3"
+              onClick={() =>
+                handleInquiryReject(
+                  selectedTicket?._id
+                )
+              }
+            >
+              Reject
+            </button>
+          </div>
+        )
+      }
+
+      if (contentTemplate === "Application and Requests-Transcript of Records") {
+        return (
+          <div className="d-flex justify-content-end">
+            {
+              selectedTicket.status === 1 && (
+                <button
+                  className="px-1 py-1 btn btn-secondary rounded-pill"
+                  onClick={() => {
+                    handleProcessTranscriptRecord(
+                      ticketId
+                    );
+                  }}
+                >
+                  Process
+                </button>
+              )
+            }
+            {
+              selectedTicket.status === 4 && (
+                <button
+                  className="btn btn-primary rounded-pill px-1 py-1"
+                  onClick={() => {
+                    handleDoneTranscriptRecord(ticketId);
+                  }}
+                >
+                  Done
+                </button>
+              )
+            }
+            {
+              selectedTicket.status === 5 && (
+                <button
+                  className="btn btn-info rounded-pill px-1 py-1"
+                  onClick={() => {
+                    handleNotifyTranscriptRecord(
+                      ticketId
+                    );
+                  }}
+                >
+                  Notify
+                </button>
+              )
+            }
+            <button
+              className="py-1 px-3 rounded-pill btn btn-primary ms-3"
+              onClick={() =>
+                handleInquiryAccept(
+                  selectedTicket?._id
+                )
+              }
+            >
+              Accept
+            </button>
+            <button
+              className="py-1 px-3 rounded-pill btn btn-danger ms-3"
+              onClick={() =>
+                handleInquiryReject(
+                  selectedTicket?._id
+                )
+              }
+            >
+              Reject
+            </button>
+          </div>
+        )
+      }
+
+      if (contentTemplate === "Application and Requests-Exam inspection") {
+        return (
+          <div className="d-flex justify-content-end">
+            <button
+              className="py-1 px-3 rounded-pill btn btn-danger"
+              onClick={() =>
+                handleInquiryClose(
+                  selectedTicket?._id
+                )
+              }
+            >
+              Close
+            </button>
+          </div>
+        )
+      }
+
+      if (contentTemplate === "Application and Requests-Enrollment") {
+        // generate pdf button
+        return (
+          <div className="d-flex justify-content-end">
+            <button
+              className="py-2 px-3 rounded-pill btn btn-info"
+              onClick={() => handleCheckEnrollment()}
+            >
+              Generate PDF
+            </button>
+          </div>
+        )
+      } else {
+        // close button
+        return (
+          <div className="d-flex justify-content-end">
+            <button
+              className="py-1 px-3 rounded-pill btn btn-danger"
+              onClick={() => handleExamInspectionCloseModalShow()}
+            >
+              Close
+            </button>
+          </div>
+        )
+      }
+    }
+  }
+
+  const BtnUpperContent = ({ contentTemplate }) => {
+    // first check permission  
+    let _permission = "";
+    if (userPermissionCategory === "all") {
+      _permission = "Responsible"
+    } else if (userPermissionCategory && contentTemplate && userPermissionCategory[contentTemplate]) {
+      _permission = userPermissionCategory[contentTemplate]
+    }
+
+    if (_permission === "Passive") {
+      return (
+        <div>
+          <button type="button" className="btn btn-info"
+            onClick={(evt) => setInternalNoteModalShow(true)}
+          >
+            Add internal note
+          </button>
+        </div>
+      )
+    }
+
+    if (_permission === "Active" || _permission === "Responsible") {
+      return (
+        <div className="d-flex flex-row flex-wrap">
+          <button
+            type="button" className="btn btn-primary"
+            onClick={(evt) => setReplyStudentModalShow(true)}
+          >
+            Reply to the student
+          </button>
+          <button
+            type="button" className="btn btn-info ms-2"
+            onClick={(evt) => setInternalNoteModalShow(true)}
+          >
+            Add internal note
+          </button>
+          <button
+            type="button" className="btn btn-secondary ms-2"
+            onClick={evt => setPassToAnotherDepartmentModalShow(true)}
+          >
+            Pass to another department
+          </button>
+        </div>
+      )
+    }
+
+    return;
+
+  }
 
   let userData = localStorage.getItem("userData");
   userData = JSON.parse(userData);
@@ -473,9 +712,6 @@ function EmailInbox() {
     userRole = userData?.role;
     enrollmentNumber = userData?.enrollmentNumber;
   }
-  useEffect(() => {
-    handleShowNewTickets();
-  }, []);
 
   const handleShowNewTickets = () => {
     setActiveTab("All");
@@ -486,11 +722,8 @@ function EmailInbox() {
     setFirstYearOfStudy("all");
     setSelectedItems([{ label: "Select All Category", value: "0" }]);
 
-    if (userRole != 2) {
-      getAllInquiries();
-    } else {
-      getAllInquiriesByEnrollmentNumber();
-    }
+    getAllInquiries();
+    getAllInquiriesByEnrollmentNumber();
 
     context.setAppContentFullHeight(true);
     context.setAppContentClass("py-3 px-1 px-md-5");
@@ -502,30 +735,16 @@ function EmailInbox() {
   };
 
   const getAllInquiries = async () => {
+    if (userRole == 2) {
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await FormService.getAllInquiries();
-      const _responsibleCategoryList = res.userCategory.filter(log => {
-        if (log.permissionValue == "3") {
-          return { inquiryCategory: log.inquiryCategory, subCategory1: log.subCategory1 }
-        }
-      })
-      setResponsibleCategoryList(_responsibleCategoryList);
 
       if (res?.inquiries) {
         let result = res.inquiries.reverse();
-        // const result = res.inquiries.map((item1) => {
-        //   const match = res.userCategory.find(
-        //     (item2) =>
-        //       item2.inquiryCategory === item1.inquiryCategory &&
-        //       item2.subCategory1 === item1.subCategory1
-        //   );
-
-        //   return {
-        //     ...item1,
-        //     permission: match ? match.permission : null // Add permission if found, otherwise null
-        //   };
-        // });
 
         const newTickets = result.filter(
           (ticket) =>
@@ -546,16 +765,31 @@ function EmailInbox() {
         const unClickedRejectTickets = result.filter(
           (ticket) => ticket.isClicked === 0 && ticket.status === 3
         );
+        const unClickedCloseTickets = result.filter(
+          (ticket) => ticket.status === 7
+        );
 
         setUnClickedNewTicketsCount(unClickedNewTickets.length);
         setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
         setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
+        setUnClickedClosedTicketCount(unClickedCloseTickets.length);
+
         setTicketData(newTickets);
         setOriginalTicketData(newTickets);
         setTicketsByYear(newTickets);
         setLoading(false);
         // setSelectedTicket(newTickets[0]?._id);
-        setUserPermissonCategory(res.userCategory);
+        if (res.userCategory === "SuperAdmin") {
+          setUserPermissonCategory("all")
+        } else {
+          let _permissionCategory = {};
+          res.userCategory.map((log) => {
+            const key = log.inquiryCategory + (log.subCategory1 ? `-${log.subCategory1}` : "");
+            const value = log.permission;
+            _permissionCategory[key] = value;
+          })
+          setUserPermissonCategory(_permissionCategory);
+        }
       }
     } catch (err) {
       console.log(err);
@@ -567,9 +801,14 @@ function EmailInbox() {
   const getAllInquiriesByEnrollmentNumber = async () => {
     try {
       setLoading(true);
+
+      if (userRole !== 2 || !enrollmentNumber) {
+        return;
+      }
       const res = await FormService.getAllInquiriesByEnrollmentNumber(
         enrollmentNumber
       );
+
       res.reverse();
 
       const newTickets = res.filter(
@@ -586,10 +825,16 @@ function EmailInbox() {
       const unClickedRejectTickets = newTickets.filter(
         (ticket) => ticket.isClicked === 0 && ticket.status === 3
       );
+      const unClickedCloseTickets = newTickets.filter(
+        (ticket) => ticket.isClicked === 0 && ticket.status === 7
+      );
+
 
       setUnClickedNewTicketsCount(unClickedNewTickets.length);
       setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
       setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
+      setUnClickedClosedTicketCount(unClickedCloseTickets.length);
+
       setTicketData(newTickets);
       setOriginalTicketData(newTickets);
       setTicketsByYear(newTickets);
@@ -601,12 +846,16 @@ function EmailInbox() {
     }
     setLoading(false);
   };
+
   const handleClickOpenTicket = (e) => {
     e.preventDefault();
     navigate("/home", { replace: true });
   };
 
   const handleSelectTicket = async (ticket_id) => {
+    // initialize selected internal data
+    setSelectedInternalMessage();
+
     const updatedTickets = ticketData.map((ticket) =>
       ticket._id === ticket_id && userRole != 2
         ? { ...ticket, isClicked: 1 }
@@ -646,6 +895,15 @@ function EmailInbox() {
         ) {
           setUnClickedRejectTicketsCount(unClickedRejectTicketsCount - 1);
         }
+        if (
+          res?.inquiry?.status == 7 &&
+          res?.inquiry?.isClicked == 1 &&
+          res?.isOriginalClicked == false &&
+          unClickedCloseTicketsCount >= 1
+        ) {
+          setUnClickedClosedTicketCount(unClickedCloseTicketsCount - 1);
+        }
+
         successNotify(res?.message);
         setLoading(false);
         setSelectedTicket(res?.inquiry);
@@ -695,9 +953,7 @@ function EmailInbox() {
         const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
           enrollmentNumber
         );
-        console.log(allTickets);
         allTickets.reverse();
-        console.log(allTickets);
         const filteredAllTickets = allTickets.filter(
           (ticket) =>
             ticket.status === 2 ||
@@ -705,7 +961,6 @@ function EmailInbox() {
             ticket.status === 6 ||
             ticket.status === 7
         );
-        console.log(filteredAllTickets);
         setTicketData(filteredAllTickets);
         setOriginalTicketData(filteredAllTickets);
         setTicketsByYear(filteredAllTickets);
@@ -769,6 +1024,54 @@ function EmailInbox() {
     setLoading(false);
   };
 
+  const handleShowClosedTickets = async () => {
+    setLoading(true);
+    setActiveTab("Closed");
+    setSelectedTicket("");
+    setShowTicketDetail(false);
+    setTicketId("");
+    if (userRole != 2) {
+      try {
+        const allTickets = await FormService.getAllInquiries();
+
+        allTickets.inquiries.reverse();
+        const filteredAllTickets = allTickets.inquiries.filter(
+          (ticket) => ticket.status === 7
+        );
+
+        setTicketData(filteredAllTickets);
+        setOriginalTicketData(filteredAllTickets);
+        setTicketsByYear(filteredAllTickets);
+
+        setFirstYearOfStudy("all");
+        setSelectedItems([{ label: "Select All Category", value: "0" }]);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+      }
+    } else {
+      try {
+        const allTickets = await FormService.getAllInquiriesByEnrollmentNumber(
+          enrollmentNumber
+        );
+        allTickets.reverse();
+        const filteredAllTickets = allTickets.filter(
+          (ticket) => ticket.status === 7
+        );
+
+        setTicketData(filteredAllTickets);
+        setOriginalTicketData(filteredAllTickets);
+        setTicketsByYear(filteredAllTickets);
+
+        setFirstYearOfStudy("all");
+        setSelectedItems([{ label: "Select All Category", value: "0" }]);
+      } catch (err) {
+        setLoading(false);
+      }
+    }
+    setLoading(false);
+  }
+
   const handleProcessTranscriptRecord = async (id) => {
     setLoading(true);
     let res;
@@ -805,13 +1108,6 @@ function EmailInbox() {
     try {
       handleModalShow(true);
       setActionBtnType("notify");
-      let res;
-      // res = await FormService.notifyTranscriptRecord(id);
-      // setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-
-      // setSelectedTicket(res?.inquiry);
-      // setLoading(false);
-      // successNotify(res?.message);
     } catch (err) {
       errorNotify(err?.message);
       setLoading(false);
@@ -901,57 +1197,54 @@ function EmailInbox() {
 
   const handleDownloadAll = (e) => {
     attachments.map((attachment, index) => {
-      handleDownload(host + attachment?.url, attachment?.filename);
+      if (userRole !== 2) {
+        // admin
+        const fileUrl = host + attachment.url;
+        const fileName = attachment.filename;
+        handleDownload(
+          fileUrl,
+          fileName
+        );
+
+        if (attachment.translatedFileUrl) {
+          const fileUrl = host + attachment.translatedFileUrl;
+          const fileName = attachment.translatedFileName;
+          handleDownload(
+            fileUrl,
+            fileName
+          );
+        }
+
+      } else {
+        // student
+        const fileUrl = host + attachment.url;
+        const fileName = attachment.filename;
+        handleDownload(
+          fileUrl,
+          fileName
+        );
+      }
     });
   };
 
-  const handleInquiryAccept = async (id) => {
-    try {
-      if (contentTemplate == "TransferTarguMures") {
-        setTarguModalShow(true);
-      } else {
-        handleModalShow(true);
-      }
-      setActionBtnType("accept");
-    } catch (err) {
-      if (err?.message) {
-        errorNotify(err?.message);
-      }
-
-      const errors = err?.errors;
-
-      if (typeof errors != "object") {
-        errorNotify(errors);
-      } else {
-        console.log(typeof errors);
-        errors.map((error) => {
-          errorNotify(error.msg);
-        });
-      }
-    }
-  };
-
-  const handleInquiryReject = async (id) => {
-    try {
+  const handleInquiryAccept = (id) => {
+    if (contentTemplate == `${selectedTicket.inquiryCategory}-Transcript to Targu Mures`) {
+      setTarguModalShow(true);
+    } else {
       handleModalShow(true);
-      setActionBtnType("reject");
-    } catch (err) {
-      if (err?.message) {
-        errorNotify(err?.message);
-      }
-
-      const errors = err?.errors;
-
-      if (typeof errors != "object") {
-        errorNotify(errors);
-      } else {
-        console.log(typeof errors);
-        errors.map((error) => {
-          errorNotify(error.msg);
-        });
-      }
     }
+    setActionBtnType("accept");
   };
+
+  const handleInquiryReject = (id) => {
+    handleModalShow(true);
+    setActionBtnType("reject");
+  };
+
+  const handleInquiryClose = (id) => {
+    handleModalShow(true);
+    setActionBtnType("close");
+  }
 
   const successNotify = (msg) => {
     toast.info(msg, {
@@ -962,10 +1255,6 @@ function EmailInbox() {
     toast.warning(msg, {
       autoClose: 5000 // Duration in milliseconds
     });
-  };
-
-  const handlePassToAnotherDepartment = () => {
-    setPassToAnotherDepartmentModalShow(true);
   };
 
   const filterByExam = (_data, _name, _value) => {
@@ -1021,10 +1310,10 @@ function EmailInbox() {
 
   const openExportExcelConfirmModal = () => {
     setShowExcelExportModal(true);
-    const _filter_options = (new Date().toDateString()) + (selectedItems?.label ? `-${selectedItems.label.replaceAll(" ", "_")}` : "")
+    const _filter_options = (new Date().toDateString()) + (selectedItems?.label ? `-${selectedItems.label?.replaceAll(" ", "_")}` : "")
       + (firstYearOfStudy !== 'all' ? `-${firstYearOfStudy}` : "-all_Year")
-      + (examFilter.subject ? `-${examFilter.subject.replaceAll(" ", "_")}` : "")
-      + (examFilter.examSpecification ? `-${examFilter.examSpecification.replaceAll(" ", "_")}` : "");
+      + (examFilter.subject ? `-${examFilter.subject?.replaceAll(" ", "_")}` : "")
+      + (examFilter.examSpecification ? `-${examFilter.examSpecification?.replaceAll(" ", "_")}` : "");
     setExcelFileName(_filter_options);
   }
 
@@ -1036,6 +1325,7 @@ function EmailInbox() {
         email: log.email,
         enrollmentNumber: log?.enrollmentNumber,
         firstYearOfStudy: log?.firstYearOfStudy,
+        inquiryCategory: log.inquiryCategory,
         category: log.subCategory1,
         detail: log.detail ? log.detail : "",
         documents: log.documents,
@@ -1067,6 +1357,118 @@ function EmailInbox() {
     XLSX.writeFile(workbook, `${excelFileName}.xlsx`);
 
     setShowExcelExportModal(false);
+  }
+
+  const handleClickInternalMessage = (_internalData, _ticketData) => {
+    setSelectedInternalMessage({
+      internalData: _internalData,
+      ticketData: _ticketData
+    });
+  }
+
+  const FormatTicketDataForInternalNote = ({ ticket }) => {
+    // add internal note - internalNotes
+    const _internalNote = internalNotes.filter(log => log.inquiry?._id === ticket?._id);
+
+    return (
+      <>
+        {
+          _internalNote && _internalNote.length > 0 && _internalNote.map((log, idx) => (
+            <div
+              key={idx}
+              className="mailbox-message p-3 bg-gradient-light"
+              style={{ cursor: "pointer" }}
+              onClick={(evt) => handleClickInternalMessage(log, ticket)}
+            >
+              <div className="mailbox-sender">
+                <span className="mailbox-sender-name mb-2 pb-1 border border-0 border-bottom">
+                  Internal Note
+                </span>
+              </div>
+              <div>
+                Ticket Number: <span className="fw-bold">{ticket.inquiryNumber}</span>
+              </div>
+              <div>
+                Creator: {log.user.firstName}{" "}
+                {log.user.lastName}
+              </div>
+              <div>
+                Creator Position: {POSITIONNAMES[log.user.position]}
+              </div>
+              <div>
+                Created Time: {moment(log.createdAt).format("DD-MM-YYYY")};
+              </div>
+            </div>
+          ))
+        }
+      </>
+    )
+  }
+
+  const FormatTicketDataForReplyStudent = ({ ticket }) => {
+    // add reply student
+    const _replyStudent = replyStudentMessage.filter(log => log.inquiry?._id === ticket?._id);
+
+    return (
+      <>
+        {
+          _replyStudent && _replyStudent.length > 0 && _replyStudent.map((log, idx) => (
+            <div
+              key={idx}
+              className="mailbox-message p-3 bg-gradient-gray-600 text-white"
+              style={{ cursor: "pointer" }}
+              onClick={(evt) => handleClickInternalMessage(log, ticket)}
+            >
+              <div className="mailbox-sender">
+                <span className="mailbox-sender-name mb-2 pb-1 border border-0 border-white border-bottom">
+                  Reply Message to student
+                </span>
+              </div>
+              <div>
+                Ticket Number: <span className="fw-bold">{ticket.inquiryNumber}</span>
+              </div>
+              <div>
+                Creator: {log.user.firstName}{" "}
+                {log.user.lastName}
+              </div>
+              <div>
+                Position: {POSITIONNAMES[log.user.position]}
+              </div>
+              <div>
+                Time: {moment(log.createdAt).format("DD-MM-YYYY")};
+              </div>
+            </div>
+          ))
+        }
+      </>
+    )
+  }
+
+  const InternalMessageContainer = () => {
+    if (!selectedInternalMessage) {
+      return <></>
+    } else {
+      const { internalData, ticketData } = selectedInternalMessage;
+      const header = (internalData.state === "internalNote" ? "Internal Note" : "Reply Message ") + ` for ${ticketData.inquiryNumber} Ticket`
+      return (
+        <div className="p-4">
+          <p className="fw-bold">{header}</p>
+          <hr />
+          <p className="fw-bold">Ticket Information</p>
+          <p>Category: {ticketData.inquiryCategory}</p>
+          <p>Subcategory: {ticketData.subCategory1}</p>
+          <p>Student Name: {ticketData.firstName}{" "}{ticketData.lastName}</p>
+          <p>Student Enrollment Number: {ticketData.firstName}{" "}{ticketData.enrollmentNumber}</p>
+          <hr />
+          <p className="fw-bold">{internalData.state === "internalNote" ? "Internal Note " : "Reply Message "} Information</p>
+          <p>Creator: {internalData.user.firstName}{" "}{internalData.user.lastName}</p>
+          <p>Position: {POSITIONNAMES[internalData.user.position]}</p>
+          <p>Created Time: {moment(internalData.createdAt).format("DD-MM-YYYY")}</p>
+          <p>Content:</p>
+          <p>{internalData.content}</p>
+        </div>
+      )
+    }
   }
 
   return (
@@ -1161,6 +1563,30 @@ function EmailInbox() {
               )}
             </Link>
           </div>
+          <div className="mailbox-toolbar-item">
+            <Link
+              onClick={handleShowClosedTickets}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "Closed" && !showTicketDetail ? "active" : ""
+                } `}
+            >
+              Closed
+              {userRole != 2 && (
+                <Badge
+                  pill
+                  bg="primary"
+                  className="ms-2"
+                  style={{
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  {unClickedCloseTicketsCount}
+                </Badge>
+              )}
+            </Link>
+          </div>
           {userData?.role !== 2 && (
             <div className="mailbox-toolbar-item">
               <button className="mailbox-toolbar-link btn-info btn text-white" onClick={openExportExcelConfirmModal}>Export</button>
@@ -1168,15 +1594,6 @@ function EmailInbox() {
           )}
 
           <div className="mailbox-toolbar-item">
-            {/* {userData?.role != 2 && (
-              <Link
-                to="/email/compose"
-                className="mailbox-toolbar-link text-inverse bg-inverse bg-opacity-15"
-              >
-                Internal Message <i className="fa fa-pen fs-12px ms-1"></i>
-              </Link>
-            )} */}
-
             {userData?.role == 2 && (
               <Link
                 onClick={handleClickOpenTicket}
@@ -1454,139 +1871,154 @@ function EmailInbox() {
               >
                 {ticketData && ticketData.length > 0 ? (
                   ticketData.map((ticket, index) => (
-                    <div
-                      key={index}
-                      className={
-                        userData?.role == 2
-                          ? "mailbox-list-item border-bottom" +
-                          (ticket?.documents ? " has-attachment " : "")
-                          : "mailbox-list-item border-bottom border-white" +
-                          (ticket?.documents &&
-                            (ticket?.status == 0 ||
-                              ticket?.status == 1 ||
-                              ticket?.status == 4 ||
-                              ticket?.status == 5)
-                            ? " has-attachment "
-                            : "") +
-                          (Math.floor(
-                            (new Date() - new Date(ticket?.createdAt)) /
-                            (1000 * 60 * 60)
-                          ) > 45
-                            ? "mailbox-list-danger "
-                            : Math.floor(
-                              (new Date() - new Date(ticket?.createdAt)) /
-                              (1000 * 60 * 60)
-                            ) > 24
-                              ? "mailbox-list-warning"
-                              : "mailbox-list-general")
-                      }
-                    >
+                    <div key={index}>
                       <div
-                        className="mailbox-message"
-                        onClick={() => handleSelectTicket(ticket?._id)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <div className="mailbox-sender">
-                          <span className="mailbox-sender-name">
-                            [
-                            {ticket?.inquiryCategory &&
-                              ticket?.subCategory1 &&
-                              inquiryCategories.find(log => log.inquiryCategoryId === ticket.inquiryCategory)[
-                                "subCategories"
-                              ].find(log => log.subCategory1 === ticket.subCategory1)["subCategory1"]
-                              ? inquiryCategories.find(log => log.inquiryCategoryId === ticket.inquiryCategory)[
-                                "subCategories"
-                              ].find(log => log.subCategory1 === ticket.subCategory1)["subCategory1"]
-                              : ""}
-                            ]
-                          </span>
-                          <span className="mailbox-time">
-                            {getTimeDifference(
-                              new Date(ticket?.createdAt),
-                              new Date()
-                            )}
-                          </span>
-                        </div>
-
-                        <div
-                          className={
-                            userData?.role == 2
-                              ? "fw-bold"
-                              : ticket?.status == 0 ||
+                        className={
+                          userData?.role == 2
+                            ? "mailbox-list-item border-bottom" +
+                            (ticket?.documents ? " has-attachment " : "")
+                            : "mailbox-list-item border-bottom" +
+                            (ticket?.documents &&
+                              (ticket?.status == 0 ||
                                 ticket?.status == 1 ||
                                 ticket?.status == 4 ||
-                                ticket?.status == 5
-                                ? "text-white fw-bold"
-                                : "fw-bold"
-                          }
-                        >
-                          {ticket?.inquiryCategory &&
-                            inquiryCategories.find(log => log.inquiryCategoryId === ticket.inquiryCategory)[
-                            "inquiryCategory"
-                            ]}
-                        </div>
+                                ticket?.status == 5)
+                              ? " has-attachment "
+                              : "") +
+                            (Math.floor(
+                              (new Date() - new Date(ticket?.createdAt)) /
+                              (1000 * 60 * 60)
+                            ) > 45
+                              ? "mailbox-list-danger "
+                              : Math.floor(
+                                (new Date() - new Date(ticket?.createdAt)) /
+                                (1000 * 60 * 60)
+                              ) > 24
+                                ? "mailbox-list-warning"
+                                : "mailbox-list-general")
+                        }
+                      >
                         <div
-                          className={
-                            userRole != 2 &&
-                              ticket?.status != 0 &&
-                              ticket?.status != 1 &&
-                              ticket?.status != 4 &&
-                              ticket?.status != 5
-                              ? "text-black"
-                              : "mailbox-desc"
-                          }
+                          className="mailbox-message"
+                          onClick={(evt) => handleSelectTicket(ticket?._id)}
+                          style={{ cursor: "pointer" }}
                         >
-                          {ticket?.email}
-                        </div>
-                        {userData?.role != 2 ? (
-                          ticket?.status == 0 ||
-                            ticket?.status == 1 ||
-                            ticket?.status == 4 ||
-                            ticket?.status == 5 ? (
-                            <>
-                              <DownTimer
-                                remainTime={getTimeRemain(
-                                  new Date(ticket?.createdAt),
-                                  new Date()
-                                )}
-                              />
-                              {ticket?.isClicked == 1 ? (
-                                <div className="d-flex align-items-center justify-content-between">
-                                  <span>
-                                    Ticket Number: {ticket?.inquiryNumber}
-                                  </span>
-
-                                  <Badge
-                                    style={{
-                                      fontSize: "14px",
-                                      fontWeight: "300"
-                                    }}
-                                    bg="primary"
-                                  >
-                                    Viewed
-                                  </Badge>
-                                </div>
-                              ) : (
-                                <div className="d-flex align-items-center justify-content-between">
-                                  Ticket Number: {ticket?.inquiryNumber}
-                                  <Badge
-                                    style={{
-                                      fontSize: "14px",
-                                      fontWeight: "300"
-                                    }}
-                                    bg="danger"
-                                  >
-                                    No Viewed
-                                  </Badge>
-                                </div>
+                          <div className="mailbox-sender">
+                            <span className="mailbox-sender-name">
+                              {ticket.subCategory1}
+                            </span>
+                            <span className="mailbox-time">
+                              {getTimeDifference(
+                                new Date(ticket?.createdAt),
+                                new Date()
                               )}
-                            </>
-                          ) : ticket?.isClicked ? (
-                            <div className="d-flex align-items-center justify-content-between">
-                              <span>
-                                {" "}
+                            </span>
+                          </div>
+
+                          <div
+                            className={
+                              userData?.role == 2
+                                ? "fw-bold"
+                                : ticket?.status == 0 ||
+                                  ticket?.status == 1 ||
+                                  ticket?.status == 4 ||
+                                  ticket?.status == 5
+                                  ? "text-white fw-bold"
+                                  : "fw-bold"
+                            }
+                          >
+                            {ticket.inquiryCategory}
+                          </div>
+                          <div
+                            className={
+                              userRole != 2 &&
+                                ticket?.status != 0 &&
+                                ticket?.status != 1 &&
+                                ticket?.status != 4 &&
+                                ticket?.status != 5
+                                ? "text-black"
+                                : "mailbox-desc"
+                            }
+                          >
+                            {ticket?.email}
+                          </div>
+                          {userData?.role != 2 ? (
+                            ticket?.status == 0 ||
+                              ticket?.status == 1 ||
+                              ticket?.status == 4 ||
+                              ticket?.status == 5 ? (
+                              <>
+                                <DownTimer
+                                  remainTime={getTimeRemain(
+                                    new Date(ticket?.createdAt),
+                                    new Date()
+                                  )}
+                                />
+                                {ticket?.isClicked == 1 ? (
+                                  <div className="d-flex align-items-center justify-content-between">
+                                    <span>
+                                      Ticket Number: {ticket?.inquiryNumber}
+                                    </span>
+
+                                    <Badge
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "300"
+                                      }}
+                                      bg="primary"
+                                    >
+                                      Viewed
+                                    </Badge>
+                                  </div>
+                                ) : (
+                                  <div className="d-flex align-items-center justify-content-between">
+                                    Ticket Number: {ticket?.inquiryNumber}
+                                    <Badge
+                                      style={{
+                                        fontSize: "14px",
+                                        fontWeight: "300"
+                                      }}
+                                      bg="danger"
+                                    >
+                                      No Viewed
+                                    </Badge>
+                                  </div>
+                                )}
+                              </>
+                            ) : ticket?.isClicked ? (
+                              <div className="d-flex align-items-center justify-content-between">
+                                <span>
+                                  {" "}
+                                  Ticket Number: {ticket?.inquiryNumber}
+                                </span>
+
+                                <Badge
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: "300"
+                                  }}
+                                  bg="primary"
+                                >
+                                  Viewed
+                                </Badge>
+                              </div>
+                            ) : (
+                              <div className="d-flex align-items-center justify-content-between">
                                 Ticket Number: {ticket?.inquiryNumber}
-                              </span>
+                                <Badge
+                                  style={{
+                                    fontSize: "14px",
+                                    fontWeight: "300"
+                                  }}
+                                  bg="danger"
+                                >
+                                  No Viewed
+                                </Badge>
+                              </div>
+                            )
+                          ) : ticket.isClicked == 1 ? (
+                            <div className="d-flex align-items-center justify-content-between mt-2">
+                              <span>Ticket Number: {ticket?.inquiryNumber}</span>
 
                               <Badge
                                 style={{
@@ -1599,7 +2031,7 @@ function EmailInbox() {
                               </Badge>
                             </div>
                           ) : (
-                            <div className="d-flex align-items-center justify-content-between">
+                            <div className="d-flex align-items-center justify-content-between mt-2">
                               Ticket Number: {ticket?.inquiryNumber}
                               <Badge
                                 style={{
@@ -1611,36 +2043,15 @@ function EmailInbox() {
                                 No Viewed
                               </Badge>
                             </div>
-                          )
-                        ) : ticket.isClicked == 1 ? (
-                          <div className="d-flex align-items-center justify-content-between mt-2">
-                            <span>Ticket Number: {ticket?.inquiryNumber}</span>
-
-                            <Badge
-                              style={{
-                                fontSize: "14px",
-                                fontWeight: "300"
-                              }}
-                              bg="primary"
-                            >
-                              Viewed
-                            </Badge>
-                          </div>
-                        ) : (
-                          <div className="d-flex align-items-center justify-content-between mt-2">
-                            Ticket Number: {ticket?.inquiryNumber}
-                            <Badge
-                              style={{
-                                fontSize: "14px",
-                                fontWeight: "300"
-                              }}
-                              bg="danger"
-                            >
-                              No Viewed
-                            </Badge>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
+                      <FormatTicketDataForInternalNote
+                        ticket={ticket}
+                      />
+                      <FormatTicketDataForReplyStudent
+                        ticket={ticket}
+                      />
                     </div>
                   ))
                 ) : (
@@ -1659,545 +2070,255 @@ function EmailInbox() {
             className={`mailbox-content d-lg-block ${showTicketDetail ? "" : "d-none"
               }`}
           >
-            {loading ? (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100vh"
-                }}
-              >
-                <BeatLoader size={15} />
-              </div>
-            ) : (
-              <PerfectScrollbar className="h-100">
-                {ticketId ? (
-                  <div className="mailbox-detail">
-                    {userRole != 2 && (
-                      <div className="mailbox-detail-header external-btn-container">
-                        <a
-                          className="btn btn-primary rounded-pill mt-2"
-                          onClick={handlePassToAnotherDepartment}
-                        >
-                          Pass to another department
-                        </a>
-                      </div>
-                    )}
-                    <div className="mailbox-detail-header">
-                      <div
-                        className="d-flex "
-                        style={{ wordBreak: "break-all" }}
-                      >
-                        <a href="#/">
-                          <img
-                            src="/assets/img/user/user-1.jpg"
-                            alt=""
-                            width="40"
-                            className="rounded-circle"
-                          />
-                        </a>
-                        <div className="flex-fill ms-3">
-                          <div className="d-lg-flex align-items-center">
-                            <div className="flex-1 mt-3">
-                              <div className="fw-600">
-                                {selectedTicket?.firstName +
-                                  " " +
-                                  selectedTicket?.lastName +
-                                  "<" +
-                                  selectedTicket?.email +
-                                  ">"}
-                              </div>
-                              <div className="fs-13px">
-                                <span>
-                                  {" "}
-                                  {getTimeDifference(
-                                    new Date(selectedTicket?.createdAt),
-                                    new Date()
-                                  )}{" "}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="fs-12px text-white text-opacity-50 text-lg-end mt-lg-0 mt-3">
-                              Nov 27, 2024{" "}
-                              <span className="d-none d-lg-inline">
-                                <br />
-                              </span>
-                              at 7.00pm
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mailbox-detail-content ">
-                      <div className="d-flex gap-3 mb-3">
-                        <h4 className="mb-0">
-                          {selectedTicket?.inquiryCategory &&
-                            selectedTicket?.subCategory1 &&
-                            inquiryCategories.find(log => log.inquiryCategoryId === selectedTicket.inquiryCategory)["subCategories"]
-                              .find(log => log.subCategory1 === selectedTicket.subCategory1)["subCategory1"]}{" "}
-                          Request from{" "}
-                          {selectedTicket?.firstName +
-                            " " +
-                            selectedTicket?.lastName}
-                        </h4>
-
-                        {selectedTicket && (
-                          <Badge
-                            style={{
-                              fontSize: "14px",
-                              fontWeight: "300",
-                              height: "25px"
-                            }}
-                            bg={ticketStatusBadge[selectedTicket?.status]}
-                          >
-                            {ticketStatus[selectedTicket?.status]}
-                          </Badge>
-                        )}
-                      </div>
-
-                      <div className="d-flex ">
-                        {attachments &&
-                          attachments.map((attachment, index) => (
-                            <div
-                              className="mailbox-detail-attachment"
-                              key={index}
-                            >
-                              <div className="mailbox-attachment">
-                                <a
-                                  onClick={(e) =>
-                                    handleDownload(
-                                      host + attachment?.url,
-                                      attachment?.filename
-                                    )
-                                  }
-                                >
-                                  <div className="document-file">
-                                    <i className="fa fa-file-archive"></i>
-                                  </div>
-                                  <div className="document-name">
-                                    {attachment?.filename}
-                                  </div>
-                                </a>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                      {attachments.length != 0 ? (
-                        <div className="mb-3">
-                          <a
-                            className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded"
-                            onClick={(e) => handleDownloadAll(e)}
-                          >
-                            Download
-                          </a>
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                      {selectedTicket?.emailContent && (
-                        <Form.Group controlId="emailContent">
-                          <label>Email Content:</label>
-                          <ReactQuill
-                            placeholder=""
-                            value={selectedTicket?.emailContent}
-                            readOnly={true}
-                            theme="snow" // Ensure you use a valid theme to keep the styles
-                            style={{
-                              height: "auto", // Set a fixed height
-
-                              backgroundColor: "#f8f9fa" // Optional: Set a background to indicate read-only
-                            }}
-                          />
-                        </Form.Group>
-                      )}
-                      {selectedTicket?.reason && (
-                        <Form.Group controlId="reason" className="mt-4">
-                          <label>Ticket Reopen Reason:</label>
-                          <ReactQuill
-                            placeholder=""
-                            value={selectedTicket?.reason}
-                            readOnly={true}
-                            theme="snow" // Ensure you use a valid theme to keep the styles
-                            style={{
-                              height: "auto", // Set a fixed height
-
-                              backgroundColor: "#f8f9fa" // Optional: Set a background to indicate read-only
-                            }}
-                          />
-                        </Form.Group>
-                      )}
-
-                      <div className="mailbox-detail-body mt-5 border-bottom border-gray ">
-                        {renderContentTemplate()}
-                        <div className="mt-5">
-                          <div className="d-flex">
-                            <p className="text-black">Name:</p>
-                            <p className="text-black">
-                              {selectedTicket?.firstName +
-                                " " +
-                                selectedTicket?.lastName}
-                            </p>
-                          </div>
-                          <div className="d-flex">
-                            <p className="text-black">Email:</p>
-                            <p className="text-black">
-                              {selectedTicket?.email}
-                            </p>
-                          </div>
-                          <div className="d-flex">
-                            <p className="text-black">Ticket Number:</p>
-                            <p className="text-black">
-                              {selectedTicket?.inquiryNumber}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="mb-0">
-                          Enrollment Number: {selectedTicket?.enrollmentNumber}
-                        </p>
-                        <br />
-                      </div>
-                    </div>
-                    {userRole != 2 &&
-                      selectedTicket?.status != 2 &&
-                      selectedTicket?.status != 3 && (
-                        <div
-                          style={{
-                            position: "sticky",
-                            bottom: "10px",
-                            backgroundColor: "white",
-                            paddingBottom: "10px"
-                          }}
-                        >
-                          <div className="pt-2 d-flex justify-content-end ">
-                            <div
-                              className="d-flex gap-3 bg-white"
-                              style={{
-                                width: "inherit"
-                              }}
-                            >
-                              {contentTemplate == "Enrollment" &&
-                                ((getPermissionOfTicket(
-                                  selectedTicket,
-                                  userPermissionCategory
-                                ) != "None" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Passive" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Active") ||
-                                  (userData?.role == 0 &&
-                                    userData?.position == 1)) && (
-                                  <div
-                                    className="btn-group w-100"
-                                    role="group"
-                                    aria-label="Basic example"
-                                    style={{
-                                      maxWidth: "115px"
-                                    }}
-                                  >
-                                    <button
-                                      type="button"
-                                      className="btn btn-info rounded-pill pl-5"
-                                      onClick={() =>
-                                        handleCheckEnrollment(
-                                          selectedTicket?._id
-                                        )
-                                      }
-                                    >
-                                      Check
-                                    </button>
-                                  </div>
-                                )}
-                              {contentTemplate == "ExamInspection" &&
-                                ((getPermissionOfTicket(
-                                  selectedTicket,
-                                  userPermissionCategory
-                                ) != "None" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Passive" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Active") ||
-                                  (userData?.role == 0 &&
-                                    userData?.position == 1)) && (
-                                  <div
-                                    className="btn-group w-100"
-                                    role="group"
-                                    aria-label="Basic example"
-                                    style={{
-                                      maxWidth: "115px"
-                                    }}
-                                  >
-                                    <button
-                                      type="button"
-                                      className="btn btn-info rounded-pill pl-5"
-                                      onClick={() =>
-                                        handleCheckExamInspection(
-                                          selectedTicket?._id
-                                        )
-                                      }
-                                    >
-                                      Check
-                                    </button>
-                                  </div>
-                                )}
-                              {contentTemplate == "TranscriptRecords" &&
-                                ((getPermissionOfTicket(
-                                  selectedTicket,
-                                  userPermissionCategory
-                                ) != "None" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Passive" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Active") ||
-                                  (userData?.role == 0 &&
-                                    userData?.position == 1)) && (
-                                  <>
-                                    <div
-                                      className="btn-group w-100"
-                                      role="group"
-                                      aria-label="Basic example"
-                                      style={{
-                                        maxWidth: "115px"
-                                      }}
-                                    >
-                                      <button
-                                        type="button"
-                                        className={
-                                          selectedTicket?.status == 1
-                                            ? "btn btn-secondary rounded-pill pl-5"
-                                            : "d-none"
-                                        }
-                                        onClick={() => {
-                                          handleProcessTranscriptRecord(
-                                            ticketId
-                                          );
-                                        }}
-                                      >
-                                        Process
-                                      </button>
-                                    </div>
-                                    <div
-                                      className="btn-group w-100"
-                                      role="group"
-                                      aria-label="Basic example"
-                                      style={{
-                                        maxWidth: "115px"
-                                      }}
-                                    >
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          handleDoneTranscriptRecord(ticketId);
-                                        }}
-                                        className={
-                                          selectedTicket?.status == 4
-                                            ? "btn btn-primary rounded-pill pl-5"
-                                            : "d-none"
-                                        }
-                                      >
-                                        Done
-                                      </button>
-                                    </div>
-                                    <div
-                                      className="btn-group w-100"
-                                      role="group"
-                                      aria-label="Basic example"
-                                      style={{
-                                        maxWidth: "115px"
-                                      }}
-                                    >
-                                      <button
-                                        type="button"
-                                        className={
-                                          selectedTicket?.status == 5
-                                            ? "btn btn-info rounded-pill pl-5"
-                                            : "d-none"
-                                        }
-                                        onClick={() => {
-                                          handleNotifyTranscriptRecord(
-                                            ticketId
-                                          );
-                                        }}
-                                      >
-                                        Notify
-                                      </button>
-                                    </div>
-                                  </>
-                                )}
-
-                              {contentTemplate != "Enrollment" &&
-                                contentTemplate != "ExamInspection" &&
-                                contentTemplate != "TranscriptRecords" &&
-                                ((getPermissionOfTicket(
-                                  selectedTicket,
-                                  userPermissionCategory
-                                ) != "None" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Passive" &&
-                                  getPermissionOfTicket(
-                                    selectedTicket,
-                                    userPermissionCategory
-                                  ) != "Active") ||
-                                  userData?.role == 0) && (
-                                  <>
-                                    {contentTemplate != "OnlineCatalogue" ? (
-                                      <>
-                                        <div
-                                          className="btn-group w-100"
-                                          role="group"
-                                          aria-label="Basic example"
-                                          style={{
-                                            maxWidth: "115px"
-                                          }}
-                                        >
-                                          <button
-                                            type="button"
-                                            style={{
-                                              backgroundColor: "#009be3",
-                                              borderTopLeftRadius: "50px",
-                                              borderBottomLeftRadius: "50px",
-                                              borderRight: "1px solid orange"
-                                            }}
-                                            className="btn btn-info btn-left mailbox-detail-button pl-5"
-                                            onClick={() =>
-                                              handleInquiryAccept(
-                                                selectedTicket?._id
-                                              )
-                                            }
-                                          >
-                                            Accept
-                                          </button>
-                                          <Dropdown type="button">
-                                            <Dropdown.Toggle
-                                              variant="success"
-                                              id="dropdown-basic"
-                                              className="btn btn-info dropdown-toggle"
-                                              style={{
-                                                borderTopRightRadius: "50px",
-                                                borderBottomRightRadius: "50px"
-                                              }}
-                                            ></Dropdown.Toggle>
-
-                                            <Dropdown.Menu>
-                                              <Dropdown.Item
-                                                href="#/action-1"
-                                                disabled
-                                              >
-                                                Accept with Internal Note
-                                              </Dropdown.Item>
-                                              <Dropdown.Item href="#/action-2">
-                                                Accept with Email
-                                              </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                          </Dropdown>
-                                        </div>
-                                        {contentTemplate !=
-                                          "OnlineCatalogue" && (
-                                            <div
-                                              className="btn-group w-100"
-                                              role="group"
-                                              aria-label="Basic example"
-                                              style={{ maxWidth: "115px" }}
-                                            >
-                                              <button
-                                                type="button"
-                                                style={{
-                                                  backgroundColor: "#e00000",
-                                                  borderTopLeftRadius: "50px",
-                                                  borderBottomLeftRadius: "50px",
-                                                  borderRight: "1px solid orange"
-                                                }}
-                                                className="btn btn-danger btn-left"
-                                                onClick={() =>
-                                                  handleInquiryReject(
-                                                    selectedTicket?._id
-                                                  )
-                                                }
-                                              >
-                                                Reject
-                                              </button>
-                                              <Dropdown type="button">
-                                                <Dropdown.Toggle
-                                                  variant="danger"
-                                                  id="dropdown-basic"
-                                                  className="btn btn-danger dropdown-toggle"
-                                                  style={{
-                                                    borderTopRightRadius: "50px",
-                                                    borderBottomRightRadius:
-                                                      "50px"
-                                                  }}
-                                                ></Dropdown.Toggle>
-
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item
-                                                    href="#/action-1"
-                                                    disabled
-                                                  >
-                                                    Reject with Internal Note
-                                                  </Dropdown.Item>
-                                                  <Dropdown.Item href="#/action-2">
-                                                    Reject with Email
-                                                  </Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
-                                            </div>
-                                          )}
-                                      </>
-                                    ) : (
-                                      <div
-                                        className="btn-group w-100"
-                                        role="group"
-                                        aria-label="Basic example"
-                                        style={{
-                                          maxWidth: "115px"
-                                        }}
-                                      >
-                                        <button
-                                          type="button"
-                                          className="btn btn-info rounded-pill pl-5"
-                                          onClick={() =>
-                                            handleInquiryAccept(
-                                              selectedTicket?._id
-                                            )
-                                          }
-                                        >
-                                          Check
-                                        </button>
-                                      </div>
-                                    )}
-                                  </>
-                                )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
+            {
+              !selectedInternalMessage && (
+                loading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100vh"
+                    }}
+                  >
+                    <BeatLoader size={15} />
                   </div>
                 ) : (
-                  <div className="mailbox-empty-message">
-                    <div className="mailbox-empty-message-icon">
-                      <i className="bi bi-inbox text-theme text-opacity-50"></i>
-                    </div>
-                    <div className="mailbox-empty-message-title">
-                      No ticket selected
-                    </div>
-                  </div>
-                )}
-              </PerfectScrollbar>
-            )}
+                  <PerfectScrollbar className="h-100">
+                    {ticketId ? (
+                      <div className="mailbox-detail">
+                        {userRole != 2 && (
+                          <div className="mailbox-detail-header external-btn-container">
+                            <BtnUpperContent
+                              contentTemplate={contentTemplate}
+                            />
+                          </div>
+                        )}
+                        <div className="mailbox-detail-header">
+                          <div
+                            className="d-flex "
+                            style={{ wordBreak: "break-all" }}
+                          >
+                            <a href="#/">
+                              <img
+                                src="/assets/img/user/user-1.jpg"
+                                alt=""
+                                width="40"
+                                className="rounded-circle"
+                              />
+                            </a>
+                            <div className="flex-fill ms-3">
+                              <div className="d-lg-flex align-items-center">
+                                <div className="flex-1 mt-3">
+                                  <div className="fw-600">
+                                    {selectedTicket?.firstName +
+                                      " " +
+                                      selectedTicket?.lastName +
+                                      "<" +
+                                      selectedTicket?.email +
+                                      ">"}
+                                  </div>
+                                  <div className="fs-13px">
+                                    <span>
+                                      {" "}
+                                      {getTimeDifference(
+                                        new Date(selectedTicket?.createdAt),
+                                        new Date()
+                                      )}{" "}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="fs-12px text-white text-opacity-50 text-lg-end mt-lg-0 mt-3">
+                                  Nov 27, 2024{" "}
+                                  <span className="d-none d-lg-inline">
+                                    <br />
+                                  </span>
+                                  at 7.00pm
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mailbox-detail-content ">
+                          <div className="d-flex gap-3 mb-3">
+                            <h4 className="mb-0">
+                              {selectedTicket?.subCategory1 ? selectedTicket?.subCategory1 : selectedTicket?.inquiryCategory}{" "}
+                              Request from{" "}
+                              {selectedTicket?.firstName + " " + selectedTicket?.lastName}
+                            </h4>
+
+                            {selectedTicket && (
+                              <Badge
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "300",
+                                  height: "25px"
+                                }}
+                                bg={ticketStatusBadge[selectedTicket?.status]}
+                              >
+                                {ticketStatus[selectedTicket?.status]}
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="d-flex ">
+                            {attachments &&
+                              attachments.map((attachment, index) => (
+                                <div
+                                  className="mailbox-detail-attachment"
+                                  key={index}
+                                >
+                                  <div className="mailbox-attachment">
+                                    <div className="d-flex">
+                                      {/* show original file */}
+                                      <a className="me-5 border border-1 rounded-1"
+                                        onClick={e => {
+                                          const fileUrl = host + attachment?.url;
+                                          const fileName = attachment?.filename;
+                                          handleDownload(
+                                            fileUrl,
+                                            fileName
+                                          )
+                                        }}
+                                      >
+                                        <div className="document-file">
+                                          <i className="fa fa-file-archive"></i>
+                                        </div>
+                                        <div className="document-name">
+                                          {attachment.filename}
+                                        </div>
+                                      </a>
+                                      {/* admin and translation exist */}
+                                      {
+                                        userRole !== 2 && attachment.translatedFileName && (
+                                          <a className="border border-1 rounded-1"
+                                            onClick={e => {
+                                              const fileUrl = host + attachment.translatedFileUrl;
+                                              const fileName = attachment.translatedFileName;
+                                              handleDownload(fileUrl, fileName);
+                                            }}
+                                          >
+                                            <div className="document-file">
+                                              <i className="fa fa-file-archive"></i>
+                                            </div>
+                                            <div className="document-name">
+                                              {attachment.translatedFileName}
+                                            </div>
+                                          </a>
+                                        )
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                          {attachments.length != 0 ? (
+                            <div className="mb-3">
+                              <a
+                                className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded"
+                                onClick={(e) => handleDownloadAll(e)}
+                              >
+                                Download
+                              </a>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                          {selectedTicket?.emailContent && (
+                            <Form.Group controlId="emailContent">
+                              <label>Email Content:</label>
+                              <ReactQuill
+                                placeholder=""
+                                value={selectedTicket?.emailContent}
+                                readOnly={true}
+                                theme="snow" // Ensure you use a valid theme to keep the styles
+                                style={{
+                                  height: "auto", // Set a fixed height
+
+                                  backgroundColor: "#f8f9fa" // Optional: Set a background to indicate read-only
+                                }}
+                              />
+                            </Form.Group>
+                          )}
+                          {selectedTicket?.reason && (
+                            <Form.Group controlId="reason" className="mt-4">
+                              <label>Ticket Reopen Reason:</label>
+                              <ReactQuill
+                                placeholder=""
+                                value={selectedTicket?.reason}
+                                readOnly={true}
+                                theme="snow" // Ensure you use a valid theme to keep the styles
+                                style={{
+                                  height: "auto", // Set a fixed height
+
+                                  backgroundColor: "#f8f9fa" // Optional: Set a background to indicate read-only
+                                }}
+                              />
+                            </Form.Group>
+                          )}
+
+                          <div className="mailbox-detail-body mt-5 border-bottom border-gray ">
+                            {renderContentTemplate()}
+                            <div className="mt-5">
+                              <div className="d-flex">
+                                <p className="text-black">Name:</p>
+                                <p className="text-black">
+                                  {selectedTicket?.firstName +
+                                    " " +
+                                    selectedTicket?.lastName}
+                                </p>
+                              </div>
+                              <div className="d-flex">
+                                <p className="text-black">Email:</p>
+                                <p className="text-black">
+                                  {selectedTicket?.email}
+                                </p>
+                              </div>
+                              <div className="d-flex">
+                                <p className="text-black">Ticket Number:</p>
+                                <p className="text-black">
+                                  {selectedTicket?.inquiryNumber}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="mb-0">
+                              Enrollment Number: {selectedTicket?.enrollmentNumber}
+                            </p>
+                            <br />
+                          </div>
+                        </div>
+                        {userRole != 2 && (
+                          <div
+                            style={{
+                              position: "sticky",
+                              bottom: "10px",
+                              backgroundColor: "white",
+                              paddingBottom: "10px"
+                            }}
+                          >
+                            <BtnUnderContent
+                              contentTemplate={contentTemplate}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mailbox-empty-message">
+                        <div className="mailbox-empty-message-icon">
+                          <i className="bi bi-inbox text-theme text-opacity-50"></i>
+                        </div>
+                        <div className="mailbox-empty-message-title">
+                          No ticket selected
+                        </div>
+                      </div>
+                    )}
+                  </PerfectScrollbar>
+                ))
+            }
+            <InternalMessageContainer />
+            {/* {
+              selectedInternalMessage && 
+            } */}
           </div>
         </div>
       </div>
@@ -2214,10 +2335,9 @@ function EmailInbox() {
           setSelectedTicket={setSelectedTicket}
           contentTemplate={contentTemplate}
           studentNo={studentNo}
-          unClickedApprovedTicketsCount={unClickedApprovedTicketsCount}
           setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
-          unClickedRejectTicketsCount={unClickedRejectTicketsCount}
           setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
+          setUnClickedClosedTicketCount={setUnClickedClosedTicketCount}
         />
       )}
       {actionBtnType && (
@@ -2236,6 +2356,8 @@ function EmailInbox() {
           setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
           unClickedRejectTicketsCount={unClickedRejectTicketsCount}
           setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
+          unClickedCloseTicketsCount={unClickedCloseTicketsCount}
+          setUnClickedClosedTicketCount={setUnClickedClosedTicketCount}
         />
       )}
       {actionBtnType && (
@@ -2255,6 +2377,8 @@ function EmailInbox() {
           setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
           unClickedRejectTicketsCount={unClickedRejectTicketsCount}
           setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
+          unClickedCloseTicketsCount={unClickedCloseTicketsCount}
+          setUnClickedClosedTicketCount={setUnClickedClosedTicketCount}
         />
       )}
       {actionBtnType && (
@@ -2274,6 +2398,8 @@ function EmailInbox() {
           setUnClickedApprovedTicketsCount={setUnClickedApprovedTicketsCount}
           unClickedRejectTicketsCount={unClickedRejectTicketsCount}
           setUnClickedRejectTicketsCount={setUnClickedRejectTicketsCount}
+          unClickedCloseTicketsCount={unClickedCloseTicketsCount}
+          setUnClickedClosedTicketCount={setUnClickedClosedTicketCount}
         />
       )}
 
@@ -2282,6 +2408,21 @@ function EmailInbox() {
         handleModalClose={handlePassToAnotherDepartmentModalClose}
         selectedTicket={selectedTicket}
       />
+
+      <InternalNoteModal
+        show={internalNoteModalShow}
+        handleModalClose={handleInterlNoteModalClose}
+        selectedTicket={selectedTicket}
+        setTicketStatusChange={setTicketStatusChange}
+      />
+
+      <ReplyStudentModal
+        show={replyStudentModalShow}
+        handleModalClose={handleReplyStudentModalClose}
+        selectedTicket={selectedTicket}
+        setTicketStatusChange={setTicketStatusChange}
+      />
+
       <Modal show={showExcelExportModal} onHide={() => setShowExcelExportModal(false)} centered>
         <Modal.Header className="h4">Are you sure to export this data?</Modal.Header>
         <Modal.Body>

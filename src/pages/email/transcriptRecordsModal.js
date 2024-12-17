@@ -100,10 +100,10 @@ const ExamInspectionModal = ({
       .replace(
         "[contact us]",
         "<a href='" +
-          process.env.REACT_APP_URL +
-          "/#/ticket-reopen/" +
-          selectedTicket?._id +
-          "'>Contact Us</a>"
+        process.env.REACT_APP_URL +
+        "/#/ticket-reopen/" +
+        selectedTicket?._id +
+        "'>Contact Us</a>"
       )
       .replace("[requested teaching hospital]", details?.changePartner)
       .replace("[requested group]", details?.switchStudyGroup)
@@ -157,10 +157,10 @@ const ExamInspectionModal = ({
         .replace(
           "[contact us]",
           "<a href='" +
-            process.env.REACT_APP_URL +
-            "/#/ticket-reopen/" +
-            selectedTicket?._id +
-            "'>Contact Us</a>"
+          process.env.REACT_APP_URL +
+          "/#/ticket-reopen/" +
+          selectedTicket?._id +
+          "'>Contact Us</a>"
         )
         .replace("[requested teaching hospital]", details?.changePartner)
         .replace("[requested group]", details?.switchStudyGroup)
@@ -209,7 +209,7 @@ const ExamInspectionModal = ({
 
       successNotify(res?.message);
       setLoading(false);
-    } catch (error) {}
+    } catch (error) { }
   };
   return (
     <Modal show={show} onHide={handleModalClose}>

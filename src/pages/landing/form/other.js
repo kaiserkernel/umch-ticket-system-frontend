@@ -73,7 +73,7 @@ const Other = () => {
             formDataToSend.append(key, formData[key]);
           }
           formDataToSend.append("details", jsonFormDetailData);
-          formDataToSend.append("subCategory1", "1");
+          formDataToSend.append("subCategory1", "");
 
           try {
             setLoading(true);

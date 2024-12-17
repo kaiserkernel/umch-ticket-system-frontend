@@ -71,6 +71,30 @@ class FormSevice {
     const sendPassEmailEndpoint = "/api/admin/send-pass-email";
     return await HttpService.post(sendPassEmailEndpoint, payload);
   };
+  closeInquiry = async (payload) => {
+    const closeInquiryEndPoint = `/api/admin/inquiries/close/${payload}`;
+    return await HttpService.post(closeInquiryEndPoint);
+  };
+  sendInternalNote = async (payload) => {
+    const sendInternalNoteEndPoint = "/api/admin/internal-note";
+    return await HttpService.post(sendInternalNoteEndPoint, payload);
+  }
+  replyStudent = async (payload) => {
+    const replyStudentEndPoint = "/api/admin/reply-student";
+    return await HttpService.post(replyStudentEndPoint, payload);
+  }
+  fetchInternalNote = async () => {
+    const fetchInternalNoteEndPoint = "/api/admin/internal-note";
+    return await HttpService.get(fetchInternalNoteEndPoint);
+  }
+  fetchReplyStudentMessageList = async () => {
+    const fethcReplyStudentMessageListEndPoint = "/api/admin/reply-student/all";
+    return await HttpService.get(fethcReplyStudentMessageListEndPoint);
+  }
+  fetchReplyStudentMessage = async () => {
+    const fethcReplyStudentMessageEndPoint = "/api/admin/reply-student";
+    return await HttpService.get(fethcReplyStudentMessageEndPoint);
+  }
 }
 
 export default new FormSevice();

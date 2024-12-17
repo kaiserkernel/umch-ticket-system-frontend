@@ -2,13 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import moment from "moment";
 import FormService from "../../sevices/form-service";
 import emailTemplateService from "../../sevices/email-template-service";
-import {
-  INQUIRYCATEGORIESEmailTemplates,
-  POSITIONNAMES
-} from "../../globalVariables";
+
+import { formatEmailContent } from "../../utils/formatEmailContent";
 
 const TarguModal = ({
   show,
@@ -28,153 +25,56 @@ const TarguModal = ({
 }) => {
   const [mailTemplateData, setMailTemplateData] = useState();
   const [emailTemplates, setEmailTemplates] = useState([]);
-  const [defaultTemplate, setDefaultTemplateData] = useState();
+  const [selectedMailTemplate, setSelectedMailTempate] = useState();
+
   const [formData, setFormData] = useState({
     studentNo: selectedTicket?.enrollmentNumber
   });
-  let subCategory1 = parseInt(selectedTicket?.subCategory1);
-  let inquiryCategory = parseInt(selectedTicket?.inquiryCategory);
-  let details = selectedTicket?.details;
 
-  let data = "";
-  if (actionBtnType == "accept" && subCategory1) {
-    data =
-      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
-      ]["accept"];
-  }
-  if (actionBtnType == "reject" && subCategory1) {
-    data =
-      INQUIRYCATEGORIESEmailTemplates[inquiryCategory - 1]["subCategories"][
-        subCategory1 - 1
-      ]["reject"];
+  let subCategory1 = selectedTicket?.subCategory1;
+  let inquiryCategory = selectedTicket?.inquiryCategory;
+
+  const formatTempateData = (_data) => {
+    let studentName = selectedTicket.firstName + " " + selectedTicket.lastName;
+    const data = formatEmailContent(_data, selectedTicket.details, studentName);
+    setMailTemplateData(data);
   }
 
-  useEffect(() => {
-    const getEmailTemplatesByCategory = async () => {
-      try {
-        const payload = {
-          inquiryCategory: inquiryCategory,
-          subCategory: subCategory1
-        };
-        const res = await emailTemplateService.getEmailTemplatesByCategory(
-          payload
-        );
-        setEmailTemplates(res?.emailTemplates);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getEmailTemplatesByCategory();
-    let authUser = localStorage.getItem("userData");
-    authUser = JSON.parse(authUser);
-    let replacedEmailTemplate = data
-      .replace(
-        "[Student's Name]",
-        selectedTicket?.firstName + " " + selectedTicket?.lastName
-      )
-      .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-      .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
-      .replace(
-        "[Institution/Organization Name]",
-        authUser.position
-          ? POSITIONNAMES[authUser.position]
-          : "UMCH University Team"
-      )
-      .replace("[Contact Information]", authUser?.email)
-      .replace(
-        "[contact us]",
-        actionBtnType == "reject"
-          ? `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
-          : `<a href='${process.env.REACT_APP_URL}/#/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
-      )
-      .replace("[requested teaching hospital]", details?.changePartner)
-      .replace("[requested group]", details?.switchStudyGroup)
-      .replace("[requested subject]", details?.subject)
-      .replace("[Subject Name]", details?.subject)
-      .replace("[Date]", moment(details?.examDate).format("DD-MM-YYYY"))
-      .replace(
-        "[interval of time requested]",
-        moment(details?.diplomaCollectionDate).format("DD-MM-YYYY")
-      );
-    setMailTemplateData(replacedEmailTemplate);
-    setDefaultTemplateData(replacedEmailTemplate);
-  }, [actionBtnType]);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-  const replaceEmailTemplate = (
+  const formatEmailPayload = (
     mailTemplateData,
     selectedTicket,
-    contentTemplate
+    formData
   ) => {
     let authUser = localStorage.getItem("userData");
     authUser = JSON.parse(authUser);
-    let replaceSubject =
-      "Decision on Your Request of Absence - Ticket Number [Ticket Number]".replace(
-        "[Ticket Number]",
-        selectedTicket?.inquiryNumber
-      );
 
-    let replacedEmailTemplate;
+    const { subCategory1, inquiryCategory } = selectedTicket;
+    const type = subCategory1 ? (subCategory1 === "Other" ? `Other (${inquiryCategory})` : subCategory1) : inquiryCategory;
+    let title = `Decision on Your Request of ${type} - Ticket Number ` + selectedTicket?.inquiryNumber;
 
-    try {
-      replacedEmailTemplate = mailTemplateData
-        .replace(
-          "[Student's Name]",
-          selectedTicket?.firstName + " " + selectedTicket?.lastName
-        )
-        .replace("[Your Name]", authUser?.firstName + " " + authUser?.lastName)
-        .replace("[Your Title]", authUser.title ? authUser.title : "Professor")
-        .replace(
-          "[Institution/Organization Name]",
-          authUser.position ? POSITIONNAMES[authUser.position] : "Vice Rector"
-        )
-        .replace("[Contact Information]", authUser?.email)
-        .replace(
-          "[contact us]",
-          actionBtnType == "reject"
-            ? `<a href='${process.env.REACT_APP_URL}/ticket-reopen/${selectedTicket?._id}'>Contact Us</a>`
-            : `<a href='${process.env.REACT_APP_URL}/home'>Contact Us</a>`
-        )
-        .replace("[requested teaching hospital]", details?.changePartner)
-        .replace("[requested group]", details?.switchStudyGroup)
-        .replace("[requested subject]", details?.subject)
-        .replace("[Subject Name]", details?.subject)
-        .replace("[Date]", moment(details?.examDate).format("MM/DD/YYYY"))
-        .replace(
-          "[interval of time requested]",
-          moment(details?.diplomaCollectionDate).format("MM/DD/YYYY")
-        );
-    } catch (err) {
-      console.log(err);
-    }
-
-    let payload = {};
-
-    if (contentTemplate == "TransferTarguMures") {
-      payload = {
-        replaceSubject: replaceSubject,
-        replacedEmailTemplate: replacedEmailTemplate,
-        formData: formData,
-        id: selectedTicket?._id,
-        selectedTicket: selectedTicket
-      };
-    }
+    let payload = {
+      replaceSubject: title,
+      replacedEmailTemplate: mailTemplateData,
+      id: selectedTicket._id,
+      selectedTicket: selectedTicket,
+      formData,
+      selectedTicket
+    };
 
     return payload;
   };
 
   const handleChangeTemplate = (e) => {
-    setMailTemplateData(e.target.value);
+    setSelectedMailTempate(e.target.value);
+    formatTempateData(e.target.value);
   };
+
   const handleSubmit = async () => {
     try {
       handleModalClose();
       setLoading(true);
 
-      const payload = replaceEmailTemplate(
+      const payload = formatEmailPayload(
         mailTemplateData,
         selectedTicket,
         contentTemplate
@@ -183,21 +83,8 @@ const TarguModal = ({
       let res;
 
       if (actionBtnType == "accept") {
-        if (contentTemplate == "Enrollment") {
-          res = await FormService.acceptEnrollmentInquiry(payload);
-          setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-        }
-        if (contentTemplate == "TransferTarguMures") {
-          res = await FormService.acceptTransferTarguMuresInquiry(payload);
-          setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-        } else {
-          try {
-            res = await FormService.acceptInquiry(payload);
-            setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-          } catch (err) {
-            console.log(err, "=====approve error");
-          }
-        }
+        res = await FormService.acceptTransferTarguMuresInquiry(payload);
+        setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
       }
       if (actionBtnType == "reject") {
         res = await FormService.rejectInquiry(payload);
@@ -208,15 +95,52 @@ const TarguModal = ({
         try {
           res = await FormService.notifyTranscriptRecord(payload);
           setUnClickedApprovedTicketsCount(unClickedApprovedTicketsCount + 1);
-        } catch (err) {}
+        } catch (err) { }
       }
       setTicketStatusChange(false);
       setSelectedTicket(res?.inquiry);
 
       successNotify(res?.message);
       setLoading(false);
-    } catch (error) {}
+    } catch (error) { }
   };
+
+  useEffect(() => {
+    const getEmailTemplates = async () => {
+      try {
+        const { data } = await emailTemplateService.getEmailTemplatesByCategory({
+          inquiryCategory,
+          subCategory1
+        });
+
+        setEmailTemplates(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getEmailTemplates();
+  }, []);
+
+  useEffect(() => {
+    if (show && emailTemplates.length > 0) {
+      const defaultTempate = emailTemplates.find(log => log.emailTemplateTitle === "Default");
+      if (defaultTempate) {
+        setSelectedMailTempate(defaultTempate.emailTemplateContent);
+        formatTempateData(defaultTempate.emailTemplateContent);
+      } else {
+        setSelectedMailTempate(emailTemplates[0].emailTemplateContent);
+        formatTempateData(emailTemplates[0].emailTemplateContent);
+      }
+    }
+  }, [show, emailTemplates])
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   return (
     <Modal show={show} onHide={handleModalClose}>
       <Modal.Header closeButton>
@@ -252,16 +176,14 @@ const TarguModal = ({
               border: "1px solid #007bff"
             }}
             className="custom-input mt-4"
+            value={selectedMailTemplate}
           >
-            <option key="0" value={defaultTemplate}>
-              Default Template
-            </option>
-            {(emailTemplates || []).map((emailTemplate, index) => (
+            {emailTemplates.map((log, index) => (
               <option
-                key={index + 1}
-                value={emailTemplate?.emailTemplateContent}
+                key={index}
+                value={log.emailTemplateContent}
               >
-                {emailTemplate?.emailTemplateTitle}
+                {log?.emailTemplateTitle}
               </option>
             ))}
           </Form.Control>

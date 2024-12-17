@@ -21,10 +21,6 @@ class TicketGroupService {
         const deleteTicketGroupEndPoint = "api/ticket-group/";
         return await HttpService.delete(deleteTicketGroupEndPoint, _payload)
     };
-    // fetchAllRegistedTicketTypes = async () => {
-    //     const fetchAllRegistedTicketTypesEndPoint = "/api/ticket-group/all-types";
-    //     return await HttpService.post(fetchAllRegistedTicketTypesEndPoint);
-    // }
 }
 
 export default new TicketGroupService();
