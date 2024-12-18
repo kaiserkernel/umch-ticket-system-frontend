@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const MedicalAbilities = ({ applicationRequest }) => {
   const {
@@ -21,6 +22,9 @@ const MedicalAbilities = ({ applicationRequest }) => {
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
   const today = dayjs().toDate();
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   const [formDetailData, setformDetailData] = useState({
     hospital: ""
@@ -157,6 +161,7 @@ const MedicalAbilities = ({ applicationRequest }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -174,6 +179,7 @@ const MedicalAbilities = ({ applicationRequest }) => {
             } catch (err) {
               setLoading(false);
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
 
               if (typeof errors != "object") {
                 errorNotify(errors);

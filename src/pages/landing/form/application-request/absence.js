@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const StyledDatePicker = styled(DatePicker)`
   border: 1px solid !important;
@@ -31,6 +32,9 @@ const Absence = ({ applicationRequest }) => {
 
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   const [formDetailData, setformDetailData] = useState({
     reasonForAbsence: "",
@@ -169,6 +173,7 @@ const Absence = ({ applicationRequest }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -186,6 +191,7 @@ const Absence = ({ applicationRequest }) => {
               });
             } catch (err) {
               const errors = err?.message;
+              setInquiryState("error");
 
               if (typeof errors != "object") {
                 errorNotify(errors);

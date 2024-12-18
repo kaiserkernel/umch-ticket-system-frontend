@@ -4,6 +4,7 @@ import { Row, Col, Form } from "react-bootstrap";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const DeanOffice = ({ complaints }) => {
   const {
@@ -20,6 +21,9 @@ const DeanOffice = ({ complaints }) => {
   const [formDetailData, setformDetailData] = useState({
     complaintComment: ""
   });
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   useEffect(() => {
     setErrors({});
@@ -74,6 +78,7 @@ const DeanOffice = ({ complaints }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
 
               setLoading(false);
               successNotify(res?.message);
@@ -89,6 +94,8 @@ const DeanOffice = ({ complaints }) => {
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
+              setLoading(false)
 
               if (typeof errors != "object") {
                 errorNotify(errors);

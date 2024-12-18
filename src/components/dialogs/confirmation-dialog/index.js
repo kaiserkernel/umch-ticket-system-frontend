@@ -16,84 +16,53 @@ import checkCircleAnimation from './animations/check-circle.json'
 import xCircleAnimation from './animations/x-circle.json'
 import loadingAnimation from './animations/loading.json'
 
-const ConfirmationDialog = ({ isOpen, isPending, setIsOpen, onConfirm }) => {
+import { useInquiry } from '../../../context/inquiryProvider'
+
+const ConfirmationDialog = () => {
   // States
-  // const [isConfirm, setisConfirm] = useState(false)
-  // const [secondDialog, setSecondDialog] = useState(false)
+  const { inquiryState, setInquiryState } = useInquiry();
 
-  // const handleSecondDialogClose = () => {
-  //   setSecondDialog(false)
-  //   onCancel()
-  // }
+  useEffect(() => {
 
-  // const handleConfirmation = async (value) => {
-  //   if (onConfirm && value) {
-  //     onConfirm()
-  //     setisConfirm(true)
-  //   }
-
-  //   onCancel()
-  // }
-
-  // useEffect(() => {
-  //   if (!isPending && isConfirm) {
-  //     // setUserInput(true)
-  //     setSecondDialog(true)
-  //   }
-  // }, [isPending, isConfirm])
+  }, [])
 
   return (
     <>
-      {/* Loading Dialog */}
-      {/* <Modal size='sm' show={isPending} centered>
-        <Modal.Body className='d-flex flex-column align-items-center text-center'>
-          <Lottie animationData={loadingAnimation} style={{ width: 150, height: 150 }} />
-        </Modal.Body>
-      </Modal>
-
-      <Modal show={open} onHide={onCancel} centered>
-        <Modal.Body className='d-flex flex-column align-items-center text-center'>
-          <Lottie animationData={infoCircleAnimation} style={{ width: 200, height: 200 }} />
-          <h4>
-            {type === 'delete-account' && 'Are you sure you want to deactivate your account?'}
-            {type === 'unsubscribe' && 'Could you send contact info?'}
-          </h4>
-        </Modal.Body>
-        <Modal.Footer className='justify-content-center'>
-          <Button variant='primary' onClick={() => handleConfirmation(true)}>
-            Yes
-          </Button>
-          <Button
-            variant='secondary'
-            onClick={() => {
-              handleConfirmation(false)
-            }}
-          >
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      
-      <Modal show={secondDialog} onHide={handleSecondDialogClose} centered>
+      <Modal show={inquiryState === "success"} centered>
         <Modal.Body className='d-flex flex-column align-items-center text-center'>
           <Lottie
             loop={false}
-            animationData={userInput ? checkCircleAnimation : xCircleAnimation}
+            animationData={checkCircleAnimation}
             style={{ width: 200, height: 200 }}
           />
           <h4 className='mt-3'>
-            {userInput
-              ? type === 'delete-account' ? 'Deactivated' : 'Success!'
-              : 'Something went error'}
+            Successfully submitted.
           </h4>
         </Modal.Body>
         <Modal.Footer className='justify-content-center'>
-          <Button variant='success' onClick={handleSecondDialogClose}>
+          <Button variant='success' onClick={(evt) => setInquiryState("")}>
             Ok
           </Button>
         </Modal.Footer>
-      </Modal> */}
+      </Modal>
+
+      <Modal show={inquiryState === "error"} centered>
+        <Modal.Body className='d-flex flex-column align-items-center text-center'>
+          <Lottie
+            loop={false}
+            animationData={xCircleAnimation}
+            style={{ width: 200, height: 200 }}
+          />
+          <h4 className='mt-3'>
+            Error occured. Please try again
+          </h4>
+        </Modal.Body>
+        <Modal.Footer className='justify-content-center'>
+          <Button variant='danger' onClick={(evt) => setInquiryState("")}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   )
 }

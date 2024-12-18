@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const Canvas = ({ campusIT }) => {
   const {
@@ -23,6 +24,9 @@ const Canvas = ({ campusIT }) => {
   const [formDetailData, setformDetailData] = useState({
     request: ""
   });
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   const [files, setFiles] = useState([]);
   const [originalFiles, setOriginalFiles] = useState([]);
@@ -154,6 +158,7 @@ const Canvas = ({ campusIT }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -168,6 +173,8 @@ const Canvas = ({ campusIT }) => {
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
+              setLoading(false)
 
               if (typeof errors != "object") {
                 errorNotify(errors);

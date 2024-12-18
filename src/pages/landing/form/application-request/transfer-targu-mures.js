@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const StyledDatePicker = styled(DatePicker)`
   border: 1px solid !important;
@@ -37,6 +38,9 @@ const TransferTarguMures = ({ applicationRequest }) => {
     birthday: "",
     comment: ""
   });
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   const [files, setFiles] = useState([]);
   const [originalFiles, setOriginalFiles] = useState([]);
@@ -168,6 +172,7 @@ const TransferTarguMures = ({ applicationRequest }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -184,6 +189,8 @@ const TransferTarguMures = ({ applicationRequest }) => {
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
+              setLoading(false);
 
               if (typeof errors != "object") {
                 errorNotify(errors);

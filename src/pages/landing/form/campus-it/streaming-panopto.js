@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const StyledDatePicker = styled(DatePicker)`
   border: 1px solid !important;
@@ -31,6 +32,9 @@ const StreamingPanopto = ({ campusIT }) => {
 
   const isFirstRender = useRef(true);
   const [errors, setErrors] = useState({});
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   const [formDetailData, setformDetailData] = useState({
     room: "",
@@ -170,6 +174,7 @@ const StreamingPanopto = ({ campusIT }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -188,6 +193,8 @@ const StreamingPanopto = ({ campusIT }) => {
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
+              setLoading(false)
 
               if (typeof errors != "object") {
                 errorNotify(errors);

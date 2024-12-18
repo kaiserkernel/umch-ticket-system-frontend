@@ -14,12 +14,9 @@ import CampusIT from "./campus-it";
 import Complaints from "./complaints";
 import BookRental from "./book-rental";
 import Other from "./other";
-// import ConfirmationDialog from "../../../components/dialogs/confirmation-dialog"
+import ConfirmationDialog from "../../../components/dialogs/confirmation-dialog"
 
 import { TicketTypeStructure } from "../../../globalVariables";
-
-import { InquiryProvider } from "../../../context/inquiryProvider";
-import { inquiryContext } from "../../../context/inquiryProvider";
 
 export const FormContext = createContext();
 
@@ -43,8 +40,6 @@ const FormSection = () => {
   });
 
   const [mainPageErrors, setErrors] = useState({});
-
-  // const [inquiryState, setInquiryState] = inquiryContext;
 
   const validate = () => {
     const newErrors = {};
@@ -176,7 +171,6 @@ const FormSection = () => {
         setLoading
       }}
     >
-      {/* <InquiryProvider> */}
       <BlockUI blocking={loading}>
         <section className="form py-2 py-md-2">
           <div className="bg-gray mt-2 mt-md-4 py-2 py-md-5">
@@ -467,11 +461,8 @@ const FormSection = () => {
           </div>
         </section>
       </BlockUI>
-      {/* <ConfirmationDialog
-          inquiryState={inquiryState}
-          setInquiryState={setInquiryState}
-        /> */}
-      {/* </InquiryProvider> */}
+      <ConfirmationDialog
+      />
     </FormContext.Provider>
   );
 };

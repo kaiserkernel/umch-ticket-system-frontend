@@ -3,6 +3,7 @@ import { Row, Col, Form } from "react-bootstrap";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const OnlineCatalogue = ({ applicationRequest }) => {
   const {
@@ -22,6 +23,9 @@ const OnlineCatalogue = ({ applicationRequest }) => {
 
   const [files, setFiles] = useState([]);
   const [originalFiles, setOriginalFiles] = useState([]);
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   useEffect(() => {
     setIsFormSubmit(false);
@@ -150,6 +154,7 @@ const OnlineCatalogue = ({ applicationRequest }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -165,6 +170,7 @@ const OnlineCatalogue = ({ applicationRequest }) => {
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
 
               if (typeof errors != "object") {
                 errorNotify(errors);

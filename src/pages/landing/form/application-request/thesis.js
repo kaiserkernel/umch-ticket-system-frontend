@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const Thesis = ({ applicationRequest }) => {
   const {
@@ -29,6 +30,9 @@ const Thesis = ({ applicationRequest }) => {
     coordinatorOfFaculty: "",
     comment: ""
   });
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   const [files, setFiles] = useState([]);
   const [originalFiles, setOriginalFiles] = useState([]);
@@ -162,6 +166,7 @@ const Thesis = ({ applicationRequest }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -182,6 +187,7 @@ const Thesis = ({ applicationRequest }) => {
               });
             } catch (err) {
               setLoading(false);
+              setInquiryState("error");
               const errors = err?.errors || err?.error;
 
               if (typeof errors != "object") {

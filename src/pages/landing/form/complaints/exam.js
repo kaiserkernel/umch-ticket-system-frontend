@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import { FormContext } from "../index";
 import FormService from "../../../../sevices/form-service";
 import { ToastContainer, toast } from "react-toastify";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const StyledDatePicker = styled(DatePicker)`
   border: 1px solid !important;
@@ -40,6 +41,9 @@ const Exam = ({ complaints }) => {
     module: "",
     complaintComment: ""
   });
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   useEffect(() => {
     setIsFormSubmit(false);
@@ -96,6 +100,7 @@ const Exam = ({ complaints }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
 
               setLoading(false);
               successNotify(res?.message);
@@ -114,6 +119,8 @@ const Exam = ({ complaints }) => {
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
+              setLoading(false)
 
               if (typeof errors != "object") {
                 errorNotify(errors);

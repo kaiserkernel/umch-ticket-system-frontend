@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
+import { useInquiry } from "../../../../context/inquiryProvider";
 
 const StyledDatePicker = styled(DatePicker)`
   border: 1px solid !important;
@@ -40,6 +41,9 @@ const Enrollment = ({ applicationRequest }) => {
 
   const [files, setFiles] = useState([]);
   const [originalFiles, setOriginalFiles] = useState([]);
+
+  // use inquiry
+  const { setInquiryState } = useInquiry();
 
   useEffect(() => {
     setIsFormSubmit(false);
@@ -168,6 +172,7 @@ const Enrollment = ({ applicationRequest }) => {
             try {
               setLoading(true);
               let res = await FormService.createInquiry(formDataToSend);
+              setInquiryState("success");
               setLoading(false);
               successNotify(res?.message);
               setformDetailData({
@@ -186,6 +191,7 @@ const Enrollment = ({ applicationRequest }) => {
             } catch (err) {
               setLoading(false);
               const errors = err?.errors || err?.error;
+              setInquiryState("error");
 
               if (typeof errors != "object") {
                 errorNotify(errors);

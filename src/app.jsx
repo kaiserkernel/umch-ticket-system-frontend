@@ -5,6 +5,7 @@ import Sidebar from "./components/sidebar/sidebar.jsx";
 import Content from "./components/content/content.jsx";
 import { AppSettings } from "./config/app-settings.js";
 import { AuthProvider } from "./context/authProvider.js";
+import { InquiryProvider } from "./context/inquiryProvider.js";
 
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -133,26 +134,28 @@ function App() {
   return (
     <AppSettings.Provider value={providerValue}>
       <AuthProvider>
-        <div
-          className={
-            "app " +
-            (appBoxedLayout ? "app-boxed-layout " : "") +
-            (appContentFullHeight ? "app-content-full-height " : "") +
-            (appHeaderNone ? "app-without-header " : "") +
-            (appSidebarNone ? "app-without-sidebar " : "") +
-            (appSidebarCollapsed ? "app-sidebar-collapsed " : "") +
-            (appFooter ? "app-footer-fixed " : "") +
-            (appTopNav ? "app-with-top-nav " : "")
-          }
-        >
-          {!appHeaderNone && <Header />}
-          {appTopNav && <TopNav />}
-          {!appSidebarNone && <Sidebar />}
-          {!appContentNone && <Content className={appContentClass} />}
-          {/* {appFooter && <Footer />} */}
-          {/* <ThemePanel /> */}
-        </div>
-        <ToastContainer />
+        <InquiryProvider>
+          <div
+            className={
+              "app " +
+              (appBoxedLayout ? "app-boxed-layout " : "") +
+              (appContentFullHeight ? "app-content-full-height " : "") +
+              (appHeaderNone ? "app-without-header " : "") +
+              (appSidebarNone ? "app-without-sidebar " : "") +
+              (appSidebarCollapsed ? "app-sidebar-collapsed " : "") +
+              (appFooter ? "app-footer-fixed " : "") +
+              (appTopNav ? "app-with-top-nav " : "")
+            }
+          >
+            {!appHeaderNone && <Header />}
+            {appTopNav && <TopNav />}
+            {!appSidebarNone && <Sidebar />}
+            {!appContentNone && <Content className={appContentClass} />}
+            {/* {appFooter && <Footer />} */}
+            {/* <ThemePanel /> */}
+          </div>
+          <ToastContainer />
+        </InquiryProvider>
       </AuthProvider>
     </AppSettings.Provider>
   );
