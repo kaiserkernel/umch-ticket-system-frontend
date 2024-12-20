@@ -90,6 +90,7 @@ const Campus = ({ complaints }) => {
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

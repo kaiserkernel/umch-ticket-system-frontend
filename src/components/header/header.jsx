@@ -3,16 +3,13 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { slideToggle } from "./../../composables/slideToggle.js";
 import { useAuth } from "../../context/authProvider.js";
+import { useModal } from "../../context/profileModalProvider.js";
 
 function Header() {
-  const notificationData = [];
   const navigate = useNavigate();
-  const {
-    isAuthenticated,
-    setIsAuthenticated,
-    isAvatarUpdated,
-    setAvatarUpdated
-  } = useAuth();
+  const { setIsAuthenticated, isAvatarUpdated } = useAuth();
+  const { setProfileModalVisible } = useModal();
+
   const [userData, setUserData] = useState(() => {
     const storedData = localStorage.getItem("userData");
     return storedData ? JSON.parse(storedData) : null;
@@ -154,7 +151,7 @@ function Header() {
           </div>
         )}
 
-        <div className="menu-item dropdown dropdown-mobile-full">
+        {/* <div className="menu-item dropdown dropdown-mobile-full">
           <a
             href="#/"
             data-bs-toggle="dropdown"
@@ -204,7 +201,7 @@ function Header() {
               </a>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="menu-item dropdown dropdown-mobile-full">
           <a
             href="#/"
@@ -247,20 +244,13 @@ function Header() {
               INBOX{" "}
               <i className="bi bi-envelope ms-auto text-theme fs-16px my-n1"></i>
             </Link>
-            {/* <Link
-              to="/calendar"
+            <button
               className="dropdown-item d-flex align-items-center"
-            >
-              CALENDAR{" "}
-              <i className="bi bi-calendar ms-auto text-theme fs-16px my-n1"></i>
-            </Link> */}
-            <Link
-              to="/profile"
-              className="dropdown-item d-flex align-items-center"
+              onClick={(evt) => setProfileModalVisible(prev => !prev)}
             >
               SETTINGS{" "}
               <i className="bi bi-gear ms-auto text-theme fs-16px my-n1"></i>
-            </Link>
+            </button>
             <div className="dropdown-divider"></div>
             <Link
               to="#"

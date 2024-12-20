@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Form } from "react-bootstrap";
+import { Modal, Form, Button, ProgressBar } from "react-bootstrap";
 
 import formService from "../../sevices/form-service";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -9,10 +9,12 @@ const ReplyStudentModal = ({
     show,
     handleModalClose,
     selectedTicket,
-    setTicketStatusChange
+    setTicketStatusChange,
+    userRole
 }) => {
     const [mailContent, setMailContent] = useState("");
     const [loading, setLoading] = useState(false);
+    const [file, setFile] = useState(null);
 
     const successNotify = (msg) => {
         toast.info(msg, {
@@ -26,17 +28,32 @@ const ReplyStudentModal = ({
         });
     };
 
+    const handleFileChange = (evt) => {
+        const selectedFile = evt.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+        }
+    };
+
     const handleSendMail = async () => {
         if (!mailContent) {
             return errorNotify("Please input content")
         }
 
+        const temp = {
+            selectedTicket: selectedTicket,
+            mailContent: mailContent
+        }
+
+        const formDataToSend = new FormData();
+        for (const key in temp) {
+            formDataToSend.append(key, JSON.stringify(temp[key]));
+        }
+        formDataToSend.append("documents", file)
+
         setLoading(true);
         try {
-            const res = await formService.replyStudent({
-                selectedTicket: selectedTicket,
-                mailContent: mailContent
-            });
+            const res = await formService.replyStudent(formDataToSend);
             successNotify(res.message);
             setTicketStatusChange(prev => !prev);
             handleModalClose();
@@ -51,6 +68,7 @@ const ReplyStudentModal = ({
     useEffect(() => {
         if (!show) {
             setMailContent("")
+            setFile(null);
         }
     }, [show])
 
@@ -59,7 +77,7 @@ const ReplyStudentModal = ({
             show={show}
         >
             <Modal.Header>
-                <Modal.Title>Reply To The Student</Modal.Title>
+                <Modal.Title>{userRole !== 2 ? "Reply To The Student" : "Reply To The Support"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p>{selectedTicket?.inquiryNumber} from {selectedTicket?.firstName} {selectedTicket?.lastName} </p>
@@ -70,6 +88,14 @@ const ReplyStudentModal = ({
                         value={mailContent}
                         onChange={evt => setMailContent(evt.target.value)} />
                 </Form.Group>
+                {
+                    userRole === 2 && (
+                        <Form.Group className="mt-3">
+                            <Form.Label>Attachment</Form.Label>
+                            <Form.Control type="file" onChange={handleFileChange} />
+                        </Form.Group>
+                    )
+                }
             </Modal.Body>
             <Modal.Footer>
                 <button className="btn btn-info" onClick={(evt) => handleSendMail()}>

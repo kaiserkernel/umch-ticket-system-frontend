@@ -192,6 +192,7 @@ const Internship = ({ applicationRequest }) => {
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
@@ -293,8 +294,7 @@ const Internship = ({ applicationRequest }) => {
         <Col lg={6}>
           <Form.Group controlId="partner">
             <Form.Label className="input-label">
-              Interval of time from{" "}
-              <span className="ms-1 required-label">*</span>
+              Interval of time <span className="fw-bold">From</span><span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker
               selected={formDetailData.timeFrom}
@@ -314,7 +314,7 @@ const Internship = ({ applicationRequest }) => {
         <Col lg={6}>
           <Form.Group controlId="partner">
             <Form.Label className="input-label">
-              Interval of time to<span className="ms-1 required-label">*</span>
+              Interval of time <span className="fw-bold">To</span><span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker
               selected={formDetailData.timeTo}

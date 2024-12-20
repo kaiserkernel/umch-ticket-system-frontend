@@ -111,6 +111,7 @@ const BookRental = () => {
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
@@ -258,7 +259,8 @@ const BookRental = () => {
         <Col lg={6}>
           <Form.Group controlId="firstName">
             <Form.Label className="input-label">
-              Period of time from
+              Period of time
+              <span className="fw-bold"> From</span>
               <span className="ms-1 required-label">*</span>
             </Form.Label>
             <StyledDatePicker

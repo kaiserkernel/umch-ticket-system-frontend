@@ -159,18 +159,19 @@ const OnlineCatalogue = ({ applicationRequest }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-
                 comment: ""
               });
               setFiles([]);
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
               setInquiryState("error");
+              setLoading(false);
 
               if (typeof errors != "object") {
                 errorNotify(errors);

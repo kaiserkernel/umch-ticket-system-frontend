@@ -165,11 +165,13 @@ const SyllabusAcademicYear = ({ applicationRequest }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
               setInquiryState("error");
+              setLoading(false);
 
               if (typeof errors != "object") {
                 errorNotify(errors);
@@ -203,7 +205,7 @@ const SyllabusAcademicYear = ({ applicationRequest }) => {
           once a year.
         </p>
         <p>
-          It will be produced at UMFST and shipped to Germany.Please note that
+          It will be produced at UMFST and shipped to Germany. Please note that
           processing your request will take approximately 30 days. The UMCH
           Student Secretariat will contact you as soon as the document is ready
           for pickup in Hamburg.

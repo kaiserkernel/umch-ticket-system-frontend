@@ -13,11 +13,15 @@ import formService from "../../sevices/form-service.js";
 import BeatLoader from "react-spinners/BeatLoader";
 import BlockUI from "react-block-ui";
 import "react-block-ui/style.css";
+import FormService from "../../sevices/form-service.js";
+
+import { TicketStatus } from "../../globalVariables.js";
 
 function PagesLogin() {
   const navigate = useNavigate();
   const location = useLocation();
   const context = useContext(AppSettings);
+  const [ticketInfo, setTicketInfo] = useState(null);
 
   const [reason, setReason] = useState();
   const [loading, setLoading] = useState(false);
@@ -26,6 +30,22 @@ function PagesLogin() {
     context.setAppHeaderNone(true);
     context.setAppSidebarNone(true);
     context.setAppContentClass("p-0");
+
+    // get ticket info
+    const fetchTicketInfo = async () => {
+      const path = location.pathname;
+      const pathArray = path.split("/");
+      try {
+        const info = await FormService.getInquiryByInquiryId(pathArray[2]);
+        console.log(info.inquiry, 'ticket info')
+        setTicketInfo(info.inquiry);
+      } catch (error) {
+        console.log("Error occured on fetch info", error);
+        setTicketInfo(null);
+      }
+    }
+
+    fetchTicketInfo();
 
     return function cleanUp() {
       context.setAppHeaderNone(false);
@@ -98,10 +118,28 @@ function PagesLogin() {
                   address it promptly and effectively.
                 </p>
                 <p className="text-inverse text-opacity-50 text-center sm-font">
-                  ure you can easily reach our team for assistance with requests
+                  Sure you can easily reach our team for assistance with requests
                   and complaints. Please sign in and provide the details of your
                   inquiry so we can address it promptly and effectively.
                 </p>
+              </div>
+
+              <div>
+                <p className="fw-bold mb-1">Ticket Information</p>
+                {ticketInfo && (
+                  <>
+                    <span className="fw-bold">Ticket Number: </span>
+                    <span>{ticketInfo.inquiryNumber}</span>
+                  </>
+                )}
+              </div>
+              <div className="mb-3">
+                {ticketInfo && (
+                  <>
+                    <span className="fw-bold">Ticket Status: </span>
+                    <span>{TicketStatus[ticketInfo?.status]}</span>
+                  </>
+                )}
               </div>
 
               <Row className="">

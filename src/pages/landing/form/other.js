@@ -92,6 +92,7 @@ const Other = () => {
 
             setFormData({
               ...formData,
+              inquiryCategory: "",
               agreement: false
             });
           } catch (err) {

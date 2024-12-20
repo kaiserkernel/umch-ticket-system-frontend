@@ -272,7 +272,7 @@ const TicketTypeStructure = [
       "Change of teaching hospital",
       "Change of study group",
       "Demonstrator student",
-      "Enrollment",
+      "Enrollment Certificate",
       "Exam inspection",
       "Online Catalogue (Solaris)",
       "Recognition of Courses",
@@ -320,7 +320,7 @@ const TicketTypeList = [
   { "Change of teaching hospital": "" },
   { "Change of study group": "" },
   { "Demonstrator student": "" },
-  { "Enrollment": "" },
+  { "Enrollment Certificate": "" },
   { "Exam inspection": "" },
   { "Online Catalogue (Solaris)": "" },
   { "Recongnition of Courses": "" },
@@ -404,7 +404,7 @@ const EmailTemplateDescription = {
       </p>
     </>
   ),
-  "Enrollment": (
+  "Enrollment Certificate": (
     <>
       <p>
         -Nationality ( "[nationality]" )
@@ -669,10 +669,22 @@ const EmailTemplateDescription = {
   )
 }
 
+const TicketStatus = {
+  0: "reopen",
+  1: "check",
+  2: "accept",
+  3: "reject",
+  4: "process",
+  5: "done",
+  6: "notify",
+  7: "close"
+}
+
 export {
   INQUIRYCATEGORIESEmailTemplates,
   POSITIONNAMES,
   TicketTypeList,
   EmailTemplateDescription,
-  TicketTypeStructure
+  TicketTypeStructure,
+  TicketStatus
 };

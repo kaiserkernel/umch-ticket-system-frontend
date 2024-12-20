@@ -14,23 +14,6 @@ const BannerSection = () => {
             height={10}
             className="bg-header-img"
           />
-
-          <div
-            className="d-block d-md-none bg-header-overlay-section"
-            style={{ width: "70%" }}
-          >
-            <div
-              className={`bg-header-img-caption ${
-                isVisible ? "fade-in-down" : ""
-              }`}
-            >
-              {/* <img src="assets/img/Pen.svg" width={50} height={50} /> */}
-              <div className="bg-header-img-headerCaption">Ticket System</div>
-              <div className="bg-header-img-textCaption ">
-                for Requests and Complaints
-              </div>
-            </div>
-          </div>
         </div>
         <div className="bg-header-mask-imgContainer">
           <img
@@ -43,9 +26,8 @@ const BannerSection = () => {
 
           <div className="bg-header-overlay-section" style={{ width: "50%" }}>
             <div
-              className={`bg-header-img-caption ${
-                isVisible ? "fade-in-down" : ""
-              }`}
+              className={`bg-header-img-caption ${isVisible ? "fade-in-down" : ""
+                }`}
             >
               <img src="/assets/img/Pen.svg" width={70} height={70} />
               <div className="bg-header-img-headerCaption mt-2 mt-md-5">
@@ -57,7 +39,22 @@ const BannerSection = () => {
             </div>
           </div>
         </div>
-        <div className="d-md-none d-flex bg-header-mobile-mask-img justify-content-center align-items-center w-100"></div>
+        <div className="d-md-none d-flex bg-header-mobile-mask-img justify-content-center align-items-center w-100">
+          <div
+            className="d-block d-md-none bg-header-overlay-section"
+            style={{ width: "70%" }}
+          >
+            <div
+              className={`bg-header-img-caption ${isVisible ? "fade-in-down" : ""
+                }`}
+            >
+              <div className="bg-header-img-headerCaption mt-3">Ticket System</div>
+              <div className="bg-header-img-textCaption ">
+                for Requests and Complaints
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

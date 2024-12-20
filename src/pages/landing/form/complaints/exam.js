@@ -115,6 +115,7 @@ const Exam = ({ complaints }) => {
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

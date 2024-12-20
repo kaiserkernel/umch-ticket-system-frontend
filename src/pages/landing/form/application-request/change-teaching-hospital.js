@@ -171,11 +171,13 @@ const ChangeTeachingHospital = ({ applicationRequest }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
               setInquiryState("error");
+              setLoading(false);
 
               if (typeof errors != "object") {
                 errorNotify(errors);
@@ -229,8 +231,7 @@ const ChangeTeachingHospital = ({ applicationRequest }) => {
         <Col lg={6}>
           <Form.Group controlId="">
             <Form.Label className="input-label">
-              Name of the hospital changing from
-              <span className="ms-1 required-label">*</span>
+              Name of the hospital changing <span className="fw-bold">From</span><span className="ms-1 required-label">*</span>
             </Form.Label>
             <Form.Control
               type="text"
@@ -249,8 +250,7 @@ const ChangeTeachingHospital = ({ applicationRequest }) => {
         <Col lg={6}>
           <Form.Group controlId="">
             <Form.Label className="input-label">
-              Name of the hospital changing to
-              <span className="ms-1 required-label">*</span>
+              Name of the hospital changing <sapn className="fw-bold">To</sapn><span className="ms-1 required-label">*</span>
             </Form.Label>
             <Form.Control
               type="text"

@@ -86,12 +86,12 @@ const OnlineCatalouge = ({ complaints }) => {
               successNotify(res?.message);
               setformDetailData({
                 ...formDetailData,
-
                 complaintComment: ""
               });
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

@@ -7,12 +7,14 @@ import {
   matchPath
 } from "react-router-dom";
 import menus from "./../../config/app-menu.jsx";
+import { useModal } from "../../context/profileModalProvider.js";
 
 function NavItem({ menu, ...props }) {
   let path = menu.path ? menu.path : "";
   let resolved = useResolvedPath(path);
   let match = useMatch({ path: resolved.pathname });
   let location = useLocation();
+  const { setProfileModalVisible } = useModal();
 
   if (menu.is_header) {
     return <div className="menu-header">{menu.title}</div>;
@@ -60,7 +62,14 @@ function NavItem({ menu, ...props }) {
         (menu.children ? " has-sub" : "")
       }
     >
-      <NavLink className="menu-link" to={menu.path} {...props}>
+      <NavLink className="menu-link"
+        to={menu.path !== "/profile" ? menu.path : "#"}
+        {...props}
+        onClick={(evt) => {
+          if (menu.path === "/profile")
+            setProfileModalVisible(prev => !prev)
+        }}
+      >
         {img} {icon} {title}
         {caret} {badge}
       </NavLink>
@@ -89,15 +98,6 @@ function SidebarNav() {
   }
 
   const filteredMenu = menus.filter((menu) => {
-    // Only include "Account Management" if the role permits
-    // console.log(userData.role, userData.position, userRole, "aaa")
-    // if (
-    //   menu.title === "Account Management" &&
-    //   userData?.role != 0 &&
-    //   userData?.position != 1
-    // ) {
-    //   return false;
-    // }
     if (
       (menu.title === "Account Management" ||
         menu.title === "Email Template" ||

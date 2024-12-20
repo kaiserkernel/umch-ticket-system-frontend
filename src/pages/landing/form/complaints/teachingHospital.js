@@ -93,6 +93,7 @@ const TeachingHospital = ({ complaints }) => {
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

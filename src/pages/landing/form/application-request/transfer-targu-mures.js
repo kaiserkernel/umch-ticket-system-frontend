@@ -185,6 +185,7 @@ const TransferTarguMures = ({ applicationRequest }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

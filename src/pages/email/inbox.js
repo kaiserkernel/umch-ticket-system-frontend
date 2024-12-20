@@ -427,7 +427,7 @@ function EmailInbox() {
         return <ChangeStudyGroup selectedTicket={selectedTicket} />;
       case "Application and Requests-Demonstrator student":
         return <DemonstratorStudent selectedTicket={selectedTicket} />;
-      case "Application and Requests-Enrollment":
+      case "Application and Requests-Enrollment Certificate":
         return <Enrollment selectedTicket={selectedTicket} />;
       case "Application and Requests-Exam inspection":
         return <ExamInspection selectedTicket={selectedTicket} />;
@@ -626,7 +626,7 @@ function EmailInbox() {
         )
       }
 
-      if (contentTemplate === "Application and Requests-Enrollment") {
+      if (contentTemplate === "Application and Requests-Enrollment Certificate") {
         // generate pdf button
         return (
           <div className="d-flex justify-content-end">
@@ -703,6 +703,23 @@ function EmailInbox() {
     return;
 
   }
+
+  const BtnUpperContentForStudent = () => (
+    <>
+      <button
+        type="button" className="btn btn-primary"
+        onClick={(evt) => setReplyStudentModalShow(true)}
+      >
+        Reply to the support
+      </button>
+      <button
+        type="button" className="btn btn-secondary ms-2"
+        onClick={evt => setPassToAnotherDepartmentModalShow(true)}
+      >
+        Forward Ticket
+      </button>
+    </>
+  )
 
   let userData = localStorage.getItem("userData");
   userData = JSON.parse(userData);
@@ -1408,34 +1425,39 @@ function EmailInbox() {
   const FormatTicketDataForReplyStudent = ({ ticket }) => {
     // add reply student
     const _replyStudent = replyStudentMessage.filter(log => log.inquiry?._id === ticket?._id);
-
     return (
       <>
         {
           _replyStudent && _replyStudent.length > 0 && _replyStudent.map((log, idx) => (
             <div
               key={idx}
-              className="mailbox-message p-3 bg-gradient-gray-600 text-white"
+              className={`mailbox-message p-3 text-white ${log.user?.role !== 2 ? "bg-gradient-gray-600" : "bg-gradient-teal"}`}
               style={{ cursor: "pointer" }}
               onClick={(evt) => handleClickInternalMessage(log, ticket)}
             >
               <div className="mailbox-sender">
                 <span className="mailbox-sender-name mb-2 pb-1 border border-0 border-white border-bottom">
-                  Reply Message to student
+                  {log.user?.role !== 2 ? "Reply Message to Student" : "Reply Message to Support"}
                 </span>
               </div>
               <div>
                 Ticket Number: <span className="fw-bold">{ticket.inquiryNumber}</span>
               </div>
+              {
+                log.user?.role !== 2 && (
+                  <>
+                    <div>
+                      Creator: {log.user.firstName}{" "}
+                      {log.user.lastName}
+                    </div>
+                    <div>
+                      Position: {POSITIONNAMES[log.user.position]}
+                    </div>
+                  </>
+                )
+              }
               <div>
-                Creator: {log.user.firstName}{" "}
-                {log.user.lastName}
-              </div>
-              <div>
-                Position: {POSITIONNAMES[log.user.position]}
-              </div>
-              <div>
-                Time: {moment(log.createdAt).format("DD-MM-YYYY")};
+                Created Time: {moment(log.createdAt).format("DD-MM-YYYY")};
               </div>
             </div>
           ))
@@ -1449,7 +1471,17 @@ function EmailInbox() {
       return <></>
     } else {
       const { internalData, ticketData } = selectedInternalMessage;
-      const header = (internalData.state === "internalNote" ? "Internal Note" : "Reply Message ") + ` for ${ticketData.inquiryNumber} Ticket`
+      let title;
+
+      if (internalData.state !== "internalNote") {
+        title = internalData.user.role === 2
+          ? "Reply Message to Support"
+          : "Reply Message to Student";
+      } else {
+        title = "Internal Note";
+      }
+
+      const header = title + ` for ${ticketData.inquiryNumber} Ticket`
       return (
         <div className="p-4">
           <p className="fw-bold">{header}</p>
@@ -1460,9 +1492,60 @@ function EmailInbox() {
           <p>Student Name: {ticketData.firstName}{" "}{ticketData.lastName}</p>
           <p>Student Enrollment Number: {ticketData.firstName}{" "}{ticketData.enrollmentNumber}</p>
           <hr />
-          <p className="fw-bold">{internalData.state === "internalNote" ? "Internal Note " : "Reply Message "} Information</p>
-          <p>Creator: {internalData.user.firstName}{" "}{internalData.user.lastName}</p>
-          <p>Position: {POSITIONNAMES[internalData.user.position]}</p>
+          <p className="fw-bold">{title} - Information</p>
+          {
+            internalData.user.role !== 2 && (
+              <>
+                <p>Creator: {internalData.user.firstName}{" "}{internalData.user.lastName}</p>
+                <p>Position: {POSITIONNAMES[internalData.user.position]}</p>
+              </>
+            )
+          }
+          {
+            internalData.document !== null && (
+              <div className="mailbox">
+                <div className="mailbox-detail px-0 pt-0">
+                  <div className="mailbox-detail-attachment">
+                    <div className="mailbox-attachment">
+                      {/* show original file */}
+                      <a className="border border-1 rounded-1"
+                        onClick={e => {
+                          const fileUrl = host + internalData.document.url;
+                          const fileName = internalData.document.filename;
+                          handleDownload(
+                            fileUrl,
+                            fileName
+                          )
+                        }}
+                      >
+                        <div className="document-file">
+                          <i className="fa fa-file-archive"></i>
+                        </div>
+                        <div className="document-name">
+                          {internalData.document.filename}
+                        </div>
+                      </a>
+                      <div className="mt-1">
+                        <a
+                          className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded"
+                          onClick={e => {
+                            const fileUrl = host + internalData.document.url;
+                            const fileName = internalData.document.filename;
+                            handleDownload(
+                              fileUrl,
+                              fileName
+                            )
+                          }}
+                        >
+                          Download
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          }
           <p>Created Time: {moment(internalData.createdAt).format("DD-MM-YYYY")}</p>
           <p>Content:</p>
           <p>{internalData.content}</p>
@@ -1980,7 +2063,7 @@ function EmailInbox() {
                                       }}
                                       bg="danger"
                                     >
-                                      No Viewed
+                                      Not Viewed
                                     </Badge>
                                   </div>
                                 )}
@@ -2012,7 +2095,7 @@ function EmailInbox() {
                                   }}
                                   bg="danger"
                                 >
-                                  No Viewed
+                                  Not Viewed
                                 </Badge>
                               </div>
                             )
@@ -2040,7 +2123,7 @@ function EmailInbox() {
                                 }}
                                 bg="danger"
                               >
-                                No Viewed
+                                Not Viewed
                               </Badge>
                             </div>
                           )}
@@ -2087,13 +2170,21 @@ function EmailInbox() {
                   <PerfectScrollbar className="h-100">
                     {ticketId ? (
                       <div className="mailbox-detail">
-                        {userRole != 2 && (
+                        {userRole !== 2 && (
                           <div className="mailbox-detail-header external-btn-container">
                             <BtnUpperContent
                               contentTemplate={contentTemplate}
                             />
                           </div>
                         )}
+                        {
+                          userRole === 2 && (
+                            <div className="mailbox-detail-header external-btn-container">
+                              <BtnUpperContentForStudent
+                              />
+                            </div>
+                          )
+                        }
                         <div className="mailbox-detail-header">
                           <div
                             className="d-flex "
@@ -2316,9 +2407,6 @@ function EmailInbox() {
                 ))
             }
             <InternalMessageContainer />
-            {/* {
-              selectedInternalMessage && 
-            } */}
           </div>
         </div>
       </div>
@@ -2407,6 +2495,7 @@ function EmailInbox() {
         show={passToAnotherDepartmentModalShow}
         handleModalClose={handlePassToAnotherDepartmentModalClose}
         selectedTicket={selectedTicket}
+        userRole={userRole}
       />
 
       <InternalNoteModal
@@ -2421,6 +2510,7 @@ function EmailInbox() {
         handleModalClose={handleReplyStudentModalClose}
         selectedTicket={selectedTicket}
         setTicketStatusChange={setTicketStatusChange}
+        userRole={userRole}
       />
 
       <Modal show={showExcelExportModal} onHide={() => setShowExcelExportModal(false)} centered>

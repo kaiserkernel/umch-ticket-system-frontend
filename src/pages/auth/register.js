@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useCallback } from "react";
-import { Row, Col, Form } from "react-bootstrap";
+import { Row, Col, Form, InputGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { AppSettings } from "./../../config/app-settings.js";
 import AuthService from "../../sevices/auth-service.js";
@@ -15,6 +15,7 @@ import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha
 } from 'react-google-recaptcha-v3';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const PagesRegister = () => (
   <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
@@ -39,14 +40,20 @@ const ReCaptchaComponent = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [recaptChatoken, setReCaptChaToken] = useState('');
 
+  const [pwdVisible, setPWdVisible] = useState(false);
+  const [confirmPwdVisible, setConfirmPwdVisible] = useState(false);
+
   const handleReCaptchaVerify = useCallback(async () => {
     if (!executeRecaptcha) {
       console.log('Execute recaptcha not yet available');
       return;
     }
-
-    const _recaptChatoken = await executeRecaptcha('submit_form');
-    setReCaptChaToken(_recaptChatoken);
+    try {
+      const _recaptChatoken = await executeRecaptcha('submit_form');
+      setReCaptChaToken(_recaptChatoken);
+    } catch (error) {
+      console.log(error, "recaptCha error");
+    }
     // Do whatever you want with the recaptChatoken
   }, [executeRecaptcha]);
 
@@ -131,14 +138,6 @@ const ReCaptchaComponent = () => {
       error.password = 'warn'
     }
 
-    // confirm password validation
-    // if (formData.password && formData.confirmPass && formData.password !== formData.confirmPass) {
-    //   error.confirmPass = 'warn'
-    // } else if (formData.password && !formData.confirmPass) {
-    //   error.confirmPass = 'error'
-    // } else {
-    //   error.confirmPass = ''
-    // }
     if (!error.password && !formData.confirmPass) {
       error.confirmPass = 'error'
     } else if (!error.password && (formData.password !== formData.confirmPass)) {
@@ -232,10 +231,10 @@ const ReCaptchaComponent = () => {
         <BannerSection />
         <div className="register">
           <div className="register-content">
-            <form onSubmit={handleSubmit} className="bg-gray-auth p-3 p-md-5">
+            <form onSubmit={handleSubmit} className="bg-gray-auth p-4 p-md-5">
               <h1 className="text-center">Sign Up for UMCH Ticket System</h1>
 
-              <p className="text-inverse text-opacity-50 text-center mt-5 sm-font">
+              <p className="text-inverse text-opacity-50 text-center mt-md-5 mt-4 sm-font">
                 Dear Students,
               </p>
               <p className="text-inverse text-opacity-50 text-center sm-font">
@@ -306,13 +305,21 @@ const ReCaptchaComponent = () => {
                     <Form.Label className="input-label">
                       Password <span className="ms-1 required-label">*</span>
                     </Form.Label>
-                    <Form.Control
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="custom-input"
-                    />
+                    <div className="d-flex">
+                      <Form.Control
+                        type={pwdVisible ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="custom-input"
+                      />
+                      <InputGroup.Text
+                        onClick={(evt) => setPWdVisible(prev => !prev)}
+                        style={{ cursor: "pointer", background: "transparent", borderLeft: "none" }}
+                      >
+                        {pwdVisible ? <FaEyeSlash /> : <FaEye />}
+                      </InputGroup.Text>
+                    </div>
                   </Form.Group>
                   {errors.password == 'warn' && <p className="text-warning sm-font">It must be at least 8 characters, include upper, lowercase letters, a number, and a special character.</p>}
                   {errors.password == 'error' && <p className="text-danger sm-font">Required field</p>}
@@ -324,13 +331,21 @@ const ReCaptchaComponent = () => {
                       Confirm Password
                       <span className="ms-1 required-label">*</span>
                     </Form.Label>
-                    <Form.Control
-                      type="password"
-                      name="confirmPass"
-                      value={formData.confirmPass}
-                      onChange={handleChange}
-                      className="custom-input"
-                    />
+                    <div className="d-flex">
+                      <Form.Control
+                        type={confirmPwdVisible ? "text" : "password"}
+                        name="confirmPass"
+                        value={formData.confirmPass}
+                        onChange={handleChange}
+                        className="custom-input"
+                      />
+                      <InputGroup.Text
+                        onClick={(evt) => setConfirmPwdVisible(prev => !prev)}
+                        style={{ cursor: "pointer", background: "transparent", borderLeft: "none" }}
+                      >
+                        {confirmPwdVisible ? <FaEyeSlash /> : <FaEye />}
+                      </InputGroup.Text>
+                    </div>
                   </Form.Group>
                   {errors.confirmPass == 'warn' && <p className="text-warning sm-font">Retype confirm password</p>}
                   {errors.confirmPass == 'error' && <p className="text-danger sm-font">Required field</p>}
@@ -387,10 +402,10 @@ const ReCaptchaComponent = () => {
                 </Col>
               </Row>
 
-              <label className="input-label mt-5">
+              {/* <label className="input-label mt-5">
                 Choose a profile picture for yourself:
-              </label>
-              <Row className="mt-3">
+              </label> */}
+              {/* <Row className="mt-3">
                 <Col md={12}>
                   <div className="mb-3 d-flex flex-column justify-content-center align-items-center">
                     <input
@@ -449,7 +464,7 @@ const ReCaptchaComponent = () => {
                     </label>
                   </div>
                 </Col>
-              </Row>
+              </Row> */}
               <div className="my-3">
                 <button
                   type="submit"
@@ -501,8 +516,8 @@ const ReCaptchaComponent = () => {
                 </Link>
               </div>
               <div className="text-inverse text-opacity-50 text-center mt-3">
-                Forget your password?{" "}
-                <Link to="/#" className="default-color">
+                Forgotten your password?{" "}
+                <Link to="/#" className="default-color d-block">
                   Reset Password
                 </Link>
               </div>

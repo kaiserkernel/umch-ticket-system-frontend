@@ -84,7 +84,7 @@ const EmailTemplateModal = ({
         id: selectedTicket?._id
       };
     }
-    if (contentTemplate == `${selectedTicket.inquiryCategory}-Enrollment`) {
+    if (contentTemplate == `${selectedTicket.inquiryCategory}-Enrollment Certificate`) {
       payload = {
         replaceSubject: title,
         replacedEmailTemplate: mailTemplateData,
@@ -124,7 +124,7 @@ const EmailTemplateModal = ({
       let res;
 
       if (actionBtnType == "accept") {
-        if (contentTemplate == `${selectedTicket.inquiryCategory}-Enrollment`) {
+        if (contentTemplate == `${selectedTicket.inquiryCategory}-Enrollment Certificate`) {
           res = await FormService.acceptEnrollmentInquiry(payload);
           setUnClickedApprovedTicketsCount(prev => prev + 1);
         }

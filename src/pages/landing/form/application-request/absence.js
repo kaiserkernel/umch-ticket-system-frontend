@@ -165,6 +165,7 @@ const Absence = ({ applicationRequest }) => {
             for (const key in combinedFormData) {
               formDataToSend.append(key, combinedFormData[key]);
             }
+
             formDataToSend.append("details", jsonFormDetailData);
             originalFiles.forEach((file) => {
               formDataToSend.append("documents", file);
@@ -187,6 +188,7 @@ const Absence = ({ applicationRequest }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

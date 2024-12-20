@@ -107,7 +107,7 @@ function ReCaptchaComponent() {
           localStorage.removeItem('enrollmentRememberMe');
         }
 
-        successNotify("Login is successfully.");
+        successNotify("Login is successful.");
 
         const bearToken = response?.token;
         const token = bearToken.slice(7);
@@ -200,7 +200,7 @@ function ReCaptchaComponent() {
           <div className="login-content">
             <form onSubmit={handleSubmit} className="bg-gray p-3 p-md-5">
               <h1 className="text-center">
-                Sign in for the UMCH Ticket System
+                Sign In for UMCH Ticket System
               </h1>
               <div className="text-inverse text-opacity-50 text-center mb-5 mt-3 mt-md-5">
                 <p className="text-inverse text-opacity-50 text-center sm-font">
@@ -218,6 +218,7 @@ function ReCaptchaComponent() {
                 <Form.Label className="input-label">
                   Enrollment Number{" "}
                   <span className="ms-1 required-label">*</span>
+                  {" "}( eg. 264 )
                 </Form.Label>
                 <Form.Control
                   type="text"
@@ -293,14 +294,13 @@ function ReCaptchaComponent() {
                 </a>
               </p>
               <div className="text-center text-inverse text-opacity-50">
-                Don't have an account yet?{" "}
                 <Link to="/register" className="default-color">
-                  Sign up
+                  Create an account
                 </Link>
                 .
               </div>
               <div className="text-inverse text-opacity-50 text-center mt-3">
-                Forget your password?{" "}
+                Forgotten your password?{" "}
                 <Link to="/reset-password" className="default-color">
                   Reset Password
                 </Link>

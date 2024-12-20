@@ -8,6 +8,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const userData = JSON.parse(localStorage.getItem("userData"));
 
   const handleClickRegister = () => {
     navigate("/register"); // Navigate to the "/special" route
@@ -45,7 +46,7 @@ const Header = () => {
                       className="logo-img"
                     />
                   </div>
-                  <nav className="text-white">
+                  <nav className="text-white d-flex align-items-center">
                     {isAuthenticated == false ? (
                       <>
                         {location.pathname == "/login" && (
@@ -79,12 +80,25 @@ const Header = () => {
                       </>
                     ) : (
                       <>
-                        <span
-                          className="p-3 cursor-pointer"
-                          onClick={handleClickLogout}
+                        <div
+                          className="p-3 cursor-pointer d-flex align-items-center"
                         >
-                          Logout
-                        </span>
+                          <div className="menu-img-width">
+                            {userData?.avatar ? (
+                              <img
+                                src={`${process.env.REACT_APP_API_URL}${userData?.avatar}`}
+                                className="rounded-circle w-100 h-100 object-fit-cover object"
+                                style={{ objectPosition: "top" }}
+                                alt=""
+                              />
+                            ) : (
+                              <div className="d-flex align-items-center justify-content-center w-100 h-100 bg-inverse bg-opacity-25 text-inverse text-opacity-50 rounded-circle overflow-hidden">
+                                <i className="bi bi-person-fill fs-32px mb-n3 text-white"></i>
+                              </div>
+                            )}
+                          </div>
+                          <span className="ms-2">{userData.firstName}{" "}{userData.lastName}</span>
+                        </div>
                         <span> | </span>
                         <span
                           className="p-3 cursor-pointer"

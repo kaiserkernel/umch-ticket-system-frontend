@@ -114,7 +114,7 @@ const ApplicationRequests = () => {
         applicationRequest={String(formInquiryData.applicationRequest)}
       />
     ),
-    "Enrollment": (
+    "Enrollment Certificate": (
       <Enrollment
         applicationRequest={String(formInquiryData.applicationRequest)}
       />

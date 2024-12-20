@@ -186,6 +186,7 @@ const Enrollment = ({ applicationRequest }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
@@ -225,7 +226,7 @@ const Enrollment = ({ applicationRequest }) => {
       newErrors.currentYearOfStudy = "This field is required";
     }
 
-    if (applicationRequest === "Enrollment")
+    if (applicationRequest === "Enrollment Certificate")
       setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

@@ -183,6 +183,7 @@ const Thesis = ({ applicationRequest }) => {
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

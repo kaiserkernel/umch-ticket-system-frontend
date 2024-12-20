@@ -170,11 +170,13 @@ const RecognitionCourses = ({ applicationRequest }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
               setInquiryState("error");
+              setLoading(false);
 
               if (typeof errors != "object") {
                 errorNotify(errors);

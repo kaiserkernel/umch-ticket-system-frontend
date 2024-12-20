@@ -9,31 +9,13 @@ import { toast } from "react-toastify";
 const PassToAnotherDepartmentModal = ({
   show,
   handleModalClose,
-  selectedTicket
+  selectedTicket,
+  userRole
 }) => {
-  // const [selectedOptions, setSelectedOptions] = useState([]);
-  // const [adminEmails, setAdminEmails] = useState();
+
   const [personalMsg, setPersonalMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedMail, setSelectedMail] = useState("");
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   const getAdminUsers = async () => {
-  //     try {
-  //       const res = await formService.getAdminUsers();
-  //       const adminlist = res.map((user) => ({
-  //         value: user?.email,
-  //         label: user?.email
-  //       }));
-
-  //       setAdminEmails(adminlist);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   getAdminUsers();
-  // }, []);
 
   useEffect(() => {
     if (!show) {
@@ -77,24 +59,13 @@ const PassToAnotherDepartmentModal = ({
   return (
     <Modal show={show} onHide={handleModalClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Pass To Another Department</Modal.Title>
+        <Modal.Title>{userRole !== 2 ? "Pass To Another Department" : "Forward Ticket"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Row>
           <Col lg={12}>
-            {/* {adminEmails && (
-              <Select
-                isMulti={false}
-                options={adminEmails}
-                value={selectedOptions}
-                closeMenuOnSelect={false}
-                hideSelectedOptions={false}
-                onChange={setSelectedOptions}
-                placeholder="Select Emails"
-              />
-            )} */}
             <Form.Group className="mb-4">
-              <Form.Label>Please enter the email address of the person, you wnat to send this ticket to</Form.Label>
+              <Form.Label>Please enter the email address of the person, you want to send this ticket to</Form.Label>
               <Form.Control
                 as="input"
                 value={selectedMail}

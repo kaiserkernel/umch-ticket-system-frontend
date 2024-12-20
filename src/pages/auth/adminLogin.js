@@ -109,7 +109,7 @@ function ReCaptchaComponent() {
           localStorage.removeItem('emailRememberMe');
         }
 
-        successNotify("Login is successfully.");
+        successNotify("Login is successful.");
 
         const bearToken = response?.token;
         const token = bearToken.slice(7);

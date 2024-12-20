@@ -191,11 +191,13 @@ const RecognitionInternship = ({ applicationRequest }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
               const errors = err?.errors || err?.error;
               setInquiryState("error");
+              setLoading(false);
 
               if (typeof errors != "object") {
                 errorNotify(errors);
@@ -275,7 +277,7 @@ const RecognitionInternship = ({ applicationRequest }) => {
       <Row className="d-flex  my-4">
         <Col lg={6}>
           <a
-            className="btn btn-primary"
+            className="btn btn-primary mb-md-0 mb-3"
             onClick={() =>
               handleDownload(
                 process.env.REACT_APP_API_URL +

@@ -189,6 +189,7 @@ const StreamingPanopto = ({ campusIT }) => {
               setOriginalFiles([]);
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {

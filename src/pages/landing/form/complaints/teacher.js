@@ -95,6 +95,7 @@ const Teacher = ({ complaints }) => {
 
               setFormData({
                 ...formData,
+                inquiryCategory: "",
                 agreement: false
               });
             } catch (err) {
