@@ -14,14 +14,14 @@ import "react-block-ui/style.css";
 import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha
-} from 'react-google-recaptcha-v3';
+} from "react-google-recaptcha-v3";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const PagesRegister = () => (
-  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ""}>
     <ReCaptchaComponent />
   </GoogleReCaptchaProvider>
-)
+);
 
 const ReCaptchaComponent = () => {
   const context = useContext(AppSettings);
@@ -38,18 +38,18 @@ const ReCaptchaComponent = () => {
     avatar: null
   });
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptChatoken, setReCaptChaToken] = useState('');
+  const [recaptChatoken, setReCaptChaToken] = useState("");
 
   const [pwdVisible, setPWdVisible] = useState(false);
   const [confirmPwdVisible, setConfirmPwdVisible] = useState(false);
 
   const handleReCaptchaVerify = useCallback(async () => {
     if (!executeRecaptcha) {
-      console.log('Execute recaptcha not yet available');
+      console.log("Execute recaptcha not yet available");
       return;
     }
     try {
-      const _recaptChatoken = await executeRecaptcha('submit_form');
+      const _recaptChatoken = await executeRecaptcha("submit_form");
       setReCaptChaToken(_recaptChatoken);
     } catch (error) {
       console.log(error, "recaptCha error");
@@ -84,8 +84,8 @@ const ReCaptchaComponent = () => {
       // Create a mock event to reuse the handleFileChange logic
       const mockEvent = {
         target: {
-          files: [droppedFile],
-        },
+          files: [droppedFile]
+        }
       };
       handleFileChange(mockEvent);
     }
@@ -113,10 +113,10 @@ const ReCaptchaComponent = () => {
       ...formData,
       [name]: type === "file" ? files[0] : value
     });
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       [name]: ""
-    }))
+    }));
   };
 
   // Validate form data
@@ -124,35 +124,36 @@ const ReCaptchaComponent = () => {
     let error = {};
 
     // required field validation
-    Object.keys(formData).map(log => {
+    Object.keys(formData).map((log) => {
       if (!formData[log] || formData[log]?.trim().length == 0) {
-        error[log] = 'error'
+        error[log] = "error";
       }
-    })
+    });
 
     // password validation - role
     // min lenght 8
     // at least - one number, one capital letter, one small letter, one special letter
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{8,}$/;
     if (formData.password && !passwordRegex.test(formData.password)) {
-      error.password = 'warn'
+      error.password = "warn";
     }
 
     if (!error.password && !formData.confirmPass) {
-      error.confirmPass = 'error'
-    } else if (!error.password && (formData.password !== formData.confirmPass)) {
-      error.confirmPass = 'warn'
+      error.confirmPass = "error";
+    } else if (!error.password && formData.password !== formData.confirmPass) {
+      error.confirmPass = "warn";
     } else {
-      delete error.confirmPass
+      delete error.confirmPass;
     }
 
-    delete error.avatar
+    delete error.avatar;
 
     if (Object.keys(error).length > 0) {
-      setErrors(prev => ({ ...prev, ...error }));
-      return false
+      setErrors((prev) => ({ ...prev, ...error }));
+      return false;
     } else {
-      return true
+      return true;
     }
   };
 
@@ -169,8 +170,7 @@ const ReCaptchaComponent = () => {
     // sign up validation
     const validation = validateForm();
 
-    if (!validation)
-      return;
+    if (!validation) return;
 
     try {
       const formDataToSend = new FormData();
@@ -193,7 +193,6 @@ const ReCaptchaComponent = () => {
         errorNotify(_errors);
         setLoading(false);
       } else {
-
         _errors.map((error) => {
           errorNotify(error.msg);
         });
@@ -261,7 +260,9 @@ const ReCaptchaComponent = () => {
                       className="custom-input"
                     />
                   </Form.Group>
-                  {errors.firstName == 'error' && <p className="text-danger sm-font">Required field</p>}
+                  {errors.firstName == "error" && (
+                    <p className="text-danger sm-font">Required field</p>
+                  )}
                 </Col>
                 <Col lg={6}>
                   <Form.Group controlId="lastName">
@@ -277,7 +278,9 @@ const ReCaptchaComponent = () => {
                       className="custom-input"
                     />
                   </Form.Group>
-                  {errors.lastName == 'error' && <p className="text-danger sm-font">Required field</p>}
+                  {errors.lastName == "error" && (
+                    <p className="text-danger sm-font">Required field</p>
+                  )}
                 </Col>
               </Row>
               <Row className="mt-4">
@@ -296,7 +299,9 @@ const ReCaptchaComponent = () => {
                       className="custom-input"
                     />
                   </Form.Group>
-                  {errors.email == 'error' && <p className="text-danger sm-font">Required field</p>}
+                  {errors.email == "error" && (
+                    <p className="text-danger sm-font">Required field</p>
+                  )}
                 </Col>
               </Row>
               <Row className="mt-2 g-3">
@@ -314,15 +319,26 @@ const ReCaptchaComponent = () => {
                         className="custom-input"
                       />
                       <InputGroup.Text
-                        onClick={(evt) => setPWdVisible(prev => !prev)}
-                        style={{ cursor: "pointer", background: "transparent", borderLeft: "none" }}
+                        onClick={(evt) => setPWdVisible((prev) => !prev)}
+                        style={{
+                          cursor: "pointer",
+                          background: "transparent",
+                          borderLeft: "none"
+                        }}
                       >
                         {pwdVisible ? <FaEyeSlash /> : <FaEye />}
                       </InputGroup.Text>
                     </div>
                   </Form.Group>
-                  {errors.password == 'warn' && <p className="text-warning sm-font">It must be at least 8 characters, include upper, lowercase letters, a number, and a special character.</p>}
-                  {errors.password == 'error' && <p className="text-danger sm-font">Required field</p>}
+                  {errors.password == "warn" && (
+                    <p className="text-warning sm-font">
+                      It must be at least 8 characters, include upper, lowercase
+                      letters, a number, and a special character.
+                    </p>
+                  )}
+                  {errors.password == "error" && (
+                    <p className="text-danger sm-font">Required field</p>
+                  )}
                 </Col>
 
                 <Col lg={6}>
@@ -340,15 +356,25 @@ const ReCaptchaComponent = () => {
                         className="custom-input"
                       />
                       <InputGroup.Text
-                        onClick={(evt) => setConfirmPwdVisible(prev => !prev)}
-                        style={{ cursor: "pointer", background: "transparent", borderLeft: "none" }}
+                        onClick={(evt) => setConfirmPwdVisible((prev) => !prev)}
+                        style={{
+                          cursor: "pointer",
+                          background: "transparent",
+                          borderLeft: "none"
+                        }}
                       >
                         {confirmPwdVisible ? <FaEyeSlash /> : <FaEye />}
                       </InputGroup.Text>
                     </div>
                   </Form.Group>
-                  {errors.confirmPass == 'warn' && <p className="text-warning sm-font">Retype confirm password</p>}
-                  {errors.confirmPass == 'error' && <p className="text-danger sm-font">Required field</p>}
+                  {errors.confirmPass == "warn" && (
+                    <p className="text-warning sm-font">
+                      Retype confirm password
+                    </p>
+                  )}
+                  {errors.confirmPass == "error" && (
+                    <p className="text-danger sm-font">Required field</p>
+                  )}
                 </Col>
               </Row>
 
@@ -367,7 +393,9 @@ const ReCaptchaComponent = () => {
                       className="custom-input"
                     />
                   </Form.Group>
-                  {errors.enrollmentNumber == 'error' && <p className="text-danger sm-font">Required field</p>}
+                  {errors.enrollmentNumber == "error" && (
+                    <p className="text-danger sm-font">Required field</p>
+                  )}
                 </Col>
                 <Col lg={6}>
                   <Form.Group>

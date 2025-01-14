@@ -64,8 +64,8 @@ const Absence = ({ applicationRequest }) => {
       // Create a mock event to reuse the handleFileChange logic
       const mockEvent = {
         target: {
-          files: [droppedFile],
-        },
+          files: [droppedFile]
+        }
       };
       handleFileChange(mockEvent);
     }
@@ -205,7 +205,7 @@ const Absence = ({ applicationRequest }) => {
               }
 
               setformDetailData({
-                ...formDetailData,
+                ...formDetailData
                 // reasonForAbsence: "",
                 // timeFromAbsence: "",
                 // timeToAbsence: "",
@@ -239,9 +239,11 @@ const Absence = ({ applicationRequest }) => {
     if (!formDetailData.timeToAbsence) {
       newErrors.timeToAbsence = "Period of time (to) is required";
     }
+    if (files.length == 0) {
+      newErrors.file = "File Uploading is required";
+    }
 
-    if (applicationRequest === "Absence")
-      setErrors(newErrors);
+    if (applicationRequest === "Absence") setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -425,6 +427,7 @@ const Absence = ({ applicationRequest }) => {
                 </div>
               ))}
             </div>
+            {errors.file && <p className="error-content">{errors.file}</p>}
           </Col>
         </Row>
         <Row className="mt-4">
