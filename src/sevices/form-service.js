@@ -77,8 +77,8 @@ class FormSevice {
     return await HttpService.post(sendPassEmailEndpoint, payload);
   };
   closeInquiry = async (payload) => {
-    const closeInquiryEndPoint = `/api/admin/inquiries/close/${payload}`;
-    return await HttpService.post(closeInquiryEndPoint);
+    const closeInquiryEndPoint = `/api/admin/inquiries/close`;
+    return await HttpService.post(closeInquiryEndPoint, payload);
   };
   sendInternalNote = async (payload) => {
     const sendInternalNoteEndPoint = "/api/admin/internal-note";

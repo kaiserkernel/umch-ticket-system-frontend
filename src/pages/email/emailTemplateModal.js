@@ -145,7 +145,8 @@ const EmailTemplateModal = ({
         setUnClickedRejectTicketsCount(prev => prev + 1);
       }
       if (actionBtnType == "close") {
-        res = await FormService.closeInquiry(selectedTicket._id);
+        console.log("close inquiry")
+        res = await FormService.closeInquiry(payload);
         setUnClickedClosedTicketCount(prev => prev + 1);
       }
 
@@ -156,7 +157,9 @@ const EmailTemplateModal = ({
         } catch (err) { }
       }
       setTicketStatusChange(prev => !prev);
-      setSelectedTicket(res?.inquiry);
+
+      // if (actionBtnType !== "close")
+      //   setSelectedTicket(res?.inquiry);
 
       successNotify(res?.message);
       setLoading(false);

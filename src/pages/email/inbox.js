@@ -540,17 +540,17 @@ function EmailInbox() {
         contentTemplate === "Application and Requests-Absence" ||
         contentTemplate === "Application and Requests-Change of study group" ||
         contentTemplate ===
-          "Application and Requests-Change of teaching hospital" ||
+        "Application and Requests-Change of teaching hospital" ||
         contentTemplate === "Application and Requests-Demonstrator student" ||
         contentTemplate ===
-          "Application and Requests-Online Catalogue (Solaris)" ||
+        "Application and Requests-Online Catalogue (Solaris)" ||
         contentTemplate === "Application and Requests-Recognition of Courses" ||
         contentTemplate ===
-          "Application and Requests-Recognition of Internship" ||
+        "Application and Requests-Recognition of Internship" ||
         contentTemplate ===
-          "Application and Requests-Syllabus of the academic year" ||
+        "Application and Requests-Syllabus of the academic year" ||
         contentTemplate ===
-          "Application and Requests-Transcript to Targu Mures" ||
+        "Application and Requests-Transcript to Targu Mures" ||
         contentTemplate === "Book rental UMCH library"
       ) {
         // accept and reject button
@@ -623,7 +623,7 @@ function EmailInbox() {
         );
       }
 
-      if (contentTemplate === "Application and Requests-Exam inspection") {
+      if (contentTemplate !== "Application and Requests-Exam inspection") {
         return (
           <div className="d-flex justify-content-end">
             <button
@@ -1483,11 +1483,10 @@ function EmailInbox() {
           _replyStudent.map((log, idx) => (
             <div
               key={idx}
-              className={`mailbox-message p-3 text-white ${
-                log.user?.role !== 2
-                  ? "bg-gradient-gray-600"
-                  : "bg-gradient-teal"
-              }`}
+              className={`mailbox-message p-3 text-white ${log.user?.role !== 2
+                ? "bg-gradient-gray-600"
+                : "bg-gradient-teal"
+                }`}
               style={{ cursor: "pointer" }}
               onClick={(evt) => handleClickInternalMessage(log, ticket)}
             >
@@ -1561,44 +1560,6 @@ function EmailInbox() {
               <p>Position: {POSITIONNAMES[internalData.user.position]}</p>
             </>
           )}
-          {internalData.document !== null && (
-            <div className="mailbox">
-              <div className="mailbox-detail px-0 pt-0">
-                <div className="mailbox-detail-attachment">
-                  <div className="mailbox-attachment">
-                    {/* show original file */}
-                    <a
-                      className="border border-1 rounded-1"
-                      onClick={(e) => {
-                        const fileUrl = host + internalData.document.url;
-                        const fileName = internalData.document.filename;
-                        handleDownload(fileUrl, fileName);
-                      }}
-                    >
-                      <div className="document-file">
-                        <i className="fa fa-file-archive"></i>
-                      </div>
-                      <div className="document-name">
-                        {internalData.document.filename}
-                      </div>
-                    </a>
-                    <div className="mt-1">
-                      <a
-                        className="btn btn-rounded px-3 btn-sm bg-theme bg-opacity-20 text-theme fw-600 rounded"
-                        onClick={(e) => {
-                          const fileUrl = host + internalData.document.url;
-                          const fileName = internalData.document.filename;
-                          handleDownload(fileUrl, fileName);
-                        }}
-                      >
-                        Download
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
           <p>
             Created Time: {moment(internalData.createdAt).format("DD-MM-YYYY")}
           </p>
@@ -1619,9 +1580,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               to=""
-              className={`d-flex mailbox-toolbar-link ${
-                activeTab == "All" && !showTicketDetail ? "active" : ""
-              } `}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "All" && !showTicketDetail ? "active" : ""
+                } `}
               onClick={handleShowNewTickets}
             >
               New tickets
@@ -1643,15 +1603,13 @@ function EmailInbox() {
             </Link>
           </div>
           <div
-            className={`mailbox-toolbar-item ${
-              showTicketDetail ? "" : "d-none"
-            }`}
+            className={`mailbox-toolbar-item ${showTicketDetail ? "" : "d-none"
+              }`}
           >
             <Link
               to=""
-              className={`mailbox-toolbar-link ${
-                showTicketDetail ? "active" : ""
-              } `}
+              className={`mailbox-toolbar-link ${showTicketDetail ? "active" : ""
+                } `}
             >
               Detail
             </Link>
@@ -1659,9 +1617,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowApprovedTickets}
-              className={`d-flex mailbox-toolbar-link ${
-                activeTab == "Approved" && !showTicketDetail ? "active" : ""
-              } `}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "Approved" && !showTicketDetail ? "active" : ""
+                } `}
             >
               Approved
               {userRole != 2 && (
@@ -1684,9 +1641,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowRejectedTickets}
-              className={`d-flex mailbox-toolbar-link ${
-                activeTab == "Rejected" && !showTicketDetail ? "active" : ""
-              } `}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "Rejected" && !showTicketDetail ? "active" : ""
+                } `}
             >
               Rejected
               {userRole != 2 && (
@@ -1709,9 +1665,8 @@ function EmailInbox() {
           <div className="mailbox-toolbar-item">
             <Link
               onClick={handleShowClosedTickets}
-              className={`d-flex mailbox-toolbar-link ${
-                activeTab == "Closed" && !showTicketDetail ? "active" : ""
-              } `}
+              className={`d-flex mailbox-toolbar-link ${activeTab == "Closed" && !showTicketDetail ? "active" : ""
+                } `}
             >
               Closed
               {userRole != 2 && (
@@ -2075,24 +2030,24 @@ function EmailInbox() {
                         className={
                           userData?.role == 2
                             ? "mailbox-list-item border-bottom" +
-                              (ticket?.documents ? " has-attachment " : "")
+                            (ticket?.documents ? " has-attachment " : "")
                             : "mailbox-list-item border-bottom" +
-                              (ticket?.documents &&
+                            (ticket?.documents &&
                               (ticket?.status == 0 ||
                                 ticket?.status == 1 ||
                                 ticket?.status == 4 ||
                                 ticket?.status == 5)
-                                ? " has-attachment "
-                                : "") +
-                              (Math.floor(
+                              ? " has-attachment "
+                              : "") +
+                            (Math.floor(
+                              (new Date() - new Date(ticket?.createdAt)) /
+                              (1000 * 60 * 60)
+                            ) > 45
+                              ? "mailbox-list-danger "
+                              : Math.floor(
                                 (new Date() - new Date(ticket?.createdAt)) /
-                                  (1000 * 60 * 60)
-                              ) > 45
-                                ? "mailbox-list-danger "
-                                : Math.floor(
-                                    (new Date() - new Date(ticket?.createdAt)) /
-                                      (1000 * 60 * 60)
-                                  ) > 24
+                                (1000 * 60 * 60)
+                              ) > 24
                                 ? "mailbox-list-warning"
                                 : "mailbox-list-general")
                         }
@@ -2122,8 +2077,8 @@ function EmailInbox() {
                                   ticket?.status == 1 ||
                                   ticket?.status == 4 ||
                                   ticket?.status == 5
-                                ? "text-white fw-bold"
-                                : "fw-bold"
+                                  ? "text-white fw-bold"
+                                  : "fw-bold"
                             }
                           >
                             {ticket.inquiryCategory}
@@ -2131,10 +2086,10 @@ function EmailInbox() {
                           <div
                             className={
                               userRole != 2 &&
-                              ticket?.status != 0 &&
-                              ticket?.status != 1 &&
-                              ticket?.status != 4 &&
-                              ticket?.status != 5
+                                ticket?.status != 0 &&
+                                ticket?.status != 1 &&
+                                ticket?.status != 4 &&
+                                ticket?.status != 5
                                 ? "text-black"
                                 : "mailbox-desc"
                             }
@@ -2143,9 +2098,9 @@ function EmailInbox() {
                           </div>
                           {userData?.role != 2 ? (
                             ticket?.status == 0 ||
-                            ticket?.status == 1 ||
-                            ticket?.status == 4 ||
-                            ticket?.status == 5 ? (
+                              ticket?.status == 1 ||
+                              ticket?.status == 4 ||
+                              ticket?.status == 5 ? (
                               <>
                                 <DownTimer
                                   remainTime={getTimeRemain(
@@ -2264,9 +2219,8 @@ function EmailInbox() {
           </div>
 
           <div
-            className={`mailbox-content d-lg-block ${
-              showTicketDetail ? "" : "d-none"
-            }`}
+            className={`mailbox-content d-lg-block ${showTicketDetail ? "" : "d-none"
+              }`}
           >
             {!selectedInternalMessage &&
               (loading ? (
@@ -2581,7 +2535,7 @@ function EmailInbox() {
           setUnClickedClosedTicketCount={setUnClickedClosedTicketCount}
         />
       )}
-      {actionBtnType && (
+      {examInspectionModalShow && (
         <ExamInspectionModal
           show={examInspectionModalShow}
           handleModalClose={handleExamInspectionModalClose}
