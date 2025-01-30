@@ -623,7 +623,7 @@ function EmailInbox() {
         );
       }
 
-      if (contentTemplate !== "Application and Requests-Exam inspection") {
+      if (contentTemplate === "Application and Requests-Exam inspection") {
         return (
           <div className="d-flex justify-content-end">
             <button
@@ -1426,6 +1426,7 @@ function EmailInbox() {
   };
 
   const handleClickInternalMessage = (_internalData, _ticketData) => {
+    setTicketId(_ticketData?._id);
     setSelectedInternalMessage({
       internalData: _internalData,
       ticketData: _ticketData

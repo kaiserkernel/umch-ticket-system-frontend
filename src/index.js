@@ -14,6 +14,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import "./index.css";
 import "./scss/styles.scss";
+import AuthService from "./sevices/auth-service.js";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -24,18 +25,19 @@ function App() {
   const navigate = useNavigate();
 
   // Memoize the token validity check
-  const tokenInfo = () => {
+  const tokenInfo = async () => {
     const jwtToken = localStorage.getItem("token");
     try {
       if (!jwtToken) return false;
 
       const decoded = jwtDecode(jwtToken);
+      if (!decoded || !decoded.exp) return false;
 
-      if (!decoded.exp) return false;
+      const currentTime = await AuthService.fetchServerTime();
 
-      const currentTime = Date.now() / 1000; // Current time in seconds
       return decoded.exp > currentTime;
     } catch (error) {
+      console.log(error, 'token info fetch error')
       return false;
     }
   };
@@ -55,14 +57,15 @@ function App() {
       return;
     }
 
-    // Redirect based on token state
-    if (tokenInfo() && (location.pathname == "/" || location.pathname == "/login")) {
-      navigate("/profile", { replace: true });
+    if (!tokenInfo()) {
+      navigate("/login");
       return;
     }
 
-    if (!tokenInfo()) {
-      navigate("/login", { replace: true });
+    // Redirect based on token state
+    if (tokenInfo() && (location.pathname == "/")) {
+      navigate("/profile");
+      return;
     }
 
   }, [location.pathname]);

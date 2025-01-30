@@ -106,7 +106,7 @@ const Absence = ({ applicationRequest }) => {
       setFiles((prevFiles) =>
         prevFiles.map((file) =>
           file.file.name === fileData.file.name && file.progress < 100
-            ? { ...file, progress: file.progress + 10 }
+            ? { ...file, progress: file.progress + 50 }
             : file
         )
       );

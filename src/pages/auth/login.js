@@ -15,6 +15,8 @@ import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha
 } from 'react-google-recaptcha-v3';
+import { jwtDecode } from "jwt-decode";
+
 
 const PagesLogin = () => (
   <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>

@@ -54,6 +54,11 @@ class AuthService {
     const updateProfileEndpoint = "/api/user/admin-reset-password";
     return await HttpService.post(updateProfileEndpoint, payload);
   };
+
+  fetchServerTime = async () => {
+    const fetchServerTimeEndpoint = "/api/user/time";
+    return await HttpService.get(fetchServerTimeEndpoint);
+  }
 }
 
 export default new AuthService();

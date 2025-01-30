@@ -14,11 +14,11 @@ import "react-block-ui/style.css";
 import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha
-} from "react-google-recaptcha-v3";
+} from 'react-google-recaptcha-v3';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const PagesRegister = () => (
-  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ""}>
+  <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_SITE_KEY || ''}>
     <ReCaptchaComponent />
   </GoogleReCaptchaProvider>
 );
@@ -38,30 +38,9 @@ const ReCaptchaComponent = () => {
     avatar: null
   });
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptChatoken, setReCaptChaToken] = useState("");
 
   const [pwdVisible, setPWdVisible] = useState(false);
   const [confirmPwdVisible, setConfirmPwdVisible] = useState(false);
-
-  const handleReCaptchaVerify = useCallback(async () => {
-    if (!executeRecaptcha) {
-      console.log("Execute recaptcha not yet available");
-      return;
-    }
-    try {
-      const _recaptChatoken = await executeRecaptcha("submit_form");
-      setReCaptChaToken(_recaptChatoken);
-    } catch (error) {
-      console.log(error, "recaptCha error");
-    }
-    // Do whatever you want with the recaptChatoken
-  }, [executeRecaptcha]);
-
-  useEffect(() => {
-    if (executeRecaptcha) {
-      handleReCaptchaVerify();
-    }
-  }, [executeRecaptcha]);
 
   const [loading, setLoading] = useState(false);
 
@@ -94,6 +73,7 @@ const ReCaptchaComponent = () => {
   const handleDragOver = (event) => {
     event.preventDefault();
   };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
 
@@ -107,6 +87,7 @@ const ReCaptchaComponent = () => {
       });
     }
   };
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData({
@@ -134,7 +115,7 @@ const ReCaptchaComponent = () => {
     // min lenght 8
     // at least - one number, one capital letter, one small letter, one special letter
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{8,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^-])[A-Za-z\d@$!%*?&#^-]{8,}$/;
     if (formData.password && !passwordRegex.test(formData.password)) {
       error.password = "warn";
     }
@@ -179,6 +160,15 @@ const ReCaptchaComponent = () => {
       }
       setLoading(true);
 
+      if (!executeRecaptcha) {
+        errorNotify('reCAPTCHA is not ready. Please try again');
+        setLoading(false)
+        return;
+      }
+
+      // Fecth the reCAPTCHA token dynamically at submission time
+      const recaptChatoken = await executeRecaptcha('user_register_action');
+
       formDataToSend.append("recaptChatoken", recaptChatoken);
 
       const response = await AuthService.register(formDataToSend);
@@ -218,11 +208,13 @@ const ReCaptchaComponent = () => {
       autoClose: 5000 // Duration in milliseconds
     });
   };
+
   const errorNotify = (msg) => {
     toast.warning(msg, {
       autoClose: 5000 // Duration in milliseconds
     });
   };
+
   return (
     <>
       <BlockUI blocking={loading}>
