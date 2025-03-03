@@ -1502,7 +1502,7 @@ function EmailInbox() {
                 Ticket Number:{" "}
                 <span className="fw-bold">{ticket.inquiryNumber}</span>
               </div>
-              {log.user?.role !== 2 && (
+              {log.user && log.user.role !== 2 && (
                 <>
                   <div>
                     Creator: {log.user.firstName} {log.user.lastName}

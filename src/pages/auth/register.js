@@ -322,6 +322,9 @@ const ReCaptchaComponent = () => {
                       </InputGroup.Text>
                     </div>
                   </Form.Group>
+                  <p className="text-success sm-font">
+                    Password should contain special character: @$!%*?&#^-
+                  </p>
                   {errors.password == "warn" && (
                     <p className="text-warning sm-font">
                       It must be at least 8 characters, include upper, lowercase

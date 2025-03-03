@@ -243,6 +243,7 @@ function AccountManagement() {
     const combinedFormData = Object.assign({}, formData, {
       category: categories
     });
+    setLoading(true);
     try {
       const res = await UserService.createAdmin(combinedFormData);
       successNotify(res.message);
@@ -261,6 +262,7 @@ function AccountManagement() {
         });
       }
     }
+    setLoading(false);
   };
 
   const handleEditUser = async () => {
@@ -288,16 +290,17 @@ function AccountManagement() {
     const combinedFormData = Object.assign({}, formData, {
       category: categories
     });
+
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await UserService.editRole(combinedFormData);
-      setLoading(false);
       successNotify(res.message);
     } catch (err) {
       setLoading(false);
       if (err?.message) {
         errorNotify(err?.message);
       }
+      setLoading(false);
 
       const errors = err?.errors;
 
@@ -627,7 +630,7 @@ function AccountManagement() {
         </Modal.Body>
         <Modal.Footer>
           {btnType == "add" ? (
-            <Button variant="primary" onClick={handleAddNewUser}>
+            <Button variant="primary" onClick={handleAddNewUser} disabled={loading}>
               {loading ? (
                 <div
                   style={{
@@ -642,7 +645,7 @@ function AccountManagement() {
               )}
             </Button>
           ) : (
-            <Button variant="primary" onClick={() => handleEditUser()}>
+            <Button variant="primary" onClick={() => handleEditUser()} disabled={loading}>
               {loading ? (
                 <div
                   style={{
