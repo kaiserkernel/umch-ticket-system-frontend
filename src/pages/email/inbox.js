@@ -2448,6 +2448,16 @@ function EmailInbox() {
                           <br />
                         </div>
                       </div>
+                      {
+                        (userRole === 2 && activeTab === 'Closed') && (
+                          <button 
+                            onClick={() => (window.location.href = `${process.env.REACT_APP_API_URL}/#/ticket-reopen/${selectedTicket._id}`)}
+                            className="btn btn-secondary"
+                          >
+                            Reopen
+                          </button>
+                        )
+                      }
                       {userRole != 2 && (
                         <div
                           style={{

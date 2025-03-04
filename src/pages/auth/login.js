@@ -131,17 +131,21 @@ function ReCaptchaComponent() {
       });
     } catch (err) {
       setLoading(false);
-      const errors = err?.errors ? err?.errors : err?.message;
-
-      if (typeof errors != "object") {
-        errorNotify(errors);
+      if (typeof err === "string") {
+        errorNotify(err);
+        return;
       } else {
-        errors.map((error) => {
-          errorNotify(error.msg);
-        });
+        const errors = err?.errors ? err?.errors : err?.message;
+  
+        if (typeof errors != "object") {
+          errorNotify(errors);
+        } else {
+          errors.map((error) => {
+            errorNotify(error.msg);
+          });
+        }
       }
     }
-    setLoading(false);
   };
 
   const handleProfileNavigation = () => {
