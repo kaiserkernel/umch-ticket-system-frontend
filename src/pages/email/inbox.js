@@ -877,17 +877,15 @@ function EmailInbox() {
       const unClickedNewTickets = newTickets.filter(
         (ticket) => ticket.isClicked === 0
       );
-      const unClickedApprovedTickets = newTickets.filter(
-        (ticket) =>
-          ticket.isClicked === 0 && (ticket.status === 2 || ticket.status === 6)
+      const unClickedApprovedTickets = res.filter(
+        (ticket) => (ticket.status === 2 || ticket.status === 6)
       );
-      const unClickedRejectTickets = newTickets.filter(
-        (ticket) => ticket.isClicked === 0 && ticket.status === 3
+      const unClickedRejectTickets = res.filter(
+        (ticket) => ticket.status === 3
       );
-      const unClickedCloseTickets = newTickets.filter(
-        (ticket) => ticket.isClicked === 0 && ticket.status === 7
+      const unClickedCloseTickets = res.filter(
+        (ticket) => ticket.status === 7
       );
-
       setUnClickedNewTicketsCount(unClickedNewTickets.length);
       setUnClickedApprovedTicketsCount(unClickedApprovedTickets.length);
       setUnClickedRejectTicketsCount(unClickedRejectTickets.length);
