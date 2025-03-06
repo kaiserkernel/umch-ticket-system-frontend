@@ -1622,21 +1622,19 @@ function EmailInbox() {
                 } `}
             >
               Approved
-              {userRole != 2 && (
-                <Badge
-                  pill
-                  bg="primary"
-                  className="ms-2"
-                  style={{
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  {unClickedApprovedTicketsCount}
-                </Badge>
-              )}
+              <Badge
+                pill
+                bg="primary"
+                className="ms-2"
+                style={{
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                {unClickedApprovedTicketsCount}
+              </Badge>
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
@@ -1646,21 +1644,19 @@ function EmailInbox() {
                 } `}
             >
               Rejected
-              {userRole != 2 && (
-                <Badge
-                  pill
-                  bg="primary"
-                  className="ms-2"
-                  style={{
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  {unClickedRejectTicketsCount}
-                </Badge>
-              )}
+              <Badge
+                pill
+                bg="primary"
+                className="ms-2"
+                style={{
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                {unClickedRejectTicketsCount}
+              </Badge>
             </Link>
           </div>
           <div className="mailbox-toolbar-item">
@@ -1670,21 +1666,19 @@ function EmailInbox() {
                 } `}
             >
               Closed
-              {userRole != 2 && (
-                <Badge
-                  pill
-                  bg="primary"
-                  className="ms-2"
-                  style={{
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  {unClickedCloseTicketsCount}
-                </Badge>
-              )}
+              <Badge
+                pill
+                bg="primary"
+                className="ms-2"
+                style={{
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                {unClickedCloseTicketsCount}
+              </Badge>
             </Link>
           </div>
           {userData?.role !== 2 && (
@@ -2449,7 +2443,7 @@ function EmailInbox() {
                         </div>
                       </div>
                       {
-                        (userRole === 2 && activeTab === 'Closed') && (
+                        (userRole === 2 && (['Rejected', 'Closed', 'Approved'].includes(activeTab))) && (
                           <button 
                             onClick={() => (window.location.href = `${process.env.REACT_APP_API_URL}/#/ticket-reopen/${selectedTicket._id}`)}
                             className="btn btn-secondary"
