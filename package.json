@@ -2,7 +2,7 @@
   "name": "hud-react",
   "version": "3.0.0",
   "private": true,
-  "homepage": "https://172.86.70.154:443",
+  "homepage": "https://ticket-system.umch.de:5000",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@fullcalendar/bootstrap": "^6.1.11",

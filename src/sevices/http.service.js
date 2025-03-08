@@ -4,7 +4,8 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 export class HttpService {
   _axios = Axios.create({
-    baseURL: API_URL
+    baseURL: API_URL,
+    withCredentials: true
   });
 
   constructor() {
